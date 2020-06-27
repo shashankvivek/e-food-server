@@ -13,11 +13,7 @@ import (
 
 // CategoryListURL generates an URL for the category list operation
 type CategoryListURL struct {
-	Kind *string
-
 	_basePath string
-	// avoid unkeyed usage
-	_ struct{}
 }
 
 // WithBasePath sets the base path for this url builder, only required when it's different from the
@@ -39,25 +35,13 @@ func (o *CategoryListURL) SetBasePath(bp string) {
 func (o *CategoryListURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/get_categories"
+	var _path = "/categories"
 
 	_basePath := o._basePath
 	if _basePath == "" {
-		_basePath = "/api"
+		_basePath = "/"
 	}
 	_result.Path = golangswaggerpaths.Join(_basePath, _path)
-
-	qs := make(url.Values)
-
-	var kindQ string
-	if o.Kind != nil {
-		kindQ = *o.Kind
-	}
-	if kindQ != "" {
-		qs.Set("kind", kindQ)
-	}
-
-	_result.RawQuery = qs.Encode()
 
 	return &_result, nil
 }

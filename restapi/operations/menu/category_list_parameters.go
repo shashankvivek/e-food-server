@@ -9,9 +9,7 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/go-openapi/strfmt"
 )
 
 // NewCategoryListParams creates a new CategoryListParams object
@@ -29,11 +27,6 @@ type CategoryListParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
-
-	/*
-	  In: query
-	*/
-	Kind *string
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -45,33 +38,8 @@ func (o *CategoryListParams) BindRequest(r *http.Request, route *middleware.Matc
 
 	o.HTTPRequest = r
 
-	qs := runtime.Values(r.URL.Query())
-
-	qKind, qhkKind, _ := qs.GetOK("kind")
-	if err := o.bindKind(qKind, qhkKind, route.Formats); err != nil {
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-// bindKind binds and validates parameter Kind from query.
-func (o *CategoryListParams) bindKind(rawData []string, hasKey bool, formats strfmt.Registry) error {
-	var raw string
-	if len(rawData) > 0 {
-		raw = rawData[len(rawData)-1]
-	}
-
-	// Required: false
-	// AllowEmptyValue: false
-	if raw == "" { // empty values pass all other validations
-		return nil
-	}
-
-	o.Kind = &raw
-
 	return nil
 }

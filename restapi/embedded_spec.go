@@ -33,21 +33,14 @@ func init() {
     "version": "1.0.0"
   },
   "host": "e-food.com",
-  "basePath": "/api",
+  "basePath": "/",
   "paths": {
-    "/get_categories": {
+    "/categories": {
       "get": {
         "tags": [
           "menu"
         ],
         "operationId": "CategoryList",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "kind",
-            "in": "query"
-          }
-        ],
         "responses": {
           "200": {
             "description": "Get Category to show menu",
@@ -124,21 +117,14 @@ func init() {
     "version": "1.0.0"
   },
   "host": "e-food.com",
-  "basePath": "/api",
+  "basePath": "/",
   "paths": {
-    "/get_categories": {
+    "/categories": {
       "get": {
         "tags": [
           "menu"
         ],
         "operationId": "CategoryList",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "kind",
-            "in": "query"
-          }
-        ],
         "responses": {
           "200": {
             "description": "Get Category to show menu",

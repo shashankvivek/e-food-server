@@ -4,11 +4,11 @@ info:
   title: E-Food
 schemes: [http]
 host: e-food.com
-basePath: /api
+basePath: /
 consumes: [application/json]
 produces: [application/json]
 paths:
-  /get_categories:
+  /categories:
     get:
       tags: [menu]
       operationId: CategoryList

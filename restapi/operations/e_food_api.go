@@ -241,7 +241,7 @@ func (o *EFoodAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/get_categories"] = menu.NewCategoryList(o.context, o.MenuCategoryListHandler)
+	o.handlers["GET"]["/categories"] = menu.NewCategoryList(o.context, o.MenuCategoryListHandler)
 }
 
 // Serve creates a http handler to serve the API over HTTP

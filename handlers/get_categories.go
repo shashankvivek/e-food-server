@@ -15,5 +15,5 @@ func NewMenuCategoryHandler() menu.CategoryListHandler {
 
 func (impl *menuImpl) Handle(param menu.CategoryListParams) middleware.Responder {
 	fmt.Print(param)
-	return nil
+	return menu.NewCategoryListOK().WithPayload(nil)
 }

@@ -29,7 +29,7 @@ func NewCategoryList(ctx *middleware.Context, handler CategoryListHandler) *Cate
 	return &CategoryList{Context: ctx, Handler: handler}
 }
 
-/*CategoryList swagger:route GET /get_categories menu categoryList
+/*CategoryList swagger:route GET /categories menu categoryList
 
 CategoryList category list API
 
