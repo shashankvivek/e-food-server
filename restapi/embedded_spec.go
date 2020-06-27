@@ -29,18 +29,18 @@ func init() {
   ],
   "swagger": "2.0",
   "info": {
-    "title": "Minimal Pet Store Example",
+    "title": "E-Food",
     "version": "1.0.0"
   },
-  "host": "example.org",
+  "host": "e-food.com",
   "basePath": "/api",
   "paths": {
-    "/pets": {
+    "/get_categories": {
       "get": {
         "tags": [
-          "pet"
+          "menu"
         ],
-        "operationId": "List",
+        "operationId": "CategoryList",
         "parameters": [
           {
             "type": "string",
@@ -50,95 +50,59 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "Pet list",
+            "description": "Get Category to show menu",
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Pet"
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "pet"
-        ],
-        "operationId": "Create",
-        "parameters": [
-          {
-            "name": "pet",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/Pet"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Pet Created",
-            "schema": {
-              "$ref": "#/definitions/Pet"
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        }
-      }
-    },
-    "/pets/{petId}": {
-      "get": {
-        "tags": [
-          "pet"
-        ],
-        "operationId": "Get",
-        "parameters": [
-          {
-            "type": "integer",
-            "format": "int64",
-            "name": "petId",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Pet get",
-            "schema": {
-              "$ref": "#/definitions/Pet"
+              "$ref": "#/definitions/Categories"
             }
           },
           "400": {
             "description": "Bad Request"
           },
           "404": {
-            "description": "Pet Not Found"
+            "description": "Categories Not Found"
           }
         }
       }
     }
   },
   "definitions": {
-    "Pet": {
-      "type": "object",
-      "required": [
-        "name"
-      ],
-      "properties": {
-        "id": {
-          "type": "integer",
-          "format": "int64",
-          "readOnly": true
-        },
-        "kind": {
-          "type": "string",
-          "example": "dog"
-        },
-        "name": {
-          "type": "string",
-          "example": "Bobby"
+    "Categories": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "BroadCategoryId": {
+            "type": "string"
+          },
+          "ImageUrl": {
+            "type": "string"
+          },
+          "IsActive": {
+            "type": "boolean"
+          },
+          "Name": {
+            "type": "string"
+          },
+          "SubCategories": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "ImageUrl": {
+                  "type": "string"
+                },
+                "IsActive": {
+                  "type": "boolean"
+                },
+                "Name": {
+                  "type": "string"
+                },
+                "SubCategoryId": {
+                  "type": "string"
+                }
+              }
+            }
+          }
         }
       }
     }
@@ -156,18 +120,18 @@ func init() {
   ],
   "swagger": "2.0",
   "info": {
-    "title": "Minimal Pet Store Example",
+    "title": "E-Food",
     "version": "1.0.0"
   },
-  "host": "example.org",
+  "host": "e-food.com",
   "basePath": "/api",
   "paths": {
-    "/pets": {
+    "/get_categories": {
       "get": {
         "tags": [
-          "pet"
+          "menu"
         ],
-        "operationId": "List",
+        "operationId": "CategoryList",
         "parameters": [
           {
             "type": "string",
@@ -177,95 +141,65 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "Pet list",
+            "description": "Get Category to show menu",
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Pet"
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "pet"
-        ],
-        "operationId": "Create",
-        "parameters": [
-          {
-            "name": "pet",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/Pet"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Pet Created",
-            "schema": {
-              "$ref": "#/definitions/Pet"
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          }
-        }
-      }
-    },
-    "/pets/{petId}": {
-      "get": {
-        "tags": [
-          "pet"
-        ],
-        "operationId": "Get",
-        "parameters": [
-          {
-            "type": "integer",
-            "format": "int64",
-            "name": "petId",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Pet get",
-            "schema": {
-              "$ref": "#/definitions/Pet"
+              "$ref": "#/definitions/Categories"
             }
           },
           "400": {
             "description": "Bad Request"
           },
           "404": {
-            "description": "Pet Not Found"
+            "description": "Categories Not Found"
           }
         }
       }
     }
   },
   "definitions": {
-    "Pet": {
+    "Categories": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/CategoriesItems0"
+      }
+    },
+    "CategoriesItems0": {
       "type": "object",
-      "required": [
-        "name"
-      ],
       "properties": {
-        "id": {
-          "type": "integer",
-          "format": "int64",
-          "readOnly": true
+        "BroadCategoryId": {
+          "type": "string"
         },
-        "kind": {
-          "type": "string",
-          "example": "dog"
+        "ImageUrl": {
+          "type": "string"
         },
-        "name": {
-          "type": "string",
-          "example": "Bobby"
+        "IsActive": {
+          "type": "boolean"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "SubCategories": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CategoriesItems0SubCategoriesItems0"
+          }
+        }
+      }
+    },
+    "CategoriesItems0SubCategoriesItems0": {
+      "type": "object",
+      "properties": {
+        "ImageUrl": {
+          "type": "string"
+        },
+        "IsActive": {
+          "type": "boolean"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "SubCategoryId": {
+          "type": "string"
         }
       }
     }

@@ -19,12 +19,12 @@ import (
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	"e-food/restapi/operations/pet"
+	"e-food/restapi/operations/menu"
 )
 
-// NewMinimalPetStoreExampleAPI creates a new MinimalPetStoreExample instance
-func NewMinimalPetStoreExampleAPI(spec *loads.Document) *MinimalPetStoreExampleAPI {
-	return &MinimalPetStoreExampleAPI{
+// NewEFoodAPI creates a new EFood instance
+func NewEFoodAPI(spec *loads.Document) *EFoodAPI {
+	return &EFoodAPI{
 		handlers:            make(map[string]map[string]http.Handler),
 		formats:             strfmt.Default,
 		defaultConsumes:     "application/json",
@@ -43,20 +43,14 @@ func NewMinimalPetStoreExampleAPI(spec *loads.Document) *MinimalPetStoreExampleA
 
 		JSONProducer: runtime.JSONProducer(),
 
-		PetCreateHandler: pet.CreateHandlerFunc(func(params pet.CreateParams) middleware.Responder {
-			return middleware.NotImplemented("operation pet.Create has not yet been implemented")
-		}),
-		PetGetHandler: pet.GetHandlerFunc(func(params pet.GetParams) middleware.Responder {
-			return middleware.NotImplemented("operation pet.Get has not yet been implemented")
-		}),
-		PetListHandler: pet.ListHandlerFunc(func(params pet.ListParams) middleware.Responder {
-			return middleware.NotImplemented("operation pet.List has not yet been implemented")
+		MenuCategoryListHandler: menu.CategoryListHandlerFunc(func(params menu.CategoryListParams) middleware.Responder {
+			return middleware.NotImplemented("operation menu.CategoryList has not yet been implemented")
 		}),
 	}
 }
 
-/*MinimalPetStoreExampleAPI the minimal pet store example API */
-type MinimalPetStoreExampleAPI struct {
+/*EFoodAPI the e food API */
+type EFoodAPI struct {
 	spec            *loads.Document
 	context         *middleware.Context
 	handlers        map[string]map[string]http.Handler
@@ -85,12 +79,8 @@ type MinimalPetStoreExampleAPI struct {
 	//   - application/json
 	JSONProducer runtime.Producer
 
-	// PetCreateHandler sets the operation handler for the create operation
-	PetCreateHandler pet.CreateHandler
-	// PetGetHandler sets the operation handler for the get operation
-	PetGetHandler pet.GetHandler
-	// PetListHandler sets the operation handler for the list operation
-	PetListHandler pet.ListHandler
+	// MenuCategoryListHandler sets the operation handler for the category list operation
+	MenuCategoryListHandler menu.CategoryListHandler
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
 	ServeError func(http.ResponseWriter, *http.Request, error)
@@ -111,42 +101,42 @@ type MinimalPetStoreExampleAPI struct {
 }
 
 // SetDefaultProduces sets the default produces media type
-func (o *MinimalPetStoreExampleAPI) SetDefaultProduces(mediaType string) {
+func (o *EFoodAPI) SetDefaultProduces(mediaType string) {
 	o.defaultProduces = mediaType
 }
 
 // SetDefaultConsumes returns the default consumes media type
-func (o *MinimalPetStoreExampleAPI) SetDefaultConsumes(mediaType string) {
+func (o *EFoodAPI) SetDefaultConsumes(mediaType string) {
 	o.defaultConsumes = mediaType
 }
 
 // SetSpec sets a spec that will be served for the clients.
-func (o *MinimalPetStoreExampleAPI) SetSpec(spec *loads.Document) {
+func (o *EFoodAPI) SetSpec(spec *loads.Document) {
 	o.spec = spec
 }
 
 // DefaultProduces returns the default produces media type
-func (o *MinimalPetStoreExampleAPI) DefaultProduces() string {
+func (o *EFoodAPI) DefaultProduces() string {
 	return o.defaultProduces
 }
 
 // DefaultConsumes returns the default consumes media type
-func (o *MinimalPetStoreExampleAPI) DefaultConsumes() string {
+func (o *EFoodAPI) DefaultConsumes() string {
 	return o.defaultConsumes
 }
 
 // Formats returns the registered string formats
-func (o *MinimalPetStoreExampleAPI) Formats() strfmt.Registry {
+func (o *EFoodAPI) Formats() strfmt.Registry {
 	return o.formats
 }
 
 // RegisterFormat registers a custom format validator
-func (o *MinimalPetStoreExampleAPI) RegisterFormat(name string, format strfmt.Format, validator strfmt.Validator) {
+func (o *EFoodAPI) RegisterFormat(name string, format strfmt.Format, validator strfmt.Validator) {
 	o.formats.Add(name, format, validator)
 }
 
-// Validate validates the registrations in the MinimalPetStoreExampleAPI
-func (o *MinimalPetStoreExampleAPI) Validate() error {
+// Validate validates the registrations in the EFoodAPI
+func (o *EFoodAPI) Validate() error {
 	var unregistered []string
 
 	if o.JSONConsumer == nil {
@@ -157,14 +147,8 @@ func (o *MinimalPetStoreExampleAPI) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
-	if o.PetCreateHandler == nil {
-		unregistered = append(unregistered, "pet.CreateHandler")
-	}
-	if o.PetGetHandler == nil {
-		unregistered = append(unregistered, "pet.GetHandler")
-	}
-	if o.PetListHandler == nil {
-		unregistered = append(unregistered, "pet.ListHandler")
+	if o.MenuCategoryListHandler == nil {
+		unregistered = append(unregistered, "menu.CategoryListHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -175,23 +159,23 @@ func (o *MinimalPetStoreExampleAPI) Validate() error {
 }
 
 // ServeErrorFor gets a error handler for a given operation id
-func (o *MinimalPetStoreExampleAPI) ServeErrorFor(operationID string) func(http.ResponseWriter, *http.Request, error) {
+func (o *EFoodAPI) ServeErrorFor(operationID string) func(http.ResponseWriter, *http.Request, error) {
 	return o.ServeError
 }
 
 // AuthenticatorsFor gets the authenticators for the specified security schemes
-func (o *MinimalPetStoreExampleAPI) AuthenticatorsFor(schemes map[string]spec.SecurityScheme) map[string]runtime.Authenticator {
+func (o *EFoodAPI) AuthenticatorsFor(schemes map[string]spec.SecurityScheme) map[string]runtime.Authenticator {
 	return nil
 }
 
 // Authorizer returns the registered authorizer
-func (o *MinimalPetStoreExampleAPI) Authorizer() runtime.Authorizer {
+func (o *EFoodAPI) Authorizer() runtime.Authorizer {
 	return nil
 }
 
 // ConsumersFor gets the consumers for the specified media types.
 // MIME type parameters are ignored here.
-func (o *MinimalPetStoreExampleAPI) ConsumersFor(mediaTypes []string) map[string]runtime.Consumer {
+func (o *EFoodAPI) ConsumersFor(mediaTypes []string) map[string]runtime.Consumer {
 	result := make(map[string]runtime.Consumer, len(mediaTypes))
 	for _, mt := range mediaTypes {
 		switch mt {
@@ -208,7 +192,7 @@ func (o *MinimalPetStoreExampleAPI) ConsumersFor(mediaTypes []string) map[string
 
 // ProducersFor gets the producers for the specified media types.
 // MIME type parameters are ignored here.
-func (o *MinimalPetStoreExampleAPI) ProducersFor(mediaTypes []string) map[string]runtime.Producer {
+func (o *EFoodAPI) ProducersFor(mediaTypes []string) map[string]runtime.Producer {
 	result := make(map[string]runtime.Producer, len(mediaTypes))
 	for _, mt := range mediaTypes {
 		switch mt {
@@ -224,7 +208,7 @@ func (o *MinimalPetStoreExampleAPI) ProducersFor(mediaTypes []string) map[string
 }
 
 // HandlerFor gets a http.Handler for the provided operation method and path
-func (o *MinimalPetStoreExampleAPI) HandlerFor(method, path string) (http.Handler, bool) {
+func (o *EFoodAPI) HandlerFor(method, path string) (http.Handler, bool) {
 	if o.handlers == nil {
 		return nil, false
 	}
@@ -239,8 +223,8 @@ func (o *MinimalPetStoreExampleAPI) HandlerFor(method, path string) (http.Handle
 	return h, ok
 }
 
-// Context returns the middleware context for the minimal pet store example API
-func (o *MinimalPetStoreExampleAPI) Context() *middleware.Context {
+// Context returns the middleware context for the e food API
+func (o *EFoodAPI) Context() *middleware.Context {
 	if o.context == nil {
 		o.context = middleware.NewRoutableContext(o.spec, o, nil)
 	}
@@ -248,29 +232,21 @@ func (o *MinimalPetStoreExampleAPI) Context() *middleware.Context {
 	return o.context
 }
 
-func (o *MinimalPetStoreExampleAPI) initHandlerCache() {
+func (o *EFoodAPI) initHandlerCache() {
 	o.Context() // don't care about the result, just that the initialization happened
 	if o.handlers == nil {
 		o.handlers = make(map[string]map[string]http.Handler)
 	}
 
-	if o.handlers["POST"] == nil {
-		o.handlers["POST"] = make(map[string]http.Handler)
-	}
-	o.handlers["POST"]["/pets"] = pet.NewCreate(o.context, o.PetCreateHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/pets/{petId}"] = pet.NewGet(o.context, o.PetGetHandler)
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
-	}
-	o.handlers["GET"]["/pets"] = pet.NewList(o.context, o.PetListHandler)
+	o.handlers["GET"]["/get_categories"] = menu.NewCategoryList(o.context, o.MenuCategoryListHandler)
 }
 
 // Serve creates a http handler to serve the API over HTTP
 // can be used directly in http.ListenAndServe(":8000", api.Serve(nil))
-func (o *MinimalPetStoreExampleAPI) Serve(builder middleware.Builder) http.Handler {
+func (o *EFoodAPI) Serve(builder middleware.Builder) http.Handler {
 	o.Init()
 
 	if o.Middleware != nil {
@@ -280,24 +256,24 @@ func (o *MinimalPetStoreExampleAPI) Serve(builder middleware.Builder) http.Handl
 }
 
 // Init allows you to just initialize the handler cache, you can then recompose the middleware as you see fit
-func (o *MinimalPetStoreExampleAPI) Init() {
+func (o *EFoodAPI) Init() {
 	if len(o.handlers) == 0 {
 		o.initHandlerCache()
 	}
 }
 
 // RegisterConsumer allows you to add (or override) a consumer for a media type.
-func (o *MinimalPetStoreExampleAPI) RegisterConsumer(mediaType string, consumer runtime.Consumer) {
+func (o *EFoodAPI) RegisterConsumer(mediaType string, consumer runtime.Consumer) {
 	o.customConsumers[mediaType] = consumer
 }
 
 // RegisterProducer allows you to add (or override) a producer for a media type.
-func (o *MinimalPetStoreExampleAPI) RegisterProducer(mediaType string, producer runtime.Producer) {
+func (o *EFoodAPI) RegisterProducer(mediaType string, producer runtime.Producer) {
 	o.customProducers[mediaType] = producer
 }
 
 // AddMiddlewareFor adds a http middleware to existing handler
-func (o *MinimalPetStoreExampleAPI) AddMiddlewareFor(method, path string, builder middleware.Builder) {
+func (o *EFoodAPI) AddMiddlewareFor(method, path string, builder middleware.Builder) {
 	um := strings.ToUpper(method)
 	if path == "/" {
 		path = ""

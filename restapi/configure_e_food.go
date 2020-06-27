@@ -6,21 +6,19 @@ import (
 	"crypto/tls"
 	"net/http"
 
+	"e-food/handlers"
+	"e-food/restapi/operations"
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/runtime/middleware"
-
-	"e-food/restapi/operations"
-	"e-food/restapi/operations/pet"
 )
 
-//go:generate swagger generate server --target ..\..\e-food-server --name MinimalPetStoreExample --spec ..\swagger.yaml --exclude-main
+//go:generate swagger generate server --target ..\..\e-food-server --name EFood --spec ..\swagger.yaml
 
-func configureFlags(api *operations.MinimalPetStoreExampleAPI) {
+func configureFlags(api *operations.EFoodAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
 }
 
-func configureAPI(api *operations.MinimalPetStoreExampleAPI) http.Handler {
+func configureAPI(api *operations.EFoodAPI) http.Handler {
 	// configure the api here
 	api.ServeError = errors.ServeError
 
@@ -34,21 +32,7 @@ func configureAPI(api *operations.MinimalPetStoreExampleAPI) http.Handler {
 
 	api.JSONProducer = runtime.JSONProducer()
 
-	if api.PetCreateHandler == nil {
-		api.PetCreateHandler = pet.CreateHandlerFunc(func(params pet.CreateParams) middleware.Responder {
-			return middleware.NotImplemented("operation pet.Create has not yet been implemented")
-		})
-	}
-	if api.PetGetHandler == nil {
-		api.PetGetHandler = pet.GetHandlerFunc(func(params pet.GetParams) middleware.Responder {
-			return middleware.NotImplemented("operation pet.Get has not yet been implemented")
-		})
-	}
-	if api.PetListHandler == nil {
-		api.PetListHandler = pet.ListHandlerFunc(func(params pet.ListParams) middleware.Responder {
-			return middleware.NotImplemented("operation pet.List has not yet been implemented")
-		})
-	}
+	api.MenuCategoryListHandler = handlers.NewMenuCategoryHandler()
 
 	api.PreServerShutdown = func() {}
 
@@ -69,7 +53,7 @@ func configureTLS(tlsConfig *tls.Config) {
 func configureServer(s *http.Server, scheme, addr string) {
 }
 
-// The middleware configuration is for the handler executors. These do not apply to the swagger.json document.
+// The middleware configuration is for the handlers executors. These do not apply to the swagger.json document.
 // The middleware executes after routing but before authentication, binding and validation
 func setupMiddlewares(handler http.Handler) http.Handler {
 	return handler
