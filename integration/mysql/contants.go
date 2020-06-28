@@ -1,6 +1,7 @@
 package mysql
 
 const (
-	databaseSchema     = "ecommerce"
-	broadCategoryTable = "broadcategories"
+	DatabaseSchema     = "ecommerce"
+	BroadCategoryTable = "broad_category"
+	SubCategoryTable   = "sub_category"
 )

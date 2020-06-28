@@ -7,11 +7,11 @@ import (
 )
 
 type BroadCategoryEntity struct {
-	BroadCategoryId string
-	Name            string
-	Description     string
-	ImageUrl        string
-	IsActive        bool
+	BC_Id          string
+	BC_Name        string
+	BC_Description string
+	BC_ImageUrl    string
+	BC_IsActive    bool
 }
 
 // Insert and update can be used by sellers
@@ -20,7 +20,7 @@ func InsertMenuItem(broadCategory *BroadCategoryEntity) (string, error) {
 }
 
 func GetBroadCategoryList(dbClient *sql.DB) ([]BroadCategoryEntity, error) {
-	var q = fmt.Sprintf("SELECT * FROM %s.%s", databaseSchema, broadCategoryTable)
+	q := fmt.Sprintf("SELECT * FROM  %s", BroadCategoryTable)
 	rows, err := dbClient.Query(q)
 	if err != nil {
 		return nil, errors.New("error fetching broad category list")
@@ -32,7 +32,7 @@ func GetBroadCategoryList(dbClient *sql.DB) ([]BroadCategoryEntity, error) {
 	}
 	for rows.Next() {
 		cat := BroadCategoryEntity{}
-		err = rows.Scan(&cat.BroadCategoryId, &cat.Name, &cat.Description, &cat.ImageUrl, &cat.IsActive)
+		err = rows.Scan(&cat.BC_Id, &cat.BC_Name, &cat.BC_Description, &cat.BC_ImageUrl, &cat.BC_IsActive)
 		if err != nil {
 			return nil, errors.New("error in scanning rows")
 		}
