@@ -28,24 +28,24 @@ definitions:
     items:
       type: object
       properties:
-        BroadCategoryId:
+        bcId:
           type: string
-        Name:
+        bcName:
           type: string
-        ImageUrl:
+        bcImageUrl:
           type: string
-        IsActive:
+        bcIsActive:
           type: boolean
         SubCategories:
           type: array
           items:
             type: object
             properties:
-              SubCategoryId:
+              scId:
                 type: string
-              Name:
+              scName:
                 type: string
-              ImageUrl:
+              scImageUrl:
                 type: string
-              IsActive:
+              scIsActive:
                 type: boolean

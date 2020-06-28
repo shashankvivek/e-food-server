@@ -7,11 +7,11 @@ import (
 )
 
 type BroadCategoryEntity struct {
-	BC_Id          string
-	BC_Name        string
-	BC_Description string
-	BC_ImageUrl    string
-	BC_IsActive    bool
+	bcId          string
+	bcName        string
+	bcDescription string
+	bcImageUrl    string
+	bcIsActive    bool
 }
 
 // Insert and update can be used by sellers
@@ -32,7 +32,7 @@ func GetBroadCategoryList(dbClient *sql.DB) ([]BroadCategoryEntity, error) {
 	}
 	for rows.Next() {
 		cat := BroadCategoryEntity{}
-		err = rows.Scan(&cat.BC_Id, &cat.BC_Name, &cat.BC_Description, &cat.BC_ImageUrl, &cat.BC_IsActive)
+		err = rows.Scan(&cat.bcId, &cat.bcName, &cat.bcDescription, &cat.bcImageUrl, &cat.bcIsActive)
 		if err != nil {
 			return nil, errors.New("error in scanning rows")
 		}

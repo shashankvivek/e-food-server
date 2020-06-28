@@ -1,39 +1,39 @@
 CREATE TABLE `ecommerce`.`broad_category` (
-  `BC_Id` MEDIUMINT NOT NULL  AUTO_INCREMENT,
-  `BC_Name` VARCHAR(45) NOT NULL,
-  `BC_Description` VARCHAR(45) NULL,
-  `BC_ImageUrl` VARCHAR(200) NULL,
-  `BC_IsActive` TINYINT NULL DEFAULT 1,
-  PRIMARY KEY (`BC_Id`)
+  `bcId` MEDIUMINT NOT NULL  AUTO_INCREMENT,
+  `bcName` VARCHAR(45) NOT NULL,
+  `bcDescription` VARCHAR(45) NULL,
+  `bcImageUrl` VARCHAR(200) NULL,
+  `bcIsActive` TINYINT NULL DEFAULT 1,
+  PRIMARY KEY (`bcId`)
 );
 
 
 
 INSERT INTO `ecommerce`.`broad_category`
 (
-`BC_Name`,
-`BC_Description`)
+`bcName`,
+`bcDescription`)
 VALUES
 ("Fruits",
 "These are juicy fruits");
 
 
 CREATE TABLE `ecommerce`.`sub_category` (
-  `SC_Id` MEDIUMINT NOT NULL  AUTO_INCREMENT,
-  `SC_Name` VARCHAR(45) NULL,
-  `SC_Description` VARCHAR(45) NULL,
-  `SC_ImageUrl` VARCHAR(200) NULL,
-  `SC_IsActive` TINYINT NULL DEFAULT 1,
-  `BC_Id` MEDIUMINT NOT NULL,
-  FOREIGN KEY (`BC_Id`) REFERENCES `ecommerce`.`broad_category`(`BC_Id`),
-  PRIMARY KEY (`SC_Id`)
+  `scId` MEDIUMINT NOT NULL  AUTO_INCREMENT,
+  `scName` VARCHAR(45) NULL,
+  `scDescription` VARCHAR(45) NULL,
+  `scImageUrl` VARCHAR(200) NULL,
+  `scIsActive` TINYINT NULL DEFAULT 1,
+  `bcId` MEDIUMINT NOT NULL,
+  FOREIGN KEY (`bcId`) REFERENCES `ecommerce`.`broad_category`(`bcId`),
+  PRIMARY KEY (`scId`)
 );
 
 INSERT INTO `ecommerce`.`sub_category`
 (
-`SC_Name`,
-`SC_Description`,
-`BC_Id`)
+`scName`,
+`scDescription`,
+`bcId`)
 VALUES
 ("Apple",
 "This is an apple",
@@ -42,9 +42,9 @@ VALUES
 
 INSERT INTO `ecommerce`.`sub_category`
 (
-`SC_Name`,
-`SC_Description`,
-`BC_Id`)
+`scName`,
+`scDescription`,
+`bcId`)
 VALUES
 ("Oranges",
 "These are oranges",
@@ -53,9 +53,9 @@ VALUES
 
 INSERT INTO `ecommerce`.`sub_category`
 (
-`Name`,
-`Description`,
-`BroadCategoryId`)
+`scName`,
+`scDescription`,
+`bcId`)
 VALUES
 ("Bananas",
 "These are Bananas",
@@ -64,9 +64,9 @@ VALUES
 
 INSERT INTO `ecommerce`.`sub_category`
 (
-`SC_Name`,
-`SC_Description`,
-`BC_Id`)
+`scName`,
+`scDescription`,
+`bcId`)
 VALUES
 ("Pears",
 "These are Pears",

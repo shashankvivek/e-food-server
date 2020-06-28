@@ -6,7 +6,7 @@ type SubCategoryEntity struct {
 	SC_Description string
 	SC_ImageUrl    string
 	SC_IsActive    bool
-	BC_Id          string
+	bcId           string
 }
 
 // Functions to Read & Update the SubCategoryEntity

@@ -64,37 +64,37 @@ func init() {
       "items": {
         "type": "object",
         "properties": {
-          "BroadCategoryId": {
-            "type": "string"
-          },
-          "ImageUrl": {
-            "type": "string"
-          },
-          "IsActive": {
-            "type": "boolean"
-          },
-          "Name": {
-            "type": "string"
-          },
           "SubCategories": {
             "type": "array",
             "items": {
               "type": "object",
               "properties": {
-                "ImageUrl": {
+                "scId": {
                   "type": "string"
                 },
-                "IsActive": {
+                "scImageUrl": {
+                  "type": "string"
+                },
+                "scIsActive": {
                   "type": "boolean"
                 },
-                "Name": {
-                  "type": "string"
-                },
-                "SubCategoryId": {
+                "scName": {
                   "type": "string"
                 }
               }
             }
+          },
+          "bcId": {
+            "type": "string"
+          },
+          "bcImageUrl": {
+            "type": "string"
+          },
+          "bcIsActive": {
+            "type": "boolean"
+          },
+          "bcName": {
+            "type": "string"
           }
         }
       }
@@ -152,39 +152,39 @@ func init() {
     "CategoriesItems0": {
       "type": "object",
       "properties": {
-        "BroadCategoryId": {
-          "type": "string"
-        },
-        "ImageUrl": {
-          "type": "string"
-        },
-        "IsActive": {
-          "type": "boolean"
-        },
-        "Name": {
-          "type": "string"
-        },
         "SubCategories": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/CategoriesItems0SubCategoriesItems0"
           }
+        },
+        "bcId": {
+          "type": "string"
+        },
+        "bcImageUrl": {
+          "type": "string"
+        },
+        "bcIsActive": {
+          "type": "boolean"
+        },
+        "bcName": {
+          "type": "string"
         }
       }
     },
     "CategoriesItems0SubCategoriesItems0": {
       "type": "object",
       "properties": {
-        "ImageUrl": {
+        "scId": {
           "type": "string"
         },
-        "IsActive": {
+        "scImageUrl": {
+          "type": "string"
+        },
+        "scIsActive": {
           "type": "boolean"
         },
-        "Name": {
-          "type": "string"
-        },
-        "SubCategoryId": {
+        "scName": {
           "type": "string"
         }
       }

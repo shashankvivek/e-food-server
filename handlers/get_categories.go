@@ -24,5 +24,5 @@ func (impl *menuImpl) Handle(param menu.CategoryListParams) middleware.Responder
 	retVal, _ := models.GetMenuItems(impl.dbClient)
 	fmt.Println(retVal)
 
-	return menu.NewCategoryListOK().WithPayload(nil)
+	return menu.NewCategoryListOK().WithPayload(retVal)
 }
