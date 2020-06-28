@@ -44,19 +44,20 @@ func GetMenuItems(dbClient *sql.DB) (Categories, error) {
 }
 
 func getCategoriesInStructure(categories []CategoryJoin) Categories {
-	groupedMap := make(map[string]CategoriesItems0)
+	groupedMap := make(map[string]*CategoriesItems0)
 	for _, category := range categories {
 		if _, ok := groupedMap[category.bcId]; ok {
 			// insert SC into it
 			//groupedMap[category.bcId].BcID = "asd"
-			//groupedMap[category.bcId].SubCategories = append(groupedMap[category.bcId].SubCategories, SubMenuItems{
-			//	scId:       category.scId,
-			//	scName:     category.scName,
-			//	scIsActive: category.scIsActive,
-			//})
+			groupedMap[category.bcId].SubCategories = append(groupedMap[category.bcId].SubCategories, &CategoriesItems0SubCategoriesItems0{
+				ScID:       category.scId,
+				ScName:     category.scName,
+				ScIsActive: category.scIsActive,
+				ScImageURL: "",
+			})
 		} else {
 			// create a map entry
-			groupedMap[category.bcId] = CategoriesItems0{
+			groupedMap[category.bcId] = &CategoriesItems0{
 				BcID:       category.bcId,
 				BcName:     category.bcName,
 				BcIsActive: category.bcIsActive,
@@ -73,7 +74,7 @@ func getCategoriesInStructure(categories []CategoryJoin) Categories {
 	}
 	var menuItem Categories
 	for _, v := range groupedMap {
-		menuItem = append(menuItem, &v)
+		menuItem = append(menuItem, v)
 	}
 	return menuItem
 }
