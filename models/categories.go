@@ -8,15 +8,15 @@ package models
 import (
 	"strconv"
 
+	strfmt "github.com/go-openapi/strfmt"
+
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
 
 // Categories categories
-//
 // swagger:model Categories
-type Categories []*CategoriesItems0
+type Categories []*Category
 
 // Validate validates this categories
 func (m Categories) Validate(formats strfmt.Registry) error {
@@ -41,124 +41,5 @@ func (m Categories) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-// CategoriesItems0 categories items0
-//
-// swagger:model CategoriesItems0
-type CategoriesItems0 struct {
-
-	// sub categories
-	SubCategories []*CategoriesItems0SubCategoriesItems0 `json:"SubCategories"`
-
-	// bc Id
-	BcID string `json:"bcId,omitempty"`
-
-	// bc image Url
-	BcImageURL string `json:"bcImageUrl,omitempty"`
-
-	// bc is active
-	BcIsActive bool `json:"bcIsActive,omitempty"`
-
-	// bc name
-	BcName string `json:"bcName,omitempty"`
-}
-
-// Validate validates this categories items0
-func (m *CategoriesItems0) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.validateSubCategories(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *CategoriesItems0) validateSubCategories(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.SubCategories) { // not required
-		return nil
-	}
-
-	for i := 0; i < len(m.SubCategories); i++ {
-		if swag.IsZero(m.SubCategories[i]) { // not required
-			continue
-		}
-
-		if m.SubCategories[i] != nil {
-			if err := m.SubCategories[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("SubCategories" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-// MarshalBinary interface implementation
-func (m *CategoriesItems0) MarshalBinary() ([]byte, error) {
-	if m == nil {
-		return nil, nil
-	}
-	return swag.WriteJSON(m)
-}
-
-// UnmarshalBinary interface implementation
-func (m *CategoriesItems0) UnmarshalBinary(b []byte) error {
-	var res CategoriesItems0
-	if err := swag.ReadJSON(b, &res); err != nil {
-		return err
-	}
-	*m = res
-	return nil
-}
-
-// CategoriesItems0SubCategoriesItems0 categories items0 sub categories items0
-//
-// swagger:model CategoriesItems0SubCategoriesItems0
-type CategoriesItems0SubCategoriesItems0 struct {
-
-	// sc Id
-	ScID string `json:"scId,omitempty"`
-
-	// sc image Url
-	ScImageURL string `json:"scImageUrl,omitempty"`
-
-	// sc is active
-	ScIsActive bool `json:"scIsActive,omitempty"`
-
-	// sc name
-	ScName string `json:"scName,omitempty"`
-}
-
-// Validate validates this categories items0 sub categories items0
-func (m *CategoriesItems0SubCategoriesItems0) Validate(formats strfmt.Registry) error {
-	return nil
-}
-
-// MarshalBinary interface implementation
-func (m *CategoriesItems0SubCategoriesItems0) MarshalBinary() ([]byte, error) {
-	if m == nil {
-		return nil, nil
-	}
-	return swag.WriteJSON(m)
-}
-
-// UnmarshalBinary interface implementation
-func (m *CategoriesItems0SubCategoriesItems0) UnmarshalBinary(b []byte) error {
-	var res CategoriesItems0SubCategoriesItems0
-	if err := swag.ReadJSON(b, &res); err != nil {
-		return err
-	}
-	*m = res
 	return nil
 }

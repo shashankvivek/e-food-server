@@ -8,7 +8,7 @@ package menu
 import (
 	"net/http"
 
-	"github.com/go-openapi/runtime/middleware"
+	middleware "github.com/go-openapi/runtime/middleware"
 )
 
 // CategoryListHandlerFunc turns a function with the right signature into a category list handler

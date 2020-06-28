@@ -62,40 +62,46 @@ func init() {
     "Categories": {
       "type": "array",
       "items": {
-        "type": "object",
-        "properties": {
-          "SubCategories": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "scId": {
-                  "type": "string"
-                },
-                "scImageUrl": {
-                  "type": "string"
-                },
-                "scIsActive": {
-                  "type": "boolean"
-                },
-                "scName": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "bcId": {
-            "type": "string"
-          },
-          "bcImageUrl": {
-            "type": "string"
-          },
-          "bcIsActive": {
-            "type": "boolean"
-          },
-          "bcName": {
-            "type": "string"
+        "$ref": "#/definitions/Category"
+      }
+    },
+    "Category": {
+      "type": "object",
+      "properties": {
+        "bcId": {
+          "type": "string"
+        },
+        "bcImageUrl": {
+          "type": "string"
+        },
+        "bcIsActive": {
+          "type": "boolean"
+        },
+        "bcName": {
+          "type": "string"
+        },
+        "subCategories": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SubCategory"
           }
+        }
+      }
+    },
+    "SubCategory": {
+      "type": "object",
+      "properties": {
+        "scId": {
+          "type": "string"
+        },
+        "scImageUrl": {
+          "type": "string"
+        },
+        "scIsActive": {
+          "type": "boolean"
+        },
+        "scName": {
+          "type": "string"
         }
       }
     }
@@ -146,18 +152,12 @@ func init() {
     "Categories": {
       "type": "array",
       "items": {
-        "$ref": "#/definitions/CategoriesItems0"
+        "$ref": "#/definitions/Category"
       }
     },
-    "CategoriesItems0": {
+    "Category": {
       "type": "object",
       "properties": {
-        "SubCategories": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/CategoriesItems0SubCategoriesItems0"
-          }
-        },
         "bcId": {
           "type": "string"
         },
@@ -169,10 +169,16 @@ func init() {
         },
         "bcName": {
           "type": "string"
+        },
+        "subCategories": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SubCategory"
+          }
         }
       }
     },
-    "CategoriesItems0SubCategoriesItems0": {
+    "SubCategory": {
       "type": "object",
       "properties": {
         "scId": {

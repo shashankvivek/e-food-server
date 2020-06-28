@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"database/sql"
-	"e-food/models"
+	"e-food/dao"
 	"e-food/restapi/operations/menu"
 	"fmt"
 	"github.com/go-openapi/runtime/middleware"
@@ -21,7 +21,7 @@ func NewMenuCategoryHandler(dbClient *sql.DB) menu.CategoryListHandler {
 func (impl *menuImpl) Handle(param menu.CategoryListParams) middleware.Responder {
 	//retVal, _ := mysql.GetBroadCategoryList(impl.dbClient)
 	//fmt.Println(retVal)
-	retVal, _ := models.GetMenuItems(impl.dbClient)
+	retVal, _ := dao.GetMenuItems(impl.dbClient)
 	fmt.Println(retVal)
 
 	return menu.NewCategoryListOK().WithPayload(retVal)

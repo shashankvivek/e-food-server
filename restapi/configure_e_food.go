@@ -33,7 +33,7 @@ func configureAPI(api *operations.EFoodAPI) http.Handler {
 
 	api.MenuCategoryListHandler = handlers.NewMenuCategoryHandler(dbClient)
 
-	api.PreServerShutdown = func() {}
+	//api.PreServerShutdown = func() {}
 
 	api.ServerShutdown = func() {}
 
