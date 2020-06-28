@@ -4,6 +4,7 @@ package restapi
 
 import (
 	"crypto/tls"
+	"e-food/clients"
 	"net/http"
 
 	"e-food/handlers"
@@ -32,7 +33,11 @@ func configureAPI(api *operations.EFoodAPI) http.Handler {
 
 	api.JSONProducer = runtime.JSONProducer()
 
-	api.MenuCategoryListHandler = handlers.NewMenuCategoryHandler()
+	clientBuilder := clients.NewClientBuilder()
+
+	dbClient := clientBuilder.BuildSqlClient()
+
+	api.MenuCategoryListHandler = handlers.NewMenuCategoryHandler(dbClient)
 
 	api.PreServerShutdown = func() {}
 
