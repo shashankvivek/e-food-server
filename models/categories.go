@@ -49,20 +49,20 @@ func (m Categories) Validate(formats strfmt.Registry) error {
 // swagger:model CategoriesItems0
 type CategoriesItems0 struct {
 
-	// broad category Id
-	BroadCategoryID string `json:"BroadCategoryId,omitempty"`
-
-	// image Url
-	ImageURL string `json:"ImageUrl,omitempty"`
-
-	// is active
-	IsActive bool `json:"IsActive,omitempty"`
-
-	// name
-	Name string `json:"Name,omitempty"`
-
 	// sub categories
 	SubCategories []*CategoriesItems0SubCategoriesItems0 `json:"SubCategories"`
+
+	// bc Id
+	BcID string `json:"bcId,omitempty"`
+
+	// bc image Url
+	BcImageURL string `json:"bcImageUrl,omitempty"`
+
+	// bc is active
+	BcIsActive bool `json:"bcIsActive,omitempty"`
+
+	// bc name
+	BcName string `json:"bcName,omitempty"`
 }
 
 // Validate validates this categories items0
@@ -127,17 +127,17 @@ func (m *CategoriesItems0) UnmarshalBinary(b []byte) error {
 // swagger:model CategoriesItems0SubCategoriesItems0
 type CategoriesItems0SubCategoriesItems0 struct {
 
-	// image Url
-	ImageURL string `json:"ImageUrl,omitempty"`
+	// sc Id
+	ScID string `json:"scId,omitempty"`
 
-	// is active
-	IsActive bool `json:"IsActive,omitempty"`
+	// sc image Url
+	ScImageURL string `json:"scImageUrl,omitempty"`
 
-	// name
-	Name string `json:"Name,omitempty"`
+	// sc is active
+	ScIsActive bool `json:"scIsActive,omitempty"`
 
-	// sub category Id
-	SubCategoryID string `json:"SubCategoryId,omitempty"`
+	// sc name
+	ScName string `json:"scName,omitempty"`
 }
 
 // Validate validates this categories items0 sub categories items0

@@ -8,30 +8,17 @@ import (
 )
 
 type CategoryJoin struct {
-	BC_Id       string
-	BC_Name     string
-	BC_IsActive bool
-	SC_Id       string
-	SC_Name     string
-	SC_IsActive bool
+	bcId       string
+	bcName     string
+	bcIsActive bool
+	scId       string
+	scName     string
+	scIsActive bool
 }
 
-type MenuItems struct {
-	BC_Id         string
-	BC_Name       string
-	BC_IsActive   bool
-	SubCategories []SubMenuItems
-}
-
-type SubMenuItems struct {
-	SC_Id       string
-	SC_Name     string
-	SC_IsActive bool
-}
-
-func GetMenuItems(dbClient *sql.DB) (*[]CategoryJoin, error) {
-	q := fmt.Sprintf("select b.BC_ID ,BC_NAME,BC_IsActive,SC_Id,SC_Name,SC_IsActive "+
-		"from %s as B INNER JOIN %s as S where b.BC_Id = s.BC_Id", mysql.BroadCategoryTable, mysql.SubCategoryTable)
+func GetMenuItems(dbClient *sql.DB) (Categories, error) {
+	q := fmt.Sprintf("select b.bcID ,bcNAME,bcIsActive,scId,scName,scIsActive "+
+		"from %s as B INNER JOIN %s as S where b.bcId = s.bcId", mysql.BroadCategoryTable, mysql.SubCategoryTable)
 	fmt.Println(q)
 	rows, err := dbClient.Query(q)
 	if err != nil {
@@ -44,11 +31,49 @@ func GetMenuItems(dbClient *sql.DB) (*[]CategoryJoin, error) {
 	}
 	for rows.Next() {
 		cat := CategoryJoin{}
-		err = rows.Scan(&cat.BC_Id, &cat.BC_Name, &cat.BC_IsActive, &cat.SC_Id, &cat.SC_Name, &cat.SC_IsActive)
+		err = rows.Scan(&cat.bcId, &cat.bcName, &cat.bcIsActive, &cat.scId, &cat.scName, &cat.scIsActive)
 		if err != nil {
 			return nil, errors.New("error in scanning rows")
 		}
 		retVal = append(retVal, cat)
 	}
-	return &retVal, nil
+
+	menu := getCategoriesInStructure(retVal)
+	return menu, nil
+
+}
+
+func getCategoriesInStructure(categories []CategoryJoin) Categories {
+	groupedMap := make(map[string]CategoriesItems0)
+	for _, category := range categories {
+		if _, ok := groupedMap[category.bcId]; ok {
+			// insert SC into it
+			//groupedMap[category.bcId].BcID = "asd"
+			//groupedMap[category.bcId].SubCategories = append(groupedMap[category.bcId].SubCategories, SubMenuItems{
+			//	scId:       category.scId,
+			//	scName:     category.scName,
+			//	scIsActive: category.scIsActive,
+			//})
+		} else {
+			// create a map entry
+			groupedMap[category.bcId] = CategoriesItems0{
+				BcID:       category.bcId,
+				BcName:     category.bcName,
+				BcIsActive: category.bcIsActive,
+				SubCategories: []*CategoriesItems0SubCategoriesItems0{
+					{
+						category.scId,
+						"",
+						category.scIsActive,
+						category.scName,
+					},
+				},
+			}
+		}
+	}
+	var menuItem Categories
+	for _, v := range groupedMap {
+		menuItem = append(menuItem, &v)
+	}
+	return menuItem
 }
