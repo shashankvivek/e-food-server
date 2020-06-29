@@ -107,3 +107,45 @@ func (o *CategoryListNotFound) WriteResponse(rw http.ResponseWriter, producer ru
 
 	rw.WriteHeader(404)
 }
+
+// CategoryListInternalServerErrorCode is the HTTP code returned for type CategoryListInternalServerError
+const CategoryListInternalServerErrorCode int = 500
+
+/*CategoryListInternalServerError Server Error
+
+swagger:response categoryListInternalServerError
+*/
+type CategoryListInternalServerError struct {
+
+	/*
+	  In: Body
+	*/
+	Payload string `json:"body,omitempty"`
+}
+
+// NewCategoryListInternalServerError creates CategoryListInternalServerError with default headers values
+func NewCategoryListInternalServerError() *CategoryListInternalServerError {
+
+	return &CategoryListInternalServerError{}
+}
+
+// WithPayload adds the payload to the category list internal server error response
+func (o *CategoryListInternalServerError) WithPayload(payload string) *CategoryListInternalServerError {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the category list internal server error response
+func (o *CategoryListInternalServerError) SetPayload(payload string) {
+	o.Payload = payload
+}
+
+// WriteResponse to the client
+func (o *CategoryListInternalServerError) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(500)
+	payload := o.Payload
+	if err := producer.Produce(rw, payload); err != nil {
+		panic(err) // let the recovery middleware deal with this
+	}
+}

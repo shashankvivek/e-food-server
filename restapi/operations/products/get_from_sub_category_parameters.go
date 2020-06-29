@@ -35,7 +35,7 @@ type GetFromSubCategoryParams struct {
 	  Required: true
 	  In: path
 	*/
-	ID float64
+	ID int64
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -68,9 +68,9 @@ func (o *GetFromSubCategoryParams) bindID(rawData []string, hasKey bool, formats
 	// Required: true
 	// Parameter is provided by construction from the route
 
-	value, err := swag.ConvertFloat64(raw)
+	value, err := swag.ConvertInt64(raw)
 	if err != nil {
-		return errors.InvalidType("id", "path", "float64", raw)
+		return errors.InvalidType("id", "path", "int64", raw)
 	}
 	o.ID = value
 

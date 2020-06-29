@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"e-food/integration/mysql"
 	"e-food/models"
-	"errors"
 	"fmt"
 )
 
@@ -23,18 +22,18 @@ func GetMenuItems(dbClient *sql.DB) (models.Categories, error) {
 	fmt.Println(q)
 	rows, err := dbClient.Query(q)
 	if err != nil {
-		return nil, errors.New("error fetching broad category list")
+		return nil, err
 	}
 	defer rows.Close()
 	var retVal []CategoryJoin
 	if err := rows.Err(); err != nil {
-		return nil, errors.New("error in rows of  broad category entity ")
+		return nil, err
 	}
 	for rows.Next() {
 		cat := CategoryJoin{}
 		err = rows.Scan(&cat.bcId, &cat.bcName, &cat.bcIsActive, &cat.scId, &cat.scName, &cat.scIsActive)
 		if err != nil {
-			return nil, errors.New("error in scanning rows")
+			return nil, err
 		}
 		retVal = append(retVal, cat)
 	}

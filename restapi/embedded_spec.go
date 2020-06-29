@@ -53,6 +53,12 @@ func init() {
           },
           "404": {
             "description": "Categories Not Found"
+          },
+          "500": {
+            "description": "Server Error",
+            "schema": {
+              "type": "string"
+            }
           }
         }
       }
@@ -65,7 +71,8 @@ func init() {
         "operationId": "GetFromSubCategory",
         "parameters": [
           {
-            "type": "number",
+            "type": "integer",
+            "format": "int64",
             "description": "Subcategory Id",
             "name": "id",
             "in": "path",
@@ -84,6 +91,12 @@ func init() {
           },
           "404": {
             "description": "Products not found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
           }
         }
       }
@@ -219,6 +232,12 @@ func init() {
           },
           "404": {
             "description": "Categories Not Found"
+          },
+          "500": {
+            "description": "Server Error",
+            "schema": {
+              "type": "string"
+            }
           }
         }
       }
@@ -231,7 +250,8 @@ func init() {
         "operationId": "GetFromSubCategory",
         "parameters": [
           {
-            "type": "number",
+            "type": "integer",
+            "format": "int64",
             "description": "Subcategory Id",
             "name": "id",
             "in": "path",
@@ -250,6 +270,12 @@ func init() {
           },
           "404": {
             "description": "Products not found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
           }
         }
       }

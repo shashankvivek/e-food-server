@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"e-food/dao"
 	"e-food/restapi/operations/menu"
-	"fmt"
 	"github.com/go-openapi/runtime/middleware"
 )
 
@@ -19,10 +18,14 @@ func NewMenuCategoryHandler(dbClient *sql.DB) menu.CategoryListHandler {
 }
 
 func (impl *menuImpl) Handle(param menu.CategoryListParams) middleware.Responder {
-	//retVal, _ := mysql.GetBroadCategoryList(impl.dbClient)
-	//fmt.Println(retVal)
-	retVal, _ := dao.GetMenuItems(impl.dbClient)
-	fmt.Println(retVal)
+	retVal, err := dao.GetMenuItems(impl.dbClient)
+	if err != nil {
+		return menu.NewCategoryListInternalServerError().WithPayload("Server ERROR")
+	}
+
+	if len(retVal) == 0 {
+		return menu.NewCategoryListNotFound()
+	}
 
 	return menu.NewCategoryListOK().WithPayload(retVal)
 }

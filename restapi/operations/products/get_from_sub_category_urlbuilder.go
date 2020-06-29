@@ -16,7 +16,7 @@ import (
 
 // GetFromSubCategoryURL generates an URL for the get from sub category operation
 type GetFromSubCategoryURL struct {
-	ID float64
+	ID int64
 
 	_basePath string
 	// avoid unkeyed usage
@@ -44,7 +44,7 @@ func (o *GetFromSubCategoryURL) Build() (*url.URL, error) {
 
 	var _path = "/productListBySubCategory/{id}"
 
-	id := swag.FormatFloat64(o.ID)
+	id := swag.FormatInt64(o.ID)
 	if id != "" {
 		_path = strings.Replace(_path, "{id}", id, -1)
 	} else {

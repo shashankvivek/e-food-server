@@ -21,6 +21,10 @@ paths:
           description: Bad Request
         404:
           description: Categories Not Found
+        500:
+          schema:
+            type: string
+          description: Server Error
   /productListBySubCategory/{id}:
     get:
       tags: [products]
@@ -28,7 +32,8 @@ paths:
       parameters:
         - name: "id"
           in : "path"
-          type: number
+          type: integer
+          format: int64
           required: true
           description: Subcategory Id
       responses:
@@ -40,6 +45,10 @@ paths:
           description : Bad Request
         404:
           description: Products not found
+        500:
+          schema:
+            type: string
+          description: Server error
 definitions:
   Categories:
     type: array

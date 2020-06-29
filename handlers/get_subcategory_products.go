@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"database/sql"
+	"e-food/dao"
 	"e-food/restapi/operations/products"
 	"fmt"
 	"github.com/go-openapi/runtime/middleware"
@@ -18,6 +19,6 @@ func NewProductsFromSubCategoryHandler(dbClient *sql.DB) products.GetFromSubCate
 }
 
 func (impl *subCategoryImpl) Handle(params products.GetFromSubCategoryParams) middleware.Responder {
-	fmt.Print("hihih")
-	return products.NewGetFromSubCategoryOK().WithPayload(nil)
+	products, _ := dao.GetProductsBySubCategory(impl.dbClient, params.ID)
+	return products.New
 }

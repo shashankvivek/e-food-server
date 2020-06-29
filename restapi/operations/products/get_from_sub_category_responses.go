@@ -107,3 +107,45 @@ func (o *GetFromSubCategoryNotFound) WriteResponse(rw http.ResponseWriter, produ
 
 	rw.WriteHeader(404)
 }
+
+// GetFromSubCategoryInternalServerErrorCode is the HTTP code returned for type GetFromSubCategoryInternalServerError
+const GetFromSubCategoryInternalServerErrorCode int = 500
+
+/*GetFromSubCategoryInternalServerError Server error
+
+swagger:response getFromSubCategoryInternalServerError
+*/
+type GetFromSubCategoryInternalServerError struct {
+
+	/*
+	  In: Body
+	*/
+	Payload string `json:"body,omitempty"`
+}
+
+// NewGetFromSubCategoryInternalServerError creates GetFromSubCategoryInternalServerError with default headers values
+func NewGetFromSubCategoryInternalServerError() *GetFromSubCategoryInternalServerError {
+
+	return &GetFromSubCategoryInternalServerError{}
+}
+
+// WithPayload adds the payload to the get from sub category internal server error response
+func (o *GetFromSubCategoryInternalServerError) WithPayload(payload string) *GetFromSubCategoryInternalServerError {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the get from sub category internal server error response
+func (o *GetFromSubCategoryInternalServerError) SetPayload(payload string) {
+	o.Payload = payload
+}
+
+// WriteResponse to the client
+func (o *GetFromSubCategoryInternalServerError) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(500)
+	payload := o.Payload
+	if err := producer.Produce(rw, payload); err != nil {
+		panic(err) // let the recovery middleware deal with this
+	}
+}
