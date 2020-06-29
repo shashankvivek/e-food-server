@@ -19,7 +19,7 @@ import (
 type Category struct {
 
 	// bc Id
-	BcID string `json:"bcId,omitempty"`
+	BcID int64 `json:"bcId,omitempty"`
 
 	// bc image Url
 	BcImageURL string `json:"bcImageUrl,omitempty"`

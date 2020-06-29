@@ -20,6 +20,7 @@ import (
 	"github.com/go-openapi/swag"
 
 	"e-food/restapi/operations/menu"
+	"e-food/restapi/operations/products"
 )
 
 // NewEFoodAPI creates a new EFood instance
@@ -41,6 +42,9 @@ func NewEFoodAPI(spec *loads.Document) *EFoodAPI {
 		JSONProducer:        runtime.JSONProducer(),
 		MenuCategoryListHandler: menu.CategoryListHandlerFunc(func(params menu.CategoryListParams) middleware.Responder {
 			return middleware.NotImplemented("operation MenuCategoryList has not yet been implemented")
+		}),
+		ProductsGetFromSubCategoryHandler: products.GetFromSubCategoryHandlerFunc(func(params products.GetFromSubCategoryParams) middleware.Responder {
+			return middleware.NotImplemented("operation ProductsGetFromSubCategory has not yet been implemented")
 		}),
 	}
 }
@@ -75,6 +79,8 @@ type EFoodAPI struct {
 
 	// MenuCategoryListHandler sets the operation handler for the category list operation
 	MenuCategoryListHandler menu.CategoryListHandler
+	// ProductsGetFromSubCategoryHandler sets the operation handler for the get from sub category operation
+	ProductsGetFromSubCategoryHandler products.GetFromSubCategoryHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -140,6 +146,10 @@ func (o *EFoodAPI) Validate() error {
 
 	if o.MenuCategoryListHandler == nil {
 		unregistered = append(unregistered, "menu.CategoryListHandler")
+	}
+
+	if o.ProductsGetFromSubCategoryHandler == nil {
+		unregistered = append(unregistered, "products.GetFromSubCategoryHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -244,6 +254,11 @@ func (o *EFoodAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/categories"] = menu.NewCategoryList(o.context, o.MenuCategoryListHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/productListBySubCategory/{id}"] = products.NewGetFromSubCategory(o.context, o.ProductsGetFromSubCategoryHandler)
 
 }
 

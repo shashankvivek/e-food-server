@@ -9,10 +9,10 @@ import (
 )
 
 type CategoryJoin struct {
-	bcId       string
+	bcId       int64
 	bcName     string
 	bcIsActive bool
-	scId       string
+	scId       int64
 	scName     string
 	scIsActive bool
 }
@@ -45,7 +45,7 @@ func GetMenuItems(dbClient *sql.DB) (models.Categories, error) {
 }
 
 func getCategoriesInStructure(categories []CategoryJoin) models.Categories {
-	groupedMap := make(map[string]*models.Category)
+	groupedMap := make(map[int64]*models.Category)
 	for _, category := range categories {
 		if _, ok := groupedMap[category.bcId]; ok {
 			// insert SC into it

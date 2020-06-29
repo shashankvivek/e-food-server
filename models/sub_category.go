@@ -16,7 +16,7 @@ import (
 type SubCategory struct {
 
 	// sc Id
-	ScID string `json:"scId,omitempty"`
+	ScID int64 `json:"scId,omitempty"`
 
 	// sc image Url
 	ScImageURL string `json:"scImageUrl,omitempty"`

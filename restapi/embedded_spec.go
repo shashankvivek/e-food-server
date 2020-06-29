@@ -56,6 +56,37 @@ func init() {
           }
         }
       }
+    },
+    "/productListBySubCategory/{id}": {
+      "get": {
+        "tags": [
+          "products"
+        ],
+        "operationId": "GetFromSubCategory",
+        "parameters": [
+          {
+            "type": "number",
+            "description": "Subcategory Id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get Products based on sub category",
+            "schema": {
+              "$ref": "#/definitions/Products"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Products not found"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -69,7 +100,7 @@ func init() {
       "type": "object",
       "properties": {
         "bcId": {
-          "type": "string"
+          "type": "integer"
         },
         "bcImageUrl": {
           "type": "string"
@@ -88,11 +119,56 @@ func init() {
         }
       }
     },
+    "Product": {
+      "type": "object",
+      "properties": {
+        "bcId": {
+          "description": "Broad Category Id",
+          "type": "integer"
+        },
+        "currency": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "discountPercentage": {
+          "description": "Discount to be applied on Unit Price",
+          "type": "number",
+          "example": "1.00"
+        },
+        "imageUrl": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "productId": {
+          "type": "number"
+        },
+        "scId": {
+          "description": "Sub Category Id",
+          "type": "integer"
+        },
+        "sku": {
+          "type": "string"
+        },
+        "unitPrice": {
+          "type": "number"
+        }
+      }
+    },
+    "Products": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Product"
+      }
+    },
     "SubCategory": {
       "type": "object",
       "properties": {
         "scId": {
-          "type": "string"
+          "type": "integer"
         },
         "scImageUrl": {
           "type": "string"
@@ -146,6 +222,37 @@ func init() {
           }
         }
       }
+    },
+    "/productListBySubCategory/{id}": {
+      "get": {
+        "tags": [
+          "products"
+        ],
+        "operationId": "GetFromSubCategory",
+        "parameters": [
+          {
+            "type": "number",
+            "description": "Subcategory Id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get Products based on sub category",
+            "schema": {
+              "$ref": "#/definitions/Products"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Products not found"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -159,7 +266,7 @@ func init() {
       "type": "object",
       "properties": {
         "bcId": {
-          "type": "string"
+          "type": "integer"
         },
         "bcImageUrl": {
           "type": "string"
@@ -178,11 +285,56 @@ func init() {
         }
       }
     },
+    "Product": {
+      "type": "object",
+      "properties": {
+        "bcId": {
+          "description": "Broad Category Id",
+          "type": "integer"
+        },
+        "currency": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "discountPercentage": {
+          "description": "Discount to be applied on Unit Price",
+          "type": "number",
+          "example": "1.00"
+        },
+        "imageUrl": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "productId": {
+          "type": "number"
+        },
+        "scId": {
+          "description": "Sub Category Id",
+          "type": "integer"
+        },
+        "sku": {
+          "type": "string"
+        },
+        "unitPrice": {
+          "type": "number"
+        }
+      }
+    },
+    "Products": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Product"
+      }
+    },
     "SubCategory": {
       "type": "object",
       "properties": {
         "scId": {
-          "type": "string"
+          "type": "integer"
         },
         "scImageUrl": {
           "type": "string"

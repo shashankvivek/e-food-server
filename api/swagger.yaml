@@ -21,7 +21,25 @@ paths:
           description: Bad Request
         404:
           description: Categories Not Found
-
+  /productListBySubCategory/{id}:
+    get:
+      tags: [products]
+      operationId: GetFromSubCategory
+      parameters:
+        - name: "id"
+          in : "path"
+          type: number
+          required: true
+          description: Subcategory Id
+      responses:
+        200:
+          description: 'Get Products based on sub category'
+          schema:
+            $ref: '#/definitions/Products'
+        400:
+          description : Bad Request
+        404:
+          description: Products not found
 definitions:
   Categories:
     type: array
@@ -31,7 +49,7 @@ definitions:
     type: object
     properties:
       bcId:
-        type: string
+        type: integer
       bcName:
         type: string
       bcImageUrl:
@@ -46,12 +64,44 @@ definitions:
     type: object
     properties:
       scId:
-        type: string
+        type: integer
       scName:
         type: string
       scImageUrl:
         type: string
       scIsActive:
         type: boolean
+  Products:
+    type: array
+    items:
+      $ref: '#/definitions/Product'
+  Product:
+    type: object
+    properties:
+      productId:
+        type: number
+      name:
+        type: string
+      sku:
+        type: string
+      description:
+        type: string
+      bcId:
+        type: integer
+        description: Broad Category Id
+      currency:
+        type: string
+      imageUrl:
+        type: string
+      discountPercentage:
+        type: number
+        example: "1.00"
+        description: Discount to be applied on Unit Price
+      unitPrice:
+        type: number
+      scId:
+        type: integer
+        description: Sub Category Id
+
 
 
