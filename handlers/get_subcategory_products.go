@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"e-food/dao"
 	"e-food/restapi/operations/products"
-	"fmt"
 	"github.com/go-openapi/runtime/middleware"
 )
 
@@ -19,6 +18,12 @@ func NewProductsFromSubCategoryHandler(dbClient *sql.DB) products.GetFromSubCate
 }
 
 func (impl *subCategoryImpl) Handle(params products.GetFromSubCategoryParams) middleware.Responder {
-	products, _ := dao.GetProductsBySubCategory(impl.dbClient, params.ID)
-	return products.New
+	productList, err := dao.GetProductsBySubCategory(impl.dbClient, params.ID)
+	if err != nil {
+		return products.NewGetFromSubCategoryInternalServerError()
+	}
+	if len(productList) == 0 {
+		return products.NewGetFromSubCategoryNotFound()
+	}
+	return products.NewGetFromSubCategoryOK().WithPayload(productList)
 }

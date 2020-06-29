@@ -35,5 +35,5 @@ func GetProductsBySubCategory(dbClient *sql.DB, scId int64) (models.Products, er
 		}
 		retVal = append(retVal, product)
 	}
-	return nil, nil
+	return retVal, nil
 }
