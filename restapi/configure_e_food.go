@@ -5,13 +5,13 @@ package restapi
 import (
 	"crypto/tls"
 	"e-food/clients"
-	"github.com/rs/cors"
-	"net/http"
-
 	"e-food/handlers"
 	"e-food/restapi/operations"
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/google/uuid"
+	"github.com/rs/cors"
+	"net/http"
 )
 
 //go:generate swagger generate server --target ..\..\e-food-server --name EFood --spec ..\swagger.yaml
@@ -63,6 +63,26 @@ func setupMiddlewares(handler http.Handler) http.Handler {
 // The middleware configuration happens before anything, this middleware also applies to serving the swagger.json document.
 // So this is a good place to plug in a panic handling middleware, logging and metrics
 func setupGlobalMiddleware(handler http.Handler) http.Handler {
-	handleCORS := cors.Default().Handler
-	return handleCORS(handler)
+	corsHandler := cors.New(cors.Options{
+		Debug:            false,
+		AllowedHeaders:   []string{"*"},
+		AllowedOrigins:   []string{"*"},
+		AllowedMethods:   []string{},
+		AllowCredentials: true,
+		MaxAge:           1000,
+	})
+	h := corsHandler.Handler(handler)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var cookie, err = r.Cookie("guest_session")
+		// cookie not set
+		if err != nil {
+			cookie = &http.Cookie{
+				Name:     "guest_session",
+				Value:    uuid.New().String(),
+				SameSite: http.SameSiteDefaultMode,
+				MaxAge:   260000}
+			http.SetCookie(w, cookie)
+		}
+		h.ServeHTTP(w, r)
+	})
 }
