@@ -1,3 +1,4 @@
 1. Transaction management
-2. PAgination
-3. do loggingW
+2. Pagination
+3. do logging
+4. manage deactivated session Ids

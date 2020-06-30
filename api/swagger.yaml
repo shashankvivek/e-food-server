@@ -49,7 +49,40 @@ paths:
           schema:
             type: string
           description: Server error
+  /cart:
+    post:
+      description: 'This API adds product to cart / guest cart'
+      tags: [cart]
+      operationId: Add
+      consumes:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/CartItem"
+      responses:
+        200:
+          description: "Success reponse when item is added successfully"
+          schema:
+            $ref: "#/definitions/SuccessResponse"
+        400:
+          description: Bad Request
+        404:
+          description: Item to be added Not Found
+        500:
+          schema:
+            type: string
+          description: Server error
 definitions:
+  SuccessResponse:
+    type: object
+    properties:
+      success:
+        type: boolean
+      message:
+        type: string
   Categories:
     type: array
     items:
@@ -111,6 +144,15 @@ definitions:
       scId:
         type: integer
         description: Sub Category Id
+  CartItem:
+    type: object
+    properties:
+      totalQty:
+        type: number
+      totalSaving:
+        type: number
+      productId:
+        type: number
 
 
 

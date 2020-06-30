@@ -19,6 +19,7 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
+	"e-food/restapi/operations/cart"
 	"e-food/restapi/operations/menu"
 	"e-food/restapi/operations/products"
 )
@@ -40,6 +41,9 @@ func NewEFoodAPI(spec *loads.Document) *EFoodAPI {
 		BearerAuthenticator: security.BearerAuth,
 		JSONConsumer:        runtime.JSONConsumer(),
 		JSONProducer:        runtime.JSONProducer(),
+		CartAddHandler: cart.AddHandlerFunc(func(params cart.AddParams) middleware.Responder {
+			return middleware.NotImplemented("operation CartAdd has not yet been implemented")
+		}),
 		MenuCategoryListHandler: menu.CategoryListHandlerFunc(func(params menu.CategoryListParams) middleware.Responder {
 			return middleware.NotImplemented("operation MenuCategoryList has not yet been implemented")
 		}),
@@ -77,6 +81,8 @@ type EFoodAPI struct {
 	// JSONProducer registers a producer for a "application/json" mime type
 	JSONProducer runtime.Producer
 
+	// CartAddHandler sets the operation handler for the add operation
+	CartAddHandler cart.AddHandler
 	// MenuCategoryListHandler sets the operation handler for the category list operation
 	MenuCategoryListHandler menu.CategoryListHandler
 	// ProductsGetFromSubCategoryHandler sets the operation handler for the get from sub category operation
@@ -142,6 +148,10 @@ func (o *EFoodAPI) Validate() error {
 
 	if o.JSONProducer == nil {
 		unregistered = append(unregistered, "JSONProducer")
+	}
+
+	if o.CartAddHandler == nil {
+		unregistered = append(unregistered, "cart.AddHandler")
 	}
 
 	if o.MenuCategoryListHandler == nil {
@@ -249,6 +259,11 @@ func (o *EFoodAPI) initHandlerCache() {
 	if o.handlers == nil {
 		o.handlers = make(map[string]map[string]http.Handler)
 	}
+
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/cart"] = cart.NewAdd(o.context, o.CartAddHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

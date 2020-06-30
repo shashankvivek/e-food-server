@@ -35,6 +35,48 @@ func init() {
   "host": "e-food.com",
   "basePath": "/",
   "paths": {
+    "/cart": {
+      "post": {
+        "description": "This API adds product to cart / guest cart",
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "cart"
+        ],
+        "operationId": "Add",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CartItem"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success reponse when item is added successfully",
+            "schema": {
+              "$ref": "#/definitions/SuccessResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Item to be added Not Found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
     "/categories": {
       "get": {
         "tags": [
@@ -103,6 +145,20 @@ func init() {
     }
   },
   "definitions": {
+    "CartItem": {
+      "type": "object",
+      "properties": {
+        "productId": {
+          "type": "number"
+        },
+        "totalQty": {
+          "type": "number"
+        },
+        "totalSaving": {
+          "type": "number"
+        }
+      }
+    },
     "Categories": {
       "type": "array",
       "items": {
@@ -191,6 +247,17 @@ func init() {
         },
         "scName": {
           "type": "string"
+        }
+      }
+    },
+    "SuccessResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "success": {
+          "type": "boolean"
         }
       }
     }
@@ -214,6 +281,48 @@ func init() {
   "host": "e-food.com",
   "basePath": "/",
   "paths": {
+    "/cart": {
+      "post": {
+        "description": "This API adds product to cart / guest cart",
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "cart"
+        ],
+        "operationId": "Add",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CartItem"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success reponse when item is added successfully",
+            "schema": {
+              "$ref": "#/definitions/SuccessResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Item to be added Not Found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
     "/categories": {
       "get": {
         "tags": [
@@ -282,6 +391,20 @@ func init() {
     }
   },
   "definitions": {
+    "CartItem": {
+      "type": "object",
+      "properties": {
+        "productId": {
+          "type": "number"
+        },
+        "totalQty": {
+          "type": "number"
+        },
+        "totalSaving": {
+          "type": "number"
+        }
+      }
+    },
     "Categories": {
       "type": "array",
       "items": {
@@ -370,6 +493,17 @@ func init() {
         },
         "scName": {
           "type": "string"
+        }
+      }
+    },
+    "SuccessResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "success": {
+          "type": "boolean"
         }
       }
     }

@@ -75,7 +75,7 @@ VALUES
 "These are Pears",
 1000);
 
-
+-- PRODUCT TABLE
 CREATE TABLE `ecommerce`.`product` (
   `productId` INT NOT NULL  AUTO_INCREMENT,
   `name` VARCHAR(50) NOT NULL,
@@ -109,3 +109,31 @@ INSERT INTO `ecommerce`.`product` (`name`, `description`, `bcId`, `currency`, `u
 INSERT INTO `ecommerce`.`product` (`name`, `description`, `bcId`, `currency`, `unitsInStock`, `imageUrl`, `unitPrice`, `scId`) VALUES ('Oranges', 'This is an Orange', '1000', 'Rs', '5', 'https://raw.githubusercontent.com/shashankvivek/e-food-client/master/e-food/src/assets/oranges.jpg', '20', '2001');
 
 INSERT INTO `ecommerce`.`product` (`name`, `description`, `bcId`, `currency`, `unitsInStock`, `imageUrl`, `unitPrice`, `scId`) VALUES ('Pear', 'This is a Pear', '1000', 'Rs', '10', 'https://raw.githubusercontent.com/shashankvivek/e-food-client/master/e-food/src/assets/pears.jpg', '30', '2003');
+
+-- Creating Guest table for session id
+CREATE TABLE `ecommerce`.`guest` (
+                                     `sessionId` VARCHAR(40) NOT NULL,
+                                     `extraInfo` VARCHAR(200) NULL,
+                                     PRIMARY KEY (`sessionId`),
+                                     UNIQUE INDEX `sessionId_UNIQUE` (`sessionId` ASC) VISIBLE);
+
+-- create Guest cart Item
+
+CREATE TABLE `ecommerce`.`guest_cart_item` (
+                                               `sessionId` VARCHAR(40) NOT NULL,
+                                               `totalQty` INT NOT NULL,
+                                               `totalSaving` DECIMAL(10,2) NULL,
+                                               `totalPrice` DECIMAL(10,2) NULL,
+                                               `productId` INT NULL,
+                                               INDEX `sessionId_idx` (`sessionId` ASC) VISIBLE,
+                                               INDEX `productId_idx` (`productId` ASC) VISIBLE,
+                                               CONSTRAINT `sessionId`
+                                                   FOREIGN KEY (`sessionId`)
+                                                       REFERENCES `ecommerce`.`guest` (`sessionId`)
+                                                       ON DELETE CASCADE
+                                                       ON UPDATE CASCADE,
+                                               CONSTRAINT `productId`
+                                                   FOREIGN KEY (`productId`)
+                                                       REFERENCES `ecommerce`.`product` (`productId`)
+                                                       ON DELETE CASCADE
+                                                       ON UPDATE CASCADE);
