@@ -53,7 +53,7 @@ paths:
     post:
       description: 'This API adds product to cart / guest cart'
       tags: [cart]
-      operationId: Add
+      operationId: AddItem
       consumes:
         - "application/json"
       parameters:
@@ -64,9 +64,27 @@ paths:
             $ref: "#/definitions/CartItem"
       responses:
         200:
-          description: "Success reponse when item is added successfully"
+          description: "Success response when item is added successfully"
           schema:
-            $ref: "#/definitions/SuccessResponse"
+            $ref: "#/definitions/CartSuccessResponse"
+        400:
+          description: Bad Request
+        404:
+          description: Item to be added Not Found
+        500:
+          schema:
+            type: string
+          description: Server error
+  /cartItemCount:
+    get:
+      description: "This returns count of cart items"
+      tags: [cart]
+      operationId: ItemCount
+      responses:
+        200:
+          description: "Gives count"
+          schema:
+            $ref: '#/definitions/CartItemCount'
         400:
           description: Bad Request
         404:
@@ -76,13 +94,13 @@ paths:
             type: string
           description: Server error
 definitions:
-  SuccessResponse:
+  CartSuccessResponse:
     type: object
     properties:
       success:
         type: boolean
-      message:
-        type: string
+      totalItemCount:
+        type: number
   Categories:
     type: array
     items:
@@ -153,6 +171,11 @@ definitions:
         type: number
       productId:
         type: number
+  CartItemCount:
+    type: object
+    properties:
+      count :
+        type : integer
 
 
 

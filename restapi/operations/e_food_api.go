@@ -10,13 +10,13 @@ import (
 	"net/http"
 	"strings"
 
-	errors "github.com/go-openapi/errors"
-	loads "github.com/go-openapi/loads"
-	runtime "github.com/go-openapi/runtime"
-	middleware "github.com/go-openapi/runtime/middleware"
-	security "github.com/go-openapi/runtime/security"
-	spec "github.com/go-openapi/spec"
-	strfmt "github.com/go-openapi/strfmt"
+	"github.com/go-openapi/errors"
+	"github.com/go-openapi/loads"
+	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/runtime/middleware"
+	"github.com/go-openapi/runtime/security"
+	"github.com/go-openapi/spec"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
 	"e-food/restapi/operations/cart"
@@ -33,22 +33,29 @@ func NewEFoodAPI(spec *loads.Document) *EFoodAPI {
 		defaultProduces:     "application/json",
 		customConsumers:     make(map[string]runtime.Consumer),
 		customProducers:     make(map[string]runtime.Producer),
+		PreServerShutdown:   func() {},
 		ServerShutdown:      func() {},
 		spec:                spec,
 		ServeError:          errors.ServeError,
 		BasicAuthenticator:  security.BasicAuth,
 		APIKeyAuthenticator: security.APIKeyAuth,
 		BearerAuthenticator: security.BearerAuth,
-		JSONConsumer:        runtime.JSONConsumer(),
-		JSONProducer:        runtime.JSONProducer(),
-		CartAddHandler: cart.AddHandlerFunc(func(params cart.AddParams) middleware.Responder {
-			return middleware.NotImplemented("operation CartAdd has not yet been implemented")
+
+		JSONConsumer: runtime.JSONConsumer(),
+
+		JSONProducer: runtime.JSONProducer(),
+
+		CartAddItemHandler: cart.AddItemHandlerFunc(func(params cart.AddItemParams) middleware.Responder {
+			return middleware.NotImplemented("operation cart.AddItem has not yet been implemented")
 		}),
 		MenuCategoryListHandler: menu.CategoryListHandlerFunc(func(params menu.CategoryListParams) middleware.Responder {
-			return middleware.NotImplemented("operation MenuCategoryList has not yet been implemented")
+			return middleware.NotImplemented("operation menu.CategoryList has not yet been implemented")
 		}),
 		ProductsGetFromSubCategoryHandler: products.GetFromSubCategoryHandlerFunc(func(params products.GetFromSubCategoryParams) middleware.Responder {
-			return middleware.NotImplemented("operation ProductsGetFromSubCategory has not yet been implemented")
+			return middleware.NotImplemented("operation products.GetFromSubCategory has not yet been implemented")
+		}),
+		CartItemCountHandler: cart.ItemCountHandlerFunc(func(params cart.ItemCountParams) middleware.Responder {
+			return middleware.NotImplemented("operation cart.ItemCount has not yet been implemented")
 		}),
 	}
 }
@@ -75,22 +82,29 @@ type EFoodAPI struct {
 	// It has a default implementation in the security package, however you can replace it for your particular usage.
 	BearerAuthenticator func(string, security.ScopedTokenAuthentication) runtime.Authenticator
 
-	// JSONConsumer registers a consumer for a "application/json" mime type
+	// JSONConsumer registers a consumer for the following mime types:
+	//   - application/json
 	JSONConsumer runtime.Consumer
 
-	// JSONProducer registers a producer for a "application/json" mime type
+	// JSONProducer registers a producer for the following mime types:
+	//   - application/json
 	JSONProducer runtime.Producer
 
-	// CartAddHandler sets the operation handler for the add operation
-	CartAddHandler cart.AddHandler
+	// CartAddItemHandler sets the operation handler for the add item operation
+	CartAddItemHandler cart.AddItemHandler
 	// MenuCategoryListHandler sets the operation handler for the category list operation
 	MenuCategoryListHandler menu.CategoryListHandler
 	// ProductsGetFromSubCategoryHandler sets the operation handler for the get from sub category operation
 	ProductsGetFromSubCategoryHandler products.GetFromSubCategoryHandler
-
+	// CartItemCountHandler sets the operation handler for the item count operation
+	CartItemCountHandler cart.ItemCountHandler
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
 	ServeError func(http.ResponseWriter, *http.Request, error)
+
+	// PreServerShutdown is called before the HTTP(S) server is shutdown
+	// This allows for custom functions to get executed before the HTTP(S) server stops accepting traffic
+	PreServerShutdown func()
 
 	// ServerShutdown is called when the HTTP(S) server is shut down and done
 	// handling all active connections and does not accept connections any more
@@ -150,16 +164,17 @@ func (o *EFoodAPI) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
-	if o.CartAddHandler == nil {
-		unregistered = append(unregistered, "cart.AddHandler")
+	if o.CartAddItemHandler == nil {
+		unregistered = append(unregistered, "cart.AddItemHandler")
 	}
-
 	if o.MenuCategoryListHandler == nil {
 		unregistered = append(unregistered, "menu.CategoryListHandler")
 	}
-
 	if o.ProductsGetFromSubCategoryHandler == nil {
 		unregistered = append(unregistered, "products.GetFromSubCategoryHandler")
+	}
+	if o.CartItemCountHandler == nil {
+		unregistered = append(unregistered, "cart.ItemCountHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -176,28 +191,22 @@ func (o *EFoodAPI) ServeErrorFor(operationID string) func(http.ResponseWriter, *
 
 // AuthenticatorsFor gets the authenticators for the specified security schemes
 func (o *EFoodAPI) AuthenticatorsFor(schemes map[string]spec.SecurityScheme) map[string]runtime.Authenticator {
-
 	return nil
-
 }
 
 // Authorizer returns the registered authorizer
 func (o *EFoodAPI) Authorizer() runtime.Authorizer {
-
 	return nil
-
 }
 
-// ConsumersFor gets the consumers for the specified media types
+// ConsumersFor gets the consumers for the specified media types.
+// MIME type parameters are ignored here.
 func (o *EFoodAPI) ConsumersFor(mediaTypes []string) map[string]runtime.Consumer {
-
-	result := make(map[string]runtime.Consumer)
+	result := make(map[string]runtime.Consumer, len(mediaTypes))
 	for _, mt := range mediaTypes {
 		switch mt {
-
 		case "application/json":
 			result["application/json"] = o.JSONConsumer
-
 		}
 
 		if c, ok := o.customConsumers[mt]; ok {
@@ -205,19 +214,16 @@ func (o *EFoodAPI) ConsumersFor(mediaTypes []string) map[string]runtime.Consumer
 		}
 	}
 	return result
-
 }
 
-// ProducersFor gets the producers for the specified media types
+// ProducersFor gets the producers for the specified media types.
+// MIME type parameters are ignored here.
 func (o *EFoodAPI) ProducersFor(mediaTypes []string) map[string]runtime.Producer {
-
-	result := make(map[string]runtime.Producer)
+	result := make(map[string]runtime.Producer, len(mediaTypes))
 	for _, mt := range mediaTypes {
 		switch mt {
-
 		case "application/json":
 			result["application/json"] = o.JSONProducer
-
 		}
 
 		if p, ok := o.customProducers[mt]; ok {
@@ -225,7 +231,6 @@ func (o *EFoodAPI) ProducersFor(mediaTypes []string) map[string]runtime.Producer
 		}
 	}
 	return result
-
 }
 
 // HandlerFor gets a http.Handler for the provided operation method and path
@@ -255,7 +260,6 @@ func (o *EFoodAPI) Context() *middleware.Context {
 
 func (o *EFoodAPI) initHandlerCache() {
 	o.Context() // don't care about the result, just that the initialization happened
-
 	if o.handlers == nil {
 		o.handlers = make(map[string]map[string]http.Handler)
 	}
@@ -263,18 +267,19 @@ func (o *EFoodAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/cart"] = cart.NewAdd(o.context, o.CartAddHandler)
-
+	o.handlers["POST"]["/cart"] = cart.NewAddItem(o.context, o.CartAddItemHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/categories"] = menu.NewCategoryList(o.context, o.MenuCategoryListHandler)
-
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/productListBySubCategory/{id}"] = products.NewGetFromSubCategory(o.context, o.ProductsGetFromSubCategoryHandler)
-
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/cartItemCount"] = cart.NewItemCount(o.context, o.CartItemCountHandler)
 }
 
 // Serve creates a http handler to serve the API over HTTP
@@ -303,4 +308,16 @@ func (o *EFoodAPI) RegisterConsumer(mediaType string, consumer runtime.Consumer)
 // RegisterProducer allows you to add (or override) a producer for a media type.
 func (o *EFoodAPI) RegisterProducer(mediaType string, producer runtime.Producer) {
 	o.customProducers[mediaType] = producer
+}
+
+// AddMiddlewareFor adds a http middleware to existing handler
+func (o *EFoodAPI) AddMiddlewareFor(method, path string, builder middleware.Builder) {
+	um := strings.ToUpper(method)
+	if path == "/" {
+		path = ""
+	}
+	o.Init()
+	if h, ok := o.handlers[um][path]; ok {
+		o.handlers[method][path] = builder(h)
+	}
 }

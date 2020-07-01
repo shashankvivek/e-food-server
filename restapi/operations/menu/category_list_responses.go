@@ -10,7 +10,7 @@ import (
 
 	"github.com/go-openapi/runtime"
 
-	models "e-food/models"
+	"e-food/models"
 )
 
 // CategoryListOKCode is the HTTP code returned for type CategoryListOK

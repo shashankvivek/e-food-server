@@ -44,7 +44,7 @@ func init() {
         "tags": [
           "cart"
         ],
-        "operationId": "Add",
+        "operationId": "AddItem",
         "parameters": [
           {
             "name": "body",
@@ -57,9 +57,38 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "Success reponse when item is added successfully",
+            "description": "Success response when item is added successfully",
             "schema": {
-              "$ref": "#/definitions/SuccessResponse"
+              "$ref": "#/definitions/CartSuccessResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Item to be added Not Found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "/cartItemCount": {
+      "get": {
+        "description": "This returns count of cart items",
+        "tags": [
+          "cart"
+        ],
+        "operationId": "ItemCount",
+        "responses": {
+          "200": {
+            "description": "Gives count",
+            "schema": {
+              "$ref": "#/definitions/CartItemCount"
             }
           },
           "400": {
@@ -159,6 +188,25 @@ func init() {
         }
       }
     },
+    "CartItemCount": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer"
+        }
+      }
+    },
+    "CartSuccessResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "totalItemCount": {
+          "type": "number"
+        }
+      }
+    },
     "Categories": {
       "type": "array",
       "items": {
@@ -247,17 +295,6 @@ func init() {
         },
         "scName": {
           "type": "string"
-        }
-      }
-    },
-    "SuccessResponse": {
-      "type": "object",
-      "properties": {
-        "message": {
-          "type": "string"
-        },
-        "success": {
-          "type": "boolean"
         }
       }
     }
@@ -290,7 +327,7 @@ func init() {
         "tags": [
           "cart"
         ],
-        "operationId": "Add",
+        "operationId": "AddItem",
         "parameters": [
           {
             "name": "body",
@@ -303,9 +340,38 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "Success reponse when item is added successfully",
+            "description": "Success response when item is added successfully",
             "schema": {
-              "$ref": "#/definitions/SuccessResponse"
+              "$ref": "#/definitions/CartSuccessResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Item to be added Not Found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "/cartItemCount": {
+      "get": {
+        "description": "This returns count of cart items",
+        "tags": [
+          "cart"
+        ],
+        "operationId": "ItemCount",
+        "responses": {
+          "200": {
+            "description": "Gives count",
+            "schema": {
+              "$ref": "#/definitions/CartItemCount"
             }
           },
           "400": {
@@ -405,6 +471,25 @@ func init() {
         }
       }
     },
+    "CartItemCount": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer"
+        }
+      }
+    },
+    "CartSuccessResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "totalItemCount": {
+          "type": "number"
+        }
+      }
+    },
     "Categories": {
       "type": "array",
       "items": {
@@ -493,17 +578,6 @@ func init() {
         },
         "scName": {
           "type": "string"
-        }
-      }
-    },
-    "SuccessResponse": {
-      "type": "object",
-      "properties": {
-        "message": {
-          "type": "string"
-        },
-        "success": {
-          "type": "boolean"
         }
       }
     }
