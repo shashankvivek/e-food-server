@@ -18,10 +18,6 @@ func NewProductsFromSubCategoryHandler(dbClient *sql.DB) products.GetFromSubCate
 }
 
 func (impl *subCategoryImpl) Handle(params products.GetFromSubCategoryParams) middleware.Responder {
-	//cookieInfo ,err := params.HTTPRequest.Cookie("guest_session")
-	//if err != nil {
-	//	return products.NewGetFromSubCategoryInternalServerError().WithPayload("unable to set cookie")
-	//}
 	productList, err := dao.GetProductsBySubCategory(impl.dbClient, params.ID)
 	if err != nil {
 		return products.NewGetFromSubCategoryInternalServerError()

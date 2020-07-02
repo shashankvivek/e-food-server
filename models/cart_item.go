@@ -15,14 +15,20 @@ import (
 // swagger:model CartItem
 type CartItem struct {
 
+	// image Url
+	ImageURL string `json:"imageUrl,omitempty"`
+
 	// product Id
-	ProductID float64 `json:"productId,omitempty"`
+	ProductID int64 `json:"productId,omitempty"`
 
-	// total qty
-	TotalQty float64 `json:"totalQty,omitempty"`
+	// product name
+	ProductName string `json:"productName,omitempty"`
 
-	// total saving
-	TotalSaving float64 `json:"totalSaving,omitempty"`
+	// quantity
+	Quantity int64 `json:"quantity,omitempty"`
+
+	// unit price
+	UnitPrice float64 `json:"unitPrice,omitempty"`
 }
 
 // Validate validates this cart item

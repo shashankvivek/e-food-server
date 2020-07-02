@@ -61,7 +61,7 @@ paths:
           name: "body"
           required: true
           schema:
-            $ref: "#/definitions/CartItem"
+            $ref: "#/definitions/ItemInfo"
       responses:
         200:
           description: "Success response when item is added successfully"
@@ -75,16 +75,15 @@ paths:
           schema:
             type: string
           description: Server error
-  /cartItemCount:
     get:
-      description: "This returns count of cart items"
+      description: 'Get All cart items'
       tags: [cart]
-      operationId: ItemCount
+      operationId: GetItems
       responses:
         200:
-          description: "Gives count"
+          description: "All items in cart"
           schema:
-            $ref: '#/definitions/CartItemCount'
+            $ref: '#/definitions/CartPreview'
         400:
           description: Bad Request
         404:
@@ -139,7 +138,7 @@ definitions:
     type: object
     properties:
       productId:
-        type: number
+        type: integer
       name:
         type: string
       sku:
@@ -162,20 +161,28 @@ definitions:
       scId:
         type: integer
         description: Sub Category Id
-  CartItem:
+  ItemInfo:
     type: object
     properties:
       totalQty:
         type: number
-      totalSaving:
-        type: number
       productId:
         type: number
-  CartItemCount:
+  CartPreview:
+    type: array
+    items:
+      $ref: '#/definitions/CartItem'
+  CartItem:
     type: object
     properties:
-      count :
-        type : integer
-
-
+      productId:
+        type: integer
+      productName:
+        type: string
+      quantity:
+        type: integer
+      unitPrice:
+        type: number
+      imageUrl:
+        type: string
 

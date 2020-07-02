@@ -34,7 +34,7 @@ type Product struct {
 	Name string `json:"name,omitempty"`
 
 	// product Id
-	ProductID float64 `json:"productId,omitempty"`
+	ProductID int64 `json:"productId,omitempty"`
 
 	// Sub Category Id
 	ScID int64 `json:"scId,omitempty"`

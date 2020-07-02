@@ -36,30 +36,17 @@ func init() {
   "basePath": "/",
   "paths": {
     "/cart": {
-      "post": {
-        "description": "This API adds product to cart / guest cart",
-        "consumes": [
-          "application/json"
-        ],
+      "get": {
+        "description": "Get All cart items",
         "tags": [
           "cart"
         ],
-        "operationId": "AddItem",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/CartItem"
-            }
-          }
-        ],
+        "operationId": "GetItems",
         "responses": {
           "200": {
-            "description": "Success response when item is added successfully",
+            "description": "All items in cart",
             "schema": {
-              "$ref": "#/definitions/CartSuccessResponse"
+              "$ref": "#/definitions/CartPreview"
             }
           },
           "400": {
@@ -75,20 +62,31 @@ func init() {
             }
           }
         }
-      }
-    },
-    "/cartItemCount": {
-      "get": {
-        "description": "This returns count of cart items",
+      },
+      "post": {
+        "description": "This API adds product to cart / guest cart",
+        "consumes": [
+          "application/json"
+        ],
         "tags": [
           "cart"
         ],
-        "operationId": "ItemCount",
+        "operationId": "AddItem",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ItemInfo"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Gives count",
+            "description": "Success response when item is added successfully",
             "schema": {
-              "$ref": "#/definitions/CartItemCount"
+              "$ref": "#/definitions/CartSuccessResponse"
             }
           },
           "400": {
@@ -177,23 +175,27 @@ func init() {
     "CartItem": {
       "type": "object",
       "properties": {
+        "imageUrl": {
+          "type": "string"
+        },
         "productId": {
-          "type": "number"
+          "type": "integer"
         },
-        "totalQty": {
-          "type": "number"
+        "productName": {
+          "type": "string"
         },
-        "totalSaving": {
+        "quantity": {
+          "type": "integer"
+        },
+        "unitPrice": {
           "type": "number"
         }
       }
     },
-    "CartItemCount": {
-      "type": "object",
-      "properties": {
-        "count": {
-          "type": "integer"
-        }
+    "CartPreview": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/CartItem"
       }
     },
     "CartSuccessResponse": {
@@ -236,6 +238,17 @@ func init() {
         }
       }
     },
+    "ItemInfo": {
+      "type": "object",
+      "properties": {
+        "productId": {
+          "type": "number"
+        },
+        "totalQty": {
+          "type": "number"
+        }
+      }
+    },
     "Product": {
       "type": "object",
       "properties": {
@@ -261,7 +274,7 @@ func init() {
           "type": "string"
         },
         "productId": {
-          "type": "number"
+          "type": "integer"
         },
         "scId": {
           "description": "Sub Category Id",
@@ -319,30 +332,17 @@ func init() {
   "basePath": "/",
   "paths": {
     "/cart": {
-      "post": {
-        "description": "This API adds product to cart / guest cart",
-        "consumes": [
-          "application/json"
-        ],
+      "get": {
+        "description": "Get All cart items",
         "tags": [
           "cart"
         ],
-        "operationId": "AddItem",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/CartItem"
-            }
-          }
-        ],
+        "operationId": "GetItems",
         "responses": {
           "200": {
-            "description": "Success response when item is added successfully",
+            "description": "All items in cart",
             "schema": {
-              "$ref": "#/definitions/CartSuccessResponse"
+              "$ref": "#/definitions/CartPreview"
             }
           },
           "400": {
@@ -358,20 +358,31 @@ func init() {
             }
           }
         }
-      }
-    },
-    "/cartItemCount": {
-      "get": {
-        "description": "This returns count of cart items",
+      },
+      "post": {
+        "description": "This API adds product to cart / guest cart",
+        "consumes": [
+          "application/json"
+        ],
         "tags": [
           "cart"
         ],
-        "operationId": "ItemCount",
+        "operationId": "AddItem",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ItemInfo"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Gives count",
+            "description": "Success response when item is added successfully",
             "schema": {
-              "$ref": "#/definitions/CartItemCount"
+              "$ref": "#/definitions/CartSuccessResponse"
             }
           },
           "400": {
@@ -460,23 +471,27 @@ func init() {
     "CartItem": {
       "type": "object",
       "properties": {
+        "imageUrl": {
+          "type": "string"
+        },
         "productId": {
-          "type": "number"
+          "type": "integer"
         },
-        "totalQty": {
-          "type": "number"
+        "productName": {
+          "type": "string"
         },
-        "totalSaving": {
+        "quantity": {
+          "type": "integer"
+        },
+        "unitPrice": {
           "type": "number"
         }
       }
     },
-    "CartItemCount": {
-      "type": "object",
-      "properties": {
-        "count": {
-          "type": "integer"
-        }
+    "CartPreview": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/CartItem"
       }
     },
     "CartSuccessResponse": {
@@ -519,6 +534,17 @@ func init() {
         }
       }
     },
+    "ItemInfo": {
+      "type": "object",
+      "properties": {
+        "productId": {
+          "type": "number"
+        },
+        "totalQty": {
+          "type": "number"
+        }
+      }
+    },
     "Product": {
       "type": "object",
       "properties": {
@@ -544,7 +570,7 @@ func init() {
           "type": "string"
         },
         "productId": {
-          "type": "number"
+          "type": "integer"
         },
         "scId": {
           "description": "Sub Category Id",

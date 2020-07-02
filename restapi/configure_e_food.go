@@ -36,7 +36,7 @@ func configureAPI(api *operations.EFoodAPI) http.Handler {
 
 	api.ProductsGetFromSubCategoryHandler = handlers.NewProductsFromSubCategoryHandler(dbClient)
 
-	api.CartItemCountHandler = handlers.NewGetCartItemCountHandler(dbClient)
+	api.CartGetItemsHandler = handlers.NewCartGetItemsHandler(dbClient)
 
 	api.CartAddItemHandler = handlers.NewCartAddItemHandler(dbClient)
 

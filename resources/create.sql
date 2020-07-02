@@ -122,8 +122,6 @@ CREATE TABLE `ecommerce`.`guest` (
 CREATE TABLE `ecommerce`.`guest_cart_item` (
                                                `sessionId` VARCHAR(40) NOT NULL,
                                                `totalQty` INT NOT NULL,
-                                               `totalSaving` DECIMAL(10,2) NULL,
-                                               `totalPrice` DECIMAL(10,2) NULL,
                                                `productId` INT NULL,
                                                INDEX `sessionId_idx` (`sessionId` ASC) VISIBLE,
                                                INDEX `productId_idx` (`productId` ASC) VISIBLE,

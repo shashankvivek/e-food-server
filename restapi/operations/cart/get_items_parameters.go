@@ -12,18 +12,18 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 )
 
-// NewItemCountParams creates a new ItemCountParams object
+// NewGetItemsParams creates a new GetItemsParams object
 // no default values defined in spec.
-func NewItemCountParams() ItemCountParams {
+func NewGetItemsParams() GetItemsParams {
 
-	return ItemCountParams{}
+	return GetItemsParams{}
 }
 
-// ItemCountParams contains all the bound params for the item count operation
+// GetItemsParams contains all the bound params for the get items operation
 // typically these are obtained from a http.Request
 //
-// swagger:parameters ItemCount
-type ItemCountParams struct {
+// swagger:parameters GetItems
+type GetItemsParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
@@ -32,8 +32,8 @@ type ItemCountParams struct {
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
 // for simple values it will use straight method calls.
 //
-// To ensure default values, the struct must have been initialized with NewItemCountParams() beforehand.
-func (o *ItemCountParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
+// To ensure default values, the struct must have been initialized with NewGetItemsParams() beforehand.
+func (o *GetItemsParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
 
 	o.HTTPRequest = r

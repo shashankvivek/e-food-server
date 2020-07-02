@@ -54,8 +54,8 @@ func NewEFoodAPI(spec *loads.Document) *EFoodAPI {
 		ProductsGetFromSubCategoryHandler: products.GetFromSubCategoryHandlerFunc(func(params products.GetFromSubCategoryParams) middleware.Responder {
 			return middleware.NotImplemented("operation products.GetFromSubCategory has not yet been implemented")
 		}),
-		CartItemCountHandler: cart.ItemCountHandlerFunc(func(params cart.ItemCountParams) middleware.Responder {
-			return middleware.NotImplemented("operation cart.ItemCount has not yet been implemented")
+		CartGetItemsHandler: cart.GetItemsHandlerFunc(func(params cart.GetItemsParams) middleware.Responder {
+			return middleware.NotImplemented("operation cart.GetItems has not yet been implemented")
 		}),
 	}
 }
@@ -96,8 +96,8 @@ type EFoodAPI struct {
 	MenuCategoryListHandler menu.CategoryListHandler
 	// ProductsGetFromSubCategoryHandler sets the operation handler for the get from sub category operation
 	ProductsGetFromSubCategoryHandler products.GetFromSubCategoryHandler
-	// CartItemCountHandler sets the operation handler for the item count operation
-	CartItemCountHandler cart.ItemCountHandler
+	// CartGetItemsHandler sets the operation handler for the get items operation
+	CartGetItemsHandler cart.GetItemsHandler
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
 	ServeError func(http.ResponseWriter, *http.Request, error)
@@ -173,8 +173,8 @@ func (o *EFoodAPI) Validate() error {
 	if o.ProductsGetFromSubCategoryHandler == nil {
 		unregistered = append(unregistered, "products.GetFromSubCategoryHandler")
 	}
-	if o.CartItemCountHandler == nil {
-		unregistered = append(unregistered, "cart.ItemCountHandler")
+	if o.CartGetItemsHandler == nil {
+		unregistered = append(unregistered, "cart.GetItemsHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -279,7 +279,7 @@ func (o *EFoodAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/cartItemCount"] = cart.NewItemCount(o.context, o.CartItemCountHandler)
+	o.handlers["GET"]["/cart"] = cart.NewGetItems(o.context, o.CartGetItemsHandler)
 }
 
 // Serve creates a http handler to serve the API over HTTP
