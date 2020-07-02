@@ -5,8 +5,8 @@ import (
 	"e-food/dao"
 	"e-food/models"
 	"e-food/restapi/operations/guest"
-	"fmt"
 	"github.com/go-openapi/runtime/middleware"
+	"strings"
 )
 
 type guestUserImpl struct {
@@ -30,7 +30,9 @@ func (impl *guestUserImpl) Handle(params guest.AddSessionParams) middleware.Resp
 	}
 	isSuccess, err := dao.AddGuestSessionDetail(impl.dbClient, cookieInfo.Value, params.SessionInfo.ExtraInfo)
 	if err != nil {
-		fmt.Println(err)
+		if strings.Contains(err.Error(), "Duplicate entry") {
+			return guest.NewAddSessionOK().WithPayload(&models.SuccessResponse{Success: true, Message: "Session already present"})
+		}
 		return guest.NewAddSessionInternalServerError().WithPayload("Error adding guest session Info")
 	}
 	if !isSuccess {
