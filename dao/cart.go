@@ -33,8 +33,8 @@ func GetGuestCart(db *sql.DB, sessionId string) (models.CartPreview, error) {
 }
 
 func AddItemToGuestCart(db *sql.DB, sessionId string, totalQty, productId int64) (bool, error) {
-	// TODO: check unitsIn Stock before INsert
-
+	// TODO: check unitsIn Stock before Insert
+	// TODO: Update if already added
 	res, err := db.Exec("INSERT INTO guest_cart_item (sessionId,totalQty,productId) VALUES (?, ?, ?)", sessionId, totalQty, productId)
 	if err != nil {
 		return false, err
@@ -44,4 +44,16 @@ func AddItemToGuestCart(db *sql.DB, sessionId string, totalQty, productId int64)
 		return false, err
 	}
 	return insertedRow == 1, nil
+}
+
+func RemoveItemFromGuestCart(db *sql.DB, productId int64, sessionId string) (bool, error) {
+	res, err := db.Exec("DELETE from guest_cart_item where sessionId = ? and productId = ?", sessionId, productId)
+	if err != nil {
+		return false, err
+	}
+	deletedRow, err := res.RowsAffected()
+	if err != nil {
+		return false, err
+	}
+	return deletedRow == 1, nil
 }

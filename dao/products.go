@@ -21,6 +21,10 @@ type Product struct {
 	UnitsInStock       int
 }
 
+func GetAvailableUnits(db *sql.DB, productId int64) (int, error) {
+	return 0, nil
+}
+
 func GetProductsBySubCategory(dbClient *sql.DB, scId int64) (models.Products, error) {
 	q := fmt.Sprintf("SELECT productId,name,description,bcId,currency,imageUrl,discountPercentage,unitPrice,scId,unitsInStock FROM ecommerce.product where scId=%d", scId)
 	fmt.Println(q)

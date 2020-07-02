@@ -61,6 +61,9 @@ func NewEFoodAPI(spec *loads.Document) *EFoodAPI {
 		CartGetItemsHandler: cart.GetItemsHandlerFunc(func(params cart.GetItemsParams) middleware.Responder {
 			return middleware.NotImplemented("operation cart.GetItems has not yet been implemented")
 		}),
+		CartRemoveItemHandler: cart.RemoveItemHandlerFunc(func(params cart.RemoveItemParams) middleware.Responder {
+			return middleware.NotImplemented("operation cart.RemoveItem has not yet been implemented")
+		}),
 	}
 }
 
@@ -104,6 +107,8 @@ type EFoodAPI struct {
 	ProductsGetFromSubCategoryHandler products.GetFromSubCategoryHandler
 	// CartGetItemsHandler sets the operation handler for the get items operation
 	CartGetItemsHandler cart.GetItemsHandler
+	// CartRemoveItemHandler sets the operation handler for the remove item operation
+	CartRemoveItemHandler cart.RemoveItemHandler
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
 	ServeError func(http.ResponseWriter, *http.Request, error)
@@ -184,6 +189,9 @@ func (o *EFoodAPI) Validate() error {
 	}
 	if o.CartGetItemsHandler == nil {
 		unregistered = append(unregistered, "cart.GetItemsHandler")
+	}
+	if o.CartRemoveItemHandler == nil {
+		unregistered = append(unregistered, "cart.RemoveItemHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -293,6 +301,10 @@ func (o *EFoodAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/cart"] = cart.NewGetItems(o.context, o.CartGetItemsHandler)
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/cart"] = cart.NewRemoveItem(o.context, o.CartRemoveItemHandler)
 }
 
 // Serve creates a http handler to serve the API over HTTP

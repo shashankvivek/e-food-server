@@ -29,6 +29,10 @@ func (impl *addCartItemImpl) Handle(params cart.AddItemParams) middleware.Respon
 		return cart.NewGetItemsInternalServerError().WithPayload("Unable to add Item to cart")
 	}
 
+	if params.Body.TotalQty < 1 || params.Body.TotalQty > 12 {
+		return cart.NewAddItemOK().WithPayload(&models.SuccessResponse{Success: false, Message: "Quantity must be between 1 and 12"})
+	}
+	//TODO: check available item in stock before adding and add items with respective msg in case of shortage
 	isSuccess, err := dao.AddItemToGuestCart(impl.dbClient, cookieInfo.Value, params.Body.TotalQty, params.Body.ProductID)
 	if err != nil {
 		fmt.Println(err.Error())

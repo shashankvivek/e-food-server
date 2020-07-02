@@ -102,6 +102,41 @@ func init() {
             }
           }
         }
+      },
+      "delete": {
+        "description": "Remove item from cart",
+        "tags": [
+          "cart"
+        ],
+        "operationId": "RemoveItem",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "productId",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success response when item is removed from cart",
+            "schema": {
+              "$ref": "#/definitions/SuccessResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Item to be added Not Found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
       }
     },
     "/categories": {
@@ -434,6 +469,41 @@ func init() {
         "responses": {
           "200": {
             "description": "Success response when item is added successfully",
+            "schema": {
+              "$ref": "#/definitions/SuccessResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Item to be added Not Found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Remove item from cart",
+        "tags": [
+          "cart"
+        ],
+        "operationId": "RemoveItem",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "productId",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success response when item is removed from cart",
             "schema": {
               "$ref": "#/definitions/SuccessResponse"
             }

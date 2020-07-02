@@ -92,6 +92,28 @@ paths:
           schema:
             type: string
           description: Server error
+    delete:
+      description: 'Remove item from cart'
+      tags: [cart]
+      operationId: RemoveItem
+      parameters:
+        - in : 'query'
+          name: 'productId'
+          required: true
+          type: integer
+      responses:
+        200:
+          description: "Success response when item is removed from cart"
+          schema:
+            $ref: "#/definitions/SuccessResponse"
+        400:
+          description: Bad Request
+        404:
+          description: Item to be added Not Found
+        500:
+          schema:
+            type: string
+          description: Server error
   /sessionInfo:
     post:
       description: 'Adds Cookie ID for guests'
