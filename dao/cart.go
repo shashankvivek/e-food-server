@@ -33,6 +33,8 @@ func GetGuestCart(db *sql.DB, sessionId string) (models.CartPreview, error) {
 }
 
 func AddItemToGuestCart(db *sql.DB, sessionId string, totalQty, productId int64) (bool, error) {
+	// TODO: check unitsIn Stock before INsert
+
 	res, err := db.Exec("INSERT INTO guest_cart_item (sessionId,totalQty,productId) VALUES (?, ?, ?)", sessionId, totalQty, productId)
 	if err != nil {
 		return false, err

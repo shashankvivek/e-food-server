@@ -20,6 +20,7 @@ import (
 	"github.com/go-openapi/swag"
 
 	"e-food/restapi/operations/cart"
+	"e-food/restapi/operations/guest"
 	"e-food/restapi/operations/menu"
 	"e-food/restapi/operations/products"
 )
@@ -47,6 +48,9 @@ func NewEFoodAPI(spec *loads.Document) *EFoodAPI {
 
 		CartAddItemHandler: cart.AddItemHandlerFunc(func(params cart.AddItemParams) middleware.Responder {
 			return middleware.NotImplemented("operation cart.AddItem has not yet been implemented")
+		}),
+		GuestAddSessionHandler: guest.AddSessionHandlerFunc(func(params guest.AddSessionParams) middleware.Responder {
+			return middleware.NotImplemented("operation guest.AddSession has not yet been implemented")
 		}),
 		MenuCategoryListHandler: menu.CategoryListHandlerFunc(func(params menu.CategoryListParams) middleware.Responder {
 			return middleware.NotImplemented("operation menu.CategoryList has not yet been implemented")
@@ -92,6 +96,8 @@ type EFoodAPI struct {
 
 	// CartAddItemHandler sets the operation handler for the add item operation
 	CartAddItemHandler cart.AddItemHandler
+	// GuestAddSessionHandler sets the operation handler for the add session operation
+	GuestAddSessionHandler guest.AddSessionHandler
 	// MenuCategoryListHandler sets the operation handler for the category list operation
 	MenuCategoryListHandler menu.CategoryListHandler
 	// ProductsGetFromSubCategoryHandler sets the operation handler for the get from sub category operation
@@ -166,6 +172,9 @@ func (o *EFoodAPI) Validate() error {
 
 	if o.CartAddItemHandler == nil {
 		unregistered = append(unregistered, "cart.AddItemHandler")
+	}
+	if o.GuestAddSessionHandler == nil {
+		unregistered = append(unregistered, "guest.AddSessionHandler")
 	}
 	if o.MenuCategoryListHandler == nil {
 		unregistered = append(unregistered, "menu.CategoryListHandler")
@@ -268,6 +277,10 @@ func (o *EFoodAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/cart"] = cart.NewAddItem(o.context, o.CartAddItemHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/sessionInfo"] = guest.NewAddSession(o.context, o.GuestAddSessionHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

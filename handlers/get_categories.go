@@ -18,6 +18,7 @@ func NewMenuCategoryHandler(dbClient *sql.DB) menu.CategoryListHandler {
 }
 
 func (impl *menuImpl) Handle(param menu.CategoryListParams) middleware.Responder {
+
 	retVal, err := dao.GetMenuItems(impl.dbClient)
 	if err != nil {
 		return menu.NewCategoryListInternalServerError().WithPayload("Server ERROR")
@@ -26,6 +27,5 @@ func (impl *menuImpl) Handle(param menu.CategoryListParams) middleware.Responder
 	if len(retVal) == 0 {
 		return menu.NewCategoryListNotFound()
 	}
-
 	return menu.NewCategoryListOK().WithPayload(retVal)
 }

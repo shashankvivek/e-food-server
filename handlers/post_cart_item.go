@@ -5,6 +5,7 @@ import (
 	"e-food/dao"
 	"e-food/models"
 	"e-food/restapi/operations/cart"
+	"fmt"
 	"github.com/go-openapi/runtime/middleware"
 )
 
@@ -30,6 +31,7 @@ func (impl *addCartItemImpl) Handle(params cart.AddItemParams) middleware.Respon
 
 	isSuccess, err := dao.AddItemToGuestCart(impl.dbClient, cookieInfo.Value, params.Body.TotalQty, params.Body.ProductID)
 	if err != nil {
+		fmt.Println(err.Error())
 		return cart.NewGetItemsInternalServerError().WithPayload("Error in adding Item to cart")
 	}
 	return cart.NewAddItemOK().WithPayload(&models.SuccessResponse{Success: isSuccess, Message: "Item Added"})

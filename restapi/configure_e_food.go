@@ -40,6 +40,8 @@ func configureAPI(api *operations.EFoodAPI) http.Handler {
 
 	api.CartAddItemHandler = handlers.NewCartAddItemHandler(dbClient)
 
+	api.GuestAddSessionHandler = handlers.NewGuestAddSessionHandler(dbClient)
+
 	api.ServerShutdown = func() {}
 
 	return setupGlobalMiddleware(api.Serve(setupMiddlewares))

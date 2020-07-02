@@ -169,6 +169,47 @@ func init() {
           }
         }
       }
+    },
+    "/sessionInfo": {
+      "post": {
+        "description": "Adds Cookie ID for guests",
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "guest"
+        ],
+        "operationId": "AddSession",
+        "parameters": [
+          {
+            "name": "session_info",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/GuestSession"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success response when item is added successfully",
+            "schema": {
+              "$ref": "#/definitions/SuccessResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Item to be added Not Found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -227,6 +268,14 @@ func init() {
         }
       }
     },
+    "GuestSession": {
+      "type": "object",
+      "properties": {
+        "extraInfo": {
+          "type": "string"
+        }
+      }
+    },
     "ItemInfo": {
       "type": "object",
       "properties": {
@@ -258,6 +307,10 @@ func init() {
         },
         "imageUrl": {
           "type": "string"
+        },
+        "isAvailable": {
+          "description": "False if Product is out of stock",
+          "type": "boolean"
         },
         "name": {
           "type": "string"
@@ -465,6 +518,47 @@ func init() {
           }
         }
       }
+    },
+    "/sessionInfo": {
+      "post": {
+        "description": "Adds Cookie ID for guests",
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "guest"
+        ],
+        "operationId": "AddSession",
+        "parameters": [
+          {
+            "name": "session_info",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/GuestSession"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success response when item is added successfully",
+            "schema": {
+              "$ref": "#/definitions/SuccessResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Item to be added Not Found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -523,6 +617,14 @@ func init() {
         }
       }
     },
+    "GuestSession": {
+      "type": "object",
+      "properties": {
+        "extraInfo": {
+          "type": "string"
+        }
+      }
+    },
     "ItemInfo": {
       "type": "object",
       "properties": {
@@ -554,6 +656,10 @@ func init() {
         },
         "imageUrl": {
           "type": "string"
+        },
+        "isAvailable": {
+          "description": "False if Product is out of stock",
+          "type": "boolean"
         },
         "name": {
           "type": "string"

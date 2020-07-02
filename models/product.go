@@ -30,6 +30,9 @@ type Product struct {
 	// image Url
 	ImageURL string `json:"imageUrl,omitempty"`
 
+	// False if Product is out of stock
+	IsAvailable bool `json:"isAvailable,omitempty"`
+
 	// name
 	Name string `json:"name,omitempty"`
 
