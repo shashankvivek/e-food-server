@@ -16,10 +16,10 @@ import (
 type ItemInfo struct {
 
 	// product Id
-	ProductID float64 `json:"productId,omitempty"`
+	ProductID int64 `json:"productId,omitempty"`
 
 	// total qty
-	TotalQty float64 `json:"totalQty,omitempty"`
+	TotalQty int64 `json:"totalQty,omitempty"`
 }
 
 // Validate validates this item info

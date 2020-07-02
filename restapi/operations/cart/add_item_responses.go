@@ -25,7 +25,7 @@ type AddItemOK struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.CartSuccessResponse `json:"body,omitempty"`
+	Payload *models.SuccessResponse `json:"body,omitempty"`
 }
 
 // NewAddItemOK creates AddItemOK with default headers values
@@ -35,13 +35,13 @@ func NewAddItemOK() *AddItemOK {
 }
 
 // WithPayload adds the payload to the add item o k response
-func (o *AddItemOK) WithPayload(payload *models.CartSuccessResponse) *AddItemOK {
+func (o *AddItemOK) WithPayload(payload *models.SuccessResponse) *AddItemOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the add item o k response
-func (o *AddItemOK) SetPayload(payload *models.CartSuccessResponse) {
+func (o *AddItemOK) SetPayload(payload *models.SuccessResponse) {
 	o.Payload = payload
 }
 

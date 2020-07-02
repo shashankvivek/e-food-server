@@ -32,6 +32,14 @@ func GetGuestCart(db *sql.DB, sessionId string) (models.CartPreview, error) {
 	return cart, nil
 }
 
-func AddItemToGuestCart() {
-
+func AddItemToGuestCart(db *sql.DB, sessionId string, totalQty, productId int64) (bool, error) {
+	res, err := db.Exec("INSERT INTO guest_cart_item (sessionId,totalQty,productId) VALUES (?, ?, ?)", sessionId, totalQty, productId)
+	if err != nil {
+		return false, err
+	}
+	insertedRow, err := res.RowsAffected()
+	if err != nil {
+		return false, err
+	}
+	return insertedRow == 1, nil
 }

@@ -86,7 +86,7 @@ func init() {
           "200": {
             "description": "Success response when item is added successfully",
             "schema": {
-              "$ref": "#/definitions/CartSuccessResponse"
+              "$ref": "#/definitions/SuccessResponse"
             }
           },
           "400": {
@@ -198,17 +198,6 @@ func init() {
         "$ref": "#/definitions/CartItem"
       }
     },
-    "CartSuccessResponse": {
-      "type": "object",
-      "properties": {
-        "success": {
-          "type": "boolean"
-        },
-        "totalItemCount": {
-          "type": "number"
-        }
-      }
-    },
     "Categories": {
       "type": "array",
       "items": {
@@ -242,10 +231,10 @@ func init() {
       "type": "object",
       "properties": {
         "productId": {
-          "type": "number"
+          "type": "integer"
         },
         "totalQty": {
-          "type": "number"
+          "type": "integer"
         }
       }
     },
@@ -308,6 +297,17 @@ func init() {
         },
         "scName": {
           "type": "string"
+        }
+      }
+    },
+    "SuccessResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "success": {
+          "type": "boolean"
         }
       }
     }
@@ -382,7 +382,7 @@ func init() {
           "200": {
             "description": "Success response when item is added successfully",
             "schema": {
-              "$ref": "#/definitions/CartSuccessResponse"
+              "$ref": "#/definitions/SuccessResponse"
             }
           },
           "400": {
@@ -494,17 +494,6 @@ func init() {
         "$ref": "#/definitions/CartItem"
       }
     },
-    "CartSuccessResponse": {
-      "type": "object",
-      "properties": {
-        "success": {
-          "type": "boolean"
-        },
-        "totalItemCount": {
-          "type": "number"
-        }
-      }
-    },
     "Categories": {
       "type": "array",
       "items": {
@@ -538,10 +527,10 @@ func init() {
       "type": "object",
       "properties": {
         "productId": {
-          "type": "number"
+          "type": "integer"
         },
         "totalQty": {
-          "type": "number"
+          "type": "integer"
         }
       }
     },
@@ -604,6 +593,17 @@ func init() {
         },
         "scName": {
           "type": "string"
+        }
+      }
+    },
+    "SuccessResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "success": {
+          "type": "boolean"
         }
       }
     }
