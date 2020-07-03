@@ -21,8 +21,15 @@ type Product struct {
 	UnitsInStock       int
 }
 
-func GetAvailableUnits(db *sql.DB, productId int64) (int, error) {
-	return 0, nil
+func GetUnitsInStock(db *sql.DB, productId int64) (int64, error) {
+	var unitsInStock = 0
+	row := db.QueryRow("SELECT unitsInStock FROM ecommerce.product where productId=?", productId)
+
+	err := row.Scan(&unitsInStock)
+	if err != nil {
+		return -1, err
+	}
+	return int64(unitsInStock), nil
 }
 
 func GetProductsBySubCategory(dbClient *sql.DB, scId int64) (models.Products, error) {
