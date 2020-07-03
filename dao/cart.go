@@ -49,7 +49,6 @@ func AddItemToGuestCart(db *sql.DB, sessionId string, totalQty, productId int64)
 		totalQty = unitsInStock
 		msg = "Reached max stock quantity"
 	}
-	// TODO: Update if already added
 	itemQtyInCart, err := checkItemInGuestCart(db, sessionId, productId)
 	if err != nil {
 		return false, "", err
