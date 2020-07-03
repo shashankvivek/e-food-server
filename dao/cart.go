@@ -69,6 +69,7 @@ func AddItemToGuestCart(db *sql.DB, sessionId string, totalQty, productId int64)
 }
 
 func RemoveItemFromGuestCart(db *sql.DB, productId int64, sessionId string) (bool, error) {
+	//TODO: add transaction management and re-add items in stocks inventory
 	res, err := db.Exec("DELETE from guest_cart_item where sessionId = ? and productId = ?", sessionId, productId)
 	if err != nil {
 		return false, err
