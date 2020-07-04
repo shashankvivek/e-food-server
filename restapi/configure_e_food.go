@@ -22,6 +22,7 @@ func configureFlags(api *operations.EFoodAPI) {
 
 func configureAPI(api *operations.EFoodAPI) http.Handler {
 	// configure the api here
+
 	api.ServeError = errors.ServeError
 
 	api.JSONConsumer = runtime.JSONConsumer()
@@ -45,6 +46,10 @@ func configureAPI(api *operations.EFoodAPI) http.Handler {
 	api.CartRemoveItemHandler = handlers.NewCartRemoveItemHandler(dbClient)
 
 	api.GuestAddSessionHandler = handlers.NewGuestAddSessionHandler(dbClient)
+
+	api.BearerAuth = handlers.ValidateHeader
+
+	api.CartCheckoutHandler = handlers.NewCartCheckoutHandler(dbClient)
 
 	api.ServerShutdown = func() {}
 

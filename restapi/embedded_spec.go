@@ -167,6 +167,40 @@ func init() {
         }
       }
     },
+    "/checkoutCart": {
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "description": "Get Checkout Cart with offers",
+        "tags": [
+          "cart"
+        ],
+        "operationId": "checkout",
+        "responses": {
+          "200": {
+            "description": "Success response when item is added successfully",
+            "schema": {
+              "$ref": "#/definitions/CartSuccessResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Item to be added Not Found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
     "/login": {
       "post": {
         "description": "Returns token for authorized User",
@@ -480,6 +514,13 @@ func init() {
           "type": "boolean"
         }
       }
+    }
+  },
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
     }
   }
 }`))
@@ -633,6 +674,40 @@ func init() {
         }
       }
     },
+    "/checkoutCart": {
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "description": "Get Checkout Cart with offers",
+        "tags": [
+          "cart"
+        ],
+        "operationId": "checkout",
+        "responses": {
+          "200": {
+            "description": "Success response when item is added successfully",
+            "schema": {
+              "$ref": "#/definitions/CartSuccessResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Item to be added Not Found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
     "/login": {
       "post": {
         "description": "Returns token for authorized User",
@@ -946,6 +1021,13 @@ func init() {
           "type": "boolean"
         }
       }
+    }
+  },
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
     }
   }
 }`))

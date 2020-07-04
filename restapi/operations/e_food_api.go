@@ -68,6 +68,16 @@ func NewEFoodAPI(spec *loads.Document) *EFoodAPI {
 		CartRemoveItemHandler: cart.RemoveItemHandlerFunc(func(params cart.RemoveItemParams) middleware.Responder {
 			return middleware.NotImplemented("operation cart.RemoveItem has not yet been implemented")
 		}),
+		CartCheckoutHandler: cart.CheckoutHandlerFunc(func(params cart.CheckoutParams, principal interface{}) middleware.Responder {
+			return middleware.NotImplemented("operation cart.Checkout has not yet been implemented")
+		}),
+
+		// Applies when the "Authorization" header is set
+		BearerAuth: func(token string) (interface{}, error) {
+			return nil, errors.NotImplemented("api key auth (Bearer) Authorization from header param [Authorization] has not yet been implemented")
+		},
+		// default authorizer is authorized meaning no requests are blocked
+		APIAuthorizer: security.Authorized(),
 	}
 }
 
@@ -101,6 +111,13 @@ type EFoodAPI struct {
 	//   - application/json
 	JSONProducer runtime.Producer
 
+	// BearerAuth registers a function that takes a token and returns a principal
+	// it performs authentication based on an api key Authorization provided in the header
+	BearerAuth func(string) (interface{}, error)
+
+	// APIAuthorizer provides access control (ACL/RBAC/ABAC) by providing access to the request and authenticated principal
+	APIAuthorizer runtime.Authorizer
+
 	// CartAddItemHandler sets the operation handler for the add item operation
 	CartAddItemHandler cart.AddItemHandler
 	// GuestAddSessionHandler sets the operation handler for the add session operation
@@ -115,6 +132,8 @@ type EFoodAPI struct {
 	UserLoginHandler user.LoginHandler
 	// CartRemoveItemHandler sets the operation handler for the remove item operation
 	CartRemoveItemHandler cart.RemoveItemHandler
+	// CartCheckoutHandler sets the operation handler for the checkout operation
+	CartCheckoutHandler cart.CheckoutHandler
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
 	ServeError func(http.ResponseWriter, *http.Request, error)
@@ -181,6 +200,10 @@ func (o *EFoodAPI) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
+	if o.BearerAuth == nil {
+		unregistered = append(unregistered, "AuthorizationAuth")
+	}
+
 	if o.CartAddItemHandler == nil {
 		unregistered = append(unregistered, "cart.AddItemHandler")
 	}
@@ -202,6 +225,9 @@ func (o *EFoodAPI) Validate() error {
 	if o.CartRemoveItemHandler == nil {
 		unregistered = append(unregistered, "cart.RemoveItemHandler")
 	}
+	if o.CartCheckoutHandler == nil {
+		unregistered = append(unregistered, "cart.CheckoutHandler")
+	}
 
 	if len(unregistered) > 0 {
 		return fmt.Errorf("missing registration: %s", strings.Join(unregistered, ", "))
@@ -217,12 +243,21 @@ func (o *EFoodAPI) ServeErrorFor(operationID string) func(http.ResponseWriter, *
 
 // AuthenticatorsFor gets the authenticators for the specified security schemes
 func (o *EFoodAPI) AuthenticatorsFor(schemes map[string]spec.SecurityScheme) map[string]runtime.Authenticator {
-	return nil
+	result := make(map[string]runtime.Authenticator)
+	for name := range schemes {
+		switch name {
+		case "Bearer":
+			scheme := schemes[name]
+			result[name] = o.APIKeyAuthenticator(scheme.Name, scheme.In, o.BearerAuth)
+
+		}
+	}
+	return result
 }
 
 // Authorizer returns the registered authorizer
 func (o *EFoodAPI) Authorizer() runtime.Authorizer {
-	return nil
+	return o.APIAuthorizer
 }
 
 // ConsumersFor gets the consumers for the specified media types.
@@ -318,6 +353,10 @@ func (o *EFoodAPI) initHandlerCache() {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/cart"] = cart.NewRemoveItem(o.context, o.CartRemoveItemHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/checkoutCart"] = cart.NewCheckout(o.context, o.CartCheckoutHandler)
 }
 
 // Serve creates a http handler to serve the API over HTTP
