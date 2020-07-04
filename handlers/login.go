@@ -25,19 +25,19 @@ func NewUserLoginHandler(db *sql.DB) user.LoginHandler {
 
 func (impl *loginImpl) Handle(params user.LoginParams) middleware.Responder {
 	//TODO: check username and pwd in DB and then generate token
-	token, err := generateJWT()
+	token, err := generateJWT("test@gmail.com")
 	if err != nil {
 		return user.NewLoginInternalServerError().WithPayload("Error defining token")
 	}
 	return user.NewLoginOK().WithPayload(&models.LoginSuccess{Success: true, Token: token})
 }
 
-func generateJWT() (string, error) {
+func generateJWT(userEmail string) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
 
 	claims["authorized"] = true
-	claims["user"] = "test@gmail.com"
+	claims["user"] = userEmail
 	claims["exp"] = time.Now().Add(time.Minute * 30).Unix()
 
 	tokenString, err := token.SignedString(constants.MySecretKeyForJWT)

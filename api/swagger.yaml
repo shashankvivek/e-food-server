@@ -7,6 +7,11 @@ host: e-food.com
 basePath: /
 consumes: [application/json]
 produces: [application/json]
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
 paths:
   /categories:
     get:
@@ -74,6 +79,26 @@ paths:
           schema:
             type: string
           description: User not found
+        500:
+          schema:
+            type: string
+          description: Server error
+  /checkoutCart:
+    get:
+      description: 'Get Checkout Cart with offers'
+      tags: [cart]
+      operationId: checkout
+      security:
+        - Bearer: []
+      responses:
+        200:
+          description: "Success response when item is added successfully"
+          schema:
+            $ref: "#/definitions/CartSuccessResponse"
+        400:
+          description: Bad Request
+        404:
+          description: Item to be added Not Found
         500:
           schema:
             type: string

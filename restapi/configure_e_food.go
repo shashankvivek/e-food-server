@@ -79,7 +79,7 @@ func setupMiddlewares(handler http.Handler) http.Handler {
 func setupGlobalMiddleware(handler http.Handler) http.Handler {
 	corsHandler := cors.New(cors.Options{
 		Debug:            false,
-		AllowedHeaders:   []string{"*"},
+		AllowedHeaders:   []string{"*"}, // TODO: config accordingly
 		AllowedOrigins:   []string{"*"},
 		AllowedMethods:   []string{},
 		AllowCredentials: true,
@@ -87,10 +87,10 @@ func setupGlobalMiddleware(handler http.Handler) http.Handler {
 	})
 	h := corsHandler.Handler(handler)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		var cookie, err = r.Cookie("guest_session")
+		var _, err = r.Cookie("guest_session")
 		// cookie not set
 		if err != nil {
-			cookie = &http.Cookie{
+			cookie := &http.Cookie{
 				Name:     "guest_session",
 				Value:    uuid.New().String(),
 				SameSite: http.SameSiteDefaultMode,
