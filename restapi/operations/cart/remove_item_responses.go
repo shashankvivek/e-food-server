@@ -84,7 +84,7 @@ func (o *RemoveItemBadRequest) WriteResponse(rw http.ResponseWriter, producer ru
 // RemoveItemNotFoundCode is the HTTP code returned for type RemoveItemNotFound
 const RemoveItemNotFoundCode int = 404
 
-/*RemoveItemNotFound Item to be added Not Found
+/*RemoveItemNotFound Item to be deleted Not Found
 
 swagger:response removeItemNotFound
 */

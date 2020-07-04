@@ -87,7 +87,7 @@ func (o *GetItemsBadRequest) WriteResponse(rw http.ResponseWriter, producer runt
 // GetItemsNotFoundCode is the HTTP code returned for type GetItemsNotFound
 const GetItemsNotFoundCode int = 404
 
-/*GetItemsNotFound Item to be added Not Found
+/*GetItemsNotFound Item Not Found
 
 swagger:response getItemsNotFound
 */

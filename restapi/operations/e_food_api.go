@@ -23,6 +23,7 @@ import (
 	"e-food/restapi/operations/guest"
 	"e-food/restapi/operations/menu"
 	"e-food/restapi/operations/products"
+	"e-food/restapi/operations/user"
 )
 
 // NewEFoodAPI creates a new EFood instance
@@ -60,6 +61,9 @@ func NewEFoodAPI(spec *loads.Document) *EFoodAPI {
 		}),
 		CartGetItemsHandler: cart.GetItemsHandlerFunc(func(params cart.GetItemsParams) middleware.Responder {
 			return middleware.NotImplemented("operation cart.GetItems has not yet been implemented")
+		}),
+		UserLoginHandler: user.LoginHandlerFunc(func(params user.LoginParams) middleware.Responder {
+			return middleware.NotImplemented("operation user.Login has not yet been implemented")
 		}),
 		CartRemoveItemHandler: cart.RemoveItemHandlerFunc(func(params cart.RemoveItemParams) middleware.Responder {
 			return middleware.NotImplemented("operation cart.RemoveItem has not yet been implemented")
@@ -107,6 +111,8 @@ type EFoodAPI struct {
 	ProductsGetFromSubCategoryHandler products.GetFromSubCategoryHandler
 	// CartGetItemsHandler sets the operation handler for the get items operation
 	CartGetItemsHandler cart.GetItemsHandler
+	// UserLoginHandler sets the operation handler for the login operation
+	UserLoginHandler user.LoginHandler
 	// CartRemoveItemHandler sets the operation handler for the remove item operation
 	CartRemoveItemHandler cart.RemoveItemHandler
 	// ServeError is called when an error is received, there is a default handler
@@ -189,6 +195,9 @@ func (o *EFoodAPI) Validate() error {
 	}
 	if o.CartGetItemsHandler == nil {
 		unregistered = append(unregistered, "cart.GetItemsHandler")
+	}
+	if o.UserLoginHandler == nil {
+		unregistered = append(unregistered, "user.LoginHandler")
 	}
 	if o.CartRemoveItemHandler == nil {
 		unregistered = append(unregistered, "cart.RemoveItemHandler")
@@ -301,6 +310,10 @@ func (o *EFoodAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/cart"] = cart.NewGetItems(o.context, o.CartGetItemsHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/login"] = user.NewLogin(o.context, o.UserLoginHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}

@@ -53,7 +53,7 @@ func init() {
             "description": "Bad Request"
           },
           "404": {
-            "description": "Item to be added Not Found"
+            "description": "Item Not Found"
           },
           "500": {
             "description": "Server error",
@@ -128,7 +128,7 @@ func init() {
             "description": "Bad Request"
           },
           "404": {
-            "description": "Item to be added Not Found"
+            "description": "Item to be deleted Not Found"
           },
           "500": {
             "description": "Server error",
@@ -160,6 +160,52 @@ func init() {
           },
           "500": {
             "description": "Server Error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "description": "Returns token for authorized User",
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "user"
+        ],
+        "operationId": "Login",
+        "parameters": [
+          {
+            "description": "The user email ID",
+            "name": "login",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LoginInfo"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful login",
+            "schema": {
+              "$ref": "#/definitions/LoginSuccess"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "User not found",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "500": {
+            "description": "Server error",
             "schema": {
               "type": "string"
             }
@@ -235,7 +281,7 @@ func init() {
             "description": "Bad Request"
           },
           "404": {
-            "description": "Item to be added Not Found"
+            "description": "Session ID Not Found"
           },
           "500": {
             "description": "Server error",
@@ -333,6 +379,28 @@ func init() {
         },
         "totalQty": {
           "type": "integer"
+        }
+      }
+    },
+    "LoginInfo": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "LoginSuccess": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "token": {
+          "type": "string"
         }
       }
     },
@@ -451,7 +519,7 @@ func init() {
             "description": "Bad Request"
           },
           "404": {
-            "description": "Item to be added Not Found"
+            "description": "Item Not Found"
           },
           "500": {
             "description": "Server error",
@@ -526,7 +594,7 @@ func init() {
             "description": "Bad Request"
           },
           "404": {
-            "description": "Item to be added Not Found"
+            "description": "Item to be deleted Not Found"
           },
           "500": {
             "description": "Server error",
@@ -558,6 +626,52 @@ func init() {
           },
           "500": {
             "description": "Server Error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "description": "Returns token for authorized User",
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "user"
+        ],
+        "operationId": "Login",
+        "parameters": [
+          {
+            "description": "The user email ID",
+            "name": "login",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LoginInfo"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful login",
+            "schema": {
+              "$ref": "#/definitions/LoginSuccess"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "User not found",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "500": {
+            "description": "Server error",
             "schema": {
               "type": "string"
             }
@@ -633,7 +747,7 @@ func init() {
             "description": "Bad Request"
           },
           "404": {
-            "description": "Item to be added Not Found"
+            "description": "Session ID Not Found"
           },
           "500": {
             "description": "Server error",
@@ -731,6 +845,28 @@ func init() {
         },
         "totalQty": {
           "type": "integer"
+        }
+      }
+    },
+    "LoginInfo": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "LoginSuccess": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "token": {
+          "type": "string"
         }
       }
     },

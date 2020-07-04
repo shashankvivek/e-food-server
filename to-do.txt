@@ -2,3 +2,4 @@
 2. Pagination
 3. do logging
 4. manage deactivated session Ids
+5. CSRF

@@ -32,6 +32,8 @@ func configureAPI(api *operations.EFoodAPI) http.Handler {
 
 	dbClient := clientBuilder.BuildSqlClient()
 
+	api.UserLoginHandler = handlers.NewUserLoginHandler(dbClient)
+
 	api.MenuCategoryListHandler = handlers.NewMenuCategoryHandler(dbClient)
 
 	api.ProductsGetFromSubCategoryHandler = handlers.NewProductsFromSubCategoryHandler(dbClient)

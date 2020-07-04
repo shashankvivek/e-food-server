@@ -84,7 +84,7 @@ func (o *AddSessionBadRequest) WriteResponse(rw http.ResponseWriter, producer ru
 // AddSessionNotFoundCode is the HTTP code returned for type AddSessionNotFound
 const AddSessionNotFoundCode int = 404
 
-/*AddSessionNotFound Item to be added Not Found
+/*AddSessionNotFound Session ID Not Found
 
 swagger:response addSessionNotFound
 */

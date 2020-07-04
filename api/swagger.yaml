@@ -49,6 +49,35 @@ paths:
           schema:
             type: string
           description: Server error
+  /login:
+    post:
+      description: 'Returns token for authorized User'
+      tags: [user]
+      operationId: Login
+      consumes:
+        - "application/json"
+      parameters:
+        - name: 'login'
+          in: 'body'
+          required: true
+          description: 'The user email ID'
+          schema:
+            $ref: '#/definitions/LoginInfo'
+      responses:
+        200:
+          description: Successful login
+          schema:
+            $ref: '#/definitions/LoginSuccess'
+        400:
+          description: Bad Request
+        404:
+          schema:
+            type: string
+          description: User not found
+        500:
+          schema:
+            type: string
+          description: Server error
   /cart:
     post:
       description: 'This API adds product to cart / guest cart'
@@ -87,7 +116,7 @@ paths:
         400:
           description: Bad Request
         404:
-          description: Item to be added Not Found
+          description: Item Not Found
         500:
           schema:
             type: string
@@ -109,7 +138,7 @@ paths:
         400:
           description: Bad Request
         404:
-          description: Item to be added Not Found
+          description: Item to be deleted Not Found
         500:
           schema:
             type: string
@@ -134,12 +163,26 @@ paths:
         400:
           description: Bad Request
         404:
-          description: Item to be added Not Found
+          description: Session ID Not Found
         500:
           schema:
             type: string
           description: Server error
 definitions:
+  LoginInfo:
+    type: object
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+  LoginSuccess:
+    type: object
+    properties:
+      success:
+        type: boolean
+      token:
+        type: string
   SuccessResponse:
     type: object
     properties:
