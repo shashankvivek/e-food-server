@@ -12,6 +12,7 @@ require (
 	github.com/go-openapi/validate v0.19.10
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/go-swagger/go-swagger v0.24.0 // indirect
+	github.com/google/martian v2.1.0+incompatible
 	github.com/google/uuid v1.1.1
 	github.com/jessevdk/go-flags v1.4.0
 	github.com/rs/cors v1.7.0

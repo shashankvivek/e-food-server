@@ -6,6 +6,7 @@ import (
 	"e-food/models"
 	"e-food/restapi/operations/guest"
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/google/martian/log"
 	"strings"
 )
 
@@ -23,6 +24,7 @@ func (impl *guestUserImpl) Handle(params guest.AddSessionParams) middleware.Resp
 	//TODO: add check for logged in user and add item to cart accordingly
 	cookieInfo, err := params.HTTPRequest.Cookie("guest_session")
 	if err != nil {
+		log.Errorf(err.Error())
 		return guest.NewAddSessionInternalServerError().WithPayload("error with cookie")
 	}
 	if cookieInfo.Value == "" {
@@ -33,6 +35,7 @@ func (impl *guestUserImpl) Handle(params guest.AddSessionParams) middleware.Resp
 		if strings.Contains(err.Error(), "Duplicate entry") {
 			return guest.NewAddSessionOK().WithPayload(&models.SuccessResponse{Success: true, Message: "Session already present"})
 		}
+		log.Errorf(err.Error())
 		return guest.NewAddSessionInternalServerError().WithPayload("Error adding guest session Info")
 	}
 	if !isSuccess {

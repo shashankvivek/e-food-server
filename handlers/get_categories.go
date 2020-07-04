@@ -5,6 +5,7 @@ import (
 	"e-food/dao"
 	"e-food/restapi/operations/menu"
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/google/martian/log"
 )
 
 type menuImpl struct {
@@ -21,6 +22,7 @@ func (impl *menuImpl) Handle(param menu.CategoryListParams) middleware.Responder
 
 	retVal, err := dao.GetMenuItems(impl.dbClient)
 	if err != nil {
+		log.Errorf(err.Error())
 		return menu.NewCategoryListInternalServerError().WithPayload("Server ERROR")
 	}
 

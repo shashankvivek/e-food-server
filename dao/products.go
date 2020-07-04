@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"e-food/models"
 	"fmt"
+	"github.com/google/martian/log"
 )
 
 type Product struct {
@@ -37,11 +38,13 @@ func GetProductsBySubCategory(dbClient *sql.DB, scId int64) (models.Products, er
 	fmt.Println(q)
 	rows, err := dbClient.Query(q)
 	if err != nil {
+		log.Errorf(err.Error())
 		return nil, err
 	}
 	defer rows.Close()
 	var retVal models.Products
 	if err := rows.Err(); err != nil {
+		log.Errorf(err.Error())
 		return nil, err
 	}
 	for rows.Next() {
@@ -58,6 +61,7 @@ func GetProductsBySubCategory(dbClient *sql.DB, scId int64) (models.Products, er
 			&product.ScID,
 			&product.UnitsInStock)
 		if err != nil {
+			log.Errorf(err.Error())
 			return nil, err
 		}
 		product.IsAvailable = product.UnitsInStock > 0 // or create a DB trigger to manage this flag in DB itself

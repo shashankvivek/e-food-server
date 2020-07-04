@@ -6,6 +6,7 @@ import (
 	"e-food/models"
 	"e-food/restapi/operations/cart"
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/google/martian/log"
 )
 
 type cartItemsImpl struct {
@@ -29,6 +30,7 @@ func (impl *cartItemsImpl) Handle(params cart.GetItemsParams) middleware.Respond
 	}
 	items, err := dao.GetGuestCart(impl.dbClient, cookieInfo.Value)
 	if err != nil {
+		log.Errorf(err.Error())
 		return cart.NewGetItemsInternalServerError().WithPayload("Error in looking for cart")
 	}
 	return cart.NewGetItemsOK().WithPayload(items)

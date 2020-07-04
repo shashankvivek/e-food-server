@@ -5,6 +5,7 @@ import (
 	"e-food/dao"
 	"e-food/restapi/operations/products"
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/google/martian/log"
 )
 
 type subCategoryImpl struct {
@@ -20,6 +21,7 @@ func NewProductsFromSubCategoryHandler(dbClient *sql.DB) products.GetFromSubCate
 func (impl *subCategoryImpl) Handle(params products.GetFromSubCategoryParams) middleware.Responder {
 	productList, err := dao.GetProductsBySubCategory(impl.dbClient, params.ID)
 	if err != nil {
+		log.Errorf(err.Error())
 		return products.NewGetFromSubCategoryInternalServerError()
 	}
 	if len(productList) == 0 {

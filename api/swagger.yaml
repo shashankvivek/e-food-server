@@ -66,7 +66,7 @@ paths:
         200:
           description: "Success response when item is added successfully"
           schema:
-            $ref: "#/definitions/SuccessResponse"
+            $ref: "#/definitions/CartSuccessResponse"
         400:
           description: Bad Request
         404:
@@ -147,6 +147,15 @@ definitions:
         type: boolean
       message:
         type: string
+  CartSuccessResponse:
+    type: object
+    properties:
+      success:
+        type: boolean
+      message:
+        type: string
+      qtyAdded:
+        type: integer
   Categories:
     type: array
     items:

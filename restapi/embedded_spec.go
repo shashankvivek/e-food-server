@@ -86,7 +86,7 @@ func init() {
           "200": {
             "description": "Success response when item is added successfully",
             "schema": {
-              "$ref": "#/definitions/SuccessResponse"
+              "$ref": "#/definitions/CartSuccessResponse"
             }
           },
           "400": {
@@ -272,6 +272,20 @@ func init() {
       "type": "array",
       "items": {
         "$ref": "#/definitions/CartItem"
+      }
+    },
+    "CartSuccessResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "qtyAdded": {
+          "type": "integer"
+        },
+        "success": {
+          "type": "boolean"
+        }
       }
     },
     "Categories": {
@@ -470,7 +484,7 @@ func init() {
           "200": {
             "description": "Success response when item is added successfully",
             "schema": {
-              "$ref": "#/definitions/SuccessResponse"
+              "$ref": "#/definitions/CartSuccessResponse"
             }
           },
           "400": {
@@ -656,6 +670,20 @@ func init() {
       "type": "array",
       "items": {
         "$ref": "#/definitions/CartItem"
+      }
+    },
+    "CartSuccessResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "qtyAdded": {
+          "type": "integer"
+        },
+        "success": {
+          "type": "boolean"
+        }
       }
     },
     "Categories": {
