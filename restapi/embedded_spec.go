@@ -450,6 +450,9 @@ func init() {
     "CartItem": {
       "type": "object",
       "properties": {
+        "currency": {
+          "type": "string"
+        },
         "imageUrl": {
           "type": "string"
         },
@@ -1076,6 +1079,9 @@ func init() {
     "CartItem": {
       "type": "object",
       "properties": {
+        "currency": {
+          "type": "string"
+        },
         "imageUrl": {
           "type": "string"
         },

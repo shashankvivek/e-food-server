@@ -10,7 +10,7 @@ import (
 )
 
 func GetUserCart(db *sql.DB, email string) (models.CartPreview, error) {
-	q := fmt.Sprintf("SELECT p.productId,p.name, uc.totalQty,p.unitPrice, p.imageUrl FROM user_cart_item uc INNER JOIN product p where uc.productId = p.productId and uc.email='%s'", email)
+	q := fmt.Sprintf("SELECT p.productId,p.name,p.currency, uc.totalQty,p.unitPrice, p.imageUrl FROM user_cart_item uc INNER JOIN product p where uc.productId = p.productId and uc.email='%s'", email)
 	rows, err := db.Query(q)
 	if err != nil {
 		log.Errorf(err.Error())
@@ -28,6 +28,7 @@ func GetUserCart(db *sql.DB, email string) (models.CartPreview, error) {
 		_ = rows.Scan(
 			&item.ProductID,
 			&item.ProductName,
+			&item.Currency,
 			&item.Quantity,
 			&item.UnitPrice,
 			&item.ImageURL,

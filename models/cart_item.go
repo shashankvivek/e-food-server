@@ -15,6 +15,9 @@ import (
 // swagger:model CartItem
 type CartItem struct {
 
+	// currency
+	Currency string `json:"currency,omitempty"`
+
 	// image Url
 	ImageURL string `json:"imageUrl,omitempty"`
 
