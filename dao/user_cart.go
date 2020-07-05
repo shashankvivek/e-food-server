@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/google/martian/log"
+	"strings"
 )
 
 func GetUserCart(db *sql.DB, email string) (models.CartPreview, error) {
@@ -49,7 +50,7 @@ func AddItemToUserCart(db *sql.DB, email string, totalQty, productId int64) (*mo
 		totalQty = unitsInStock
 		msg = "Reached max stock quantity"
 	}
-	err = insertItemInUserCart(db, unitsInStock, totalQty, productId, email)
+	err = insertItemInUserCart(db, totalQty, productId, email)
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +62,7 @@ func AddItemToUserCart(db *sql.DB, email string, totalQty, productId int64) (*mo
 	return retVal, nil
 }
 
-func insertItemInUserCart(db *sql.DB, unitsInStock, totalQty, productId int64, email string) error {
+func insertItemInUserCart(db *sql.DB, totalQty, productId int64, email string) error {
 	res, err := db.Exec("INSERT INTO user_cart_item (email,totalQty,productId) VALUES (?, ?, ?)", email, totalQty, productId)
 	if err != nil {
 		return err
@@ -75,6 +76,38 @@ func insertItemInUserCart(db *sql.DB, unitsInStock, totalQty, productId int64, e
 	} else {
 		return errors.New("adding item to user cart failed")
 	}
+}
+
+func RemoveItemFromUserCart(db *sql.DB, productId int64, email string) (bool, error) {
+	itemQtyInCart, err := getItemQtyInUserCart(db, email, productId)
+	if err != nil {
+		log.Errorf(err.Error())
+		return false, err
+	}
+	if itemQtyInCart < 1 {
+		return false, errors.New("item does not exist")
+	}
+	res, err := db.Exec("DELETE from user_cart_item where email = ? and productId = ?", email, productId)
+	if err != nil {
+		return false, err
+	}
+	deletedRow, _ := res.RowsAffected()
+	if deletedRow == 1 {
+		return true, nil
+	} else {
+		return false, errors.New("error removing item from User cart")
+	}
+}
+
+func getItemQtyInUserCart(db *sql.DB, email string, productId int64) (int64, error) {
+	addedQty := 0
+	row := db.QueryRow("SELECT totalQty from user_cart_item where productId = ? and email = ?", productId, email)
+	err := row.Scan(&addedQty)
+	if err != nil && !strings.Contains(err.Error(), "no row") {
+		log.Errorf(err.Error())
+		return 0, err
+	}
+	return int64(addedQty), nil
 }
 
 //TODO: use this logic when the order is being created
