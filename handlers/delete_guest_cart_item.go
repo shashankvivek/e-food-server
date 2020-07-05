@@ -9,17 +9,17 @@ import (
 	"github.com/google/martian/log"
 )
 
-type deleteCartItemImpl struct {
+type deleteGuestCartItemImpl struct {
 	dbClient *sql.DB
 }
 
 func NewCartRemoveItemHandler(db *sql.DB) guest.RemoveItemHandler {
-	return &deleteCartItemImpl{
+	return &deleteGuestCartItemImpl{
 		dbClient: db,
 	}
 }
 
-func (impl *deleteCartItemImpl) Handle(params guest.RemoveItemParams) middleware.Responder {
+func (impl *deleteGuestCartItemImpl) Handle(params guest.RemoveItemParams) middleware.Responder {
 	//TODO: add check for logged in user
 	cookieInfo, err := params.HTTPRequest.Cookie("guest_session")
 	if err != nil {

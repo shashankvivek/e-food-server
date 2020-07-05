@@ -134,4 +134,38 @@ CREATE TABLE `ecommerce`.`guest_cart_item` (
                                                    FOREIGN KEY (`productId`)
                                                        REFERENCES `ecommerce`.`product` (`productId`)
                                                        ON DELETE CASCADE
-                                                       ON UPDATE CASCADE);
+                                                       ON UPDATE CASCADE
+);
+
+-- create user table, work on password field later
+CREATE TABLE `ecommerce`.`user_details`
+(
+    `email`     VARCHAR(45) NOT NULL,
+    `firstName` VARCHAR(45) NOT NULL,
+    `lastName`  VARCHAR(45) NULL,
+    `phoneNo`   INT         NULL,
+    `password`  VARCHAR(45) NOT NULL,
+    PRIMARY KEY (`email`),
+    UNIQUE INDEX `userEmail_UNIQUE` (`email` ASC) VISIBLE,
+    UNIQUE INDEX `phoneNo_UNIQUE` (`phoneNo` ASC) VISIBLE
+);
+
+INSERT INTO `ecommerce`.`user_details` (`email`, `firstName`, `lastName`, `phoneNo`, `password`)
+VALUES ('test@gmail.com', 'Shashank', 'Vivek', '99999999', '123123');
+
+-- create User cart Item
+
+CREATE TABLE `ecommerce`.`user_cart_item`
+(
+    `email`     VARCHAR(40) NOT NULL,
+    `totalQty`  INT         NOT NULL,
+    `productId` INT         NULL,
+    INDEX `sessionId_idx` (`email` ASC) VISIBLE,
+    INDEX `productId_idx` (`productId` ASC) VISIBLE,
+    CONSTRAINT `email`
+        FOREIGN KEY (`email`)
+            REFERENCES `ecommerce`.`user_details` (`email`),
+    CONSTRAINT `cartProductId`
+        FOREIGN KEY (`productId`)
+            REFERENCES `ecommerce`.`product` (`productId`)
+);

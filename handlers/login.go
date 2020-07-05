@@ -25,7 +25,7 @@ func (impl *loginImpl) Handle(params user.LoginParams) middleware.Responder {
 	//TODO: check username and pwd in DB and then generate token
 	// Once validated, shift any guestCart item to customer cart item
 	// delete all entry from guestCart
-	token, err := generateJWT("test@gmail.com", "test", "user")
+	token, err := generateJWT("test@gmail.com", "Shashank", "Vivek")
 	if err != nil {
 		return user.NewLoginInternalServerError().WithPayload("Error defining token")
 	}

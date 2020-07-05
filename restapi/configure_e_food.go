@@ -34,6 +34,8 @@ func configureAPI(api *operations.EFoodAPI) http.Handler {
 
 	dbClient := clientBuilder.BuildSqlClient()
 
+	api.BearerAuth = utils.ValidateHeader
+
 	api.UserLoginHandler = handlers.NewUserLoginHandler(dbClient)
 
 	api.MenuCategoryListHandler = handlers.NewMenuCategoryHandler(dbClient)
@@ -48,7 +50,11 @@ func configureAPI(api *operations.EFoodAPI) http.Handler {
 
 	api.GuestAddSessionHandler = handlers.NewGuestAddSessionHandler(dbClient)
 
-	api.BearerAuth = utils.ValidateHeader
+	api.UserAddToCartHandler = handlers.NewUserAddToCartHandler(dbClient)
+
+	api.UserGetCartHandler = handlers.NewUserGetCartHandler(dbClient)
+
+	api.UserRemoveFromCartHandler = handlers.NewUserRemoveFromCartHandler(dbClient)
 
 	api.UserCheckoutHandler = handlers.NewCartCheckoutHandler(dbClient)
 

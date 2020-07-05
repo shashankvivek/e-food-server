@@ -325,6 +325,125 @@ func init() {
           }
         }
       }
+    },
+    "/user/cart": {
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "description": "Get All cart items",
+        "tags": [
+          "user"
+        ],
+        "operationId": "GetCart",
+        "responses": {
+          "200": {
+            "description": "All items in cart",
+            "schema": {
+              "$ref": "#/definitions/CartPreview"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Item Not Found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "description": "This API adds product to cart / guest cart",
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "user"
+        ],
+        "operationId": "AddToCart",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ItemInfo"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success response when item is added successfully",
+            "schema": {
+              "$ref": "#/definitions/CartSuccessResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Item to be added Not Found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "description": "Remove item from cart",
+        "tags": [
+          "user"
+        ],
+        "operationId": "RemoveFromCart",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "productId",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success response when item is removed from cart",
+            "schema": {
+              "$ref": "#/definitions/SuccessResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Item to be deleted Not Found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -823,6 +942,125 @@ func init() {
           },
           "404": {
             "description": "Session ID Not Found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "/user/cart": {
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "description": "Get All cart items",
+        "tags": [
+          "user"
+        ],
+        "operationId": "GetCart",
+        "responses": {
+          "200": {
+            "description": "All items in cart",
+            "schema": {
+              "$ref": "#/definitions/CartPreview"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Item Not Found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "description": "This API adds product to cart / guest cart",
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "user"
+        ],
+        "operationId": "AddToCart",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ItemInfo"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success response when item is added successfully",
+            "schema": {
+              "$ref": "#/definitions/CartSuccessResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Item to be added Not Found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "description": "Remove item from cart",
+        "tags": [
+          "user"
+        ],
+        "operationId": "RemoveFromCart",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "productId",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success response when item is removed from cart",
+            "schema": {
+              "$ref": "#/definitions/SuccessResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Item to be deleted Not Found"
           },
           "500": {
             "description": "Server error",
