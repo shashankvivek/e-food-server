@@ -2,7 +2,6 @@ package dao
 
 import (
 	"database/sql"
-	"e-food/constants"
 	"e-food/models"
 	"errors"
 	"fmt"
@@ -51,35 +50,16 @@ func AddItemToGuestCart(db *sql.DB, sessionId string, totalQty, productId int64)
 		totalQty = unitsInStock
 		msg = "Reached max stock quantity"
 	}
-	itemQtyInCart, err := getItemQtyInGuestCart(db, sessionId, productId)
+	err = insertItemInGuestCart(db, unitsInStock, totalQty, productId, sessionId)
 	if err != nil {
-		log.Errorf(err.Error())
 		return nil, err
 	}
-	if itemQtyInCart > 0 {
-		updateMsg, addedQty, err := updateItemQtyInGuestCart(db, unitsInStock, totalQty, itemQtyInCart, productId, sessionId)
-		if err != nil {
-			log.Errorf(err.Error())
-			return nil, err
-		}
-		var retVal = &models.CartSuccessResponse{
-			Success:  true,
-			Message:  updateMsg + msg,
-			QtyAdded: addedQty,
-		}
-		return retVal, nil
-	} else {
-		err := insertItemInGuestCart(db, unitsInStock, totalQty, productId, sessionId)
-		if err != nil {
-			return nil, err
-		}
-		var retVal = &models.CartSuccessResponse{
-			Success:  true,
-			Message:  msg,
-			QtyAdded: totalQty,
-		}
-		return retVal, nil
+	var retVal = &models.CartSuccessResponse{
+		Success:  true,
+		Message:  msg,
+		QtyAdded: totalQty,
 	}
+	return retVal, nil
 }
 
 func RemoveItemFromGuestCart(db *sql.DB, productId int64, sessionId string) (bool, error) {
@@ -91,35 +71,15 @@ func RemoveItemFromGuestCart(db *sql.DB, productId int64, sessionId string) (boo
 	if itemQtyInCart < 1 {
 		return false, errors.New("item does not exist")
 	}
-	exitingUnitsInStock, err := GetUnitsInStock(db, productId)
-	if err != nil {
-		log.Errorf(err.Error())
-		return false, err
-	}
-	finalQty := exitingUnitsInStock + itemQtyInCart
-	tx, err := db.Begin()
+	res, err := db.Exec("DELETE from guest_cart_item where sessionId = ? and productId = ?", sessionId, productId)
 	if err != nil {
 		return false, err
 	}
-
-	res, err := tx.Exec("DELETE from guest_cart_item where sessionId = ? and productId = ?", sessionId, productId)
-	if err != nil {
-		return false, err
-	}
-
 	deletedRow, _ := res.RowsAffected()
-	res, err = tx.Exec("UPDATE product SET unitsInStock = ? WHERE (productId = ?)", finalQty, productId)
-	if err != nil {
-		tx.Rollback()
-		return false, err
-	}
-	updatedRow, _ := res.RowsAffected()
-	if deletedRow == 1 && updatedRow == 1 {
-		tx.Commit()
+	if deletedRow == 1 {
 		return true, nil
 	} else {
-		tx.Rollback()
-		return false, errors.New("cart item removal transaction error")
+		return false, errors.New("error removing item from guest cart")
 	}
 }
 
@@ -134,75 +94,18 @@ func getItemQtyInGuestCart(db *sql.DB, sessionId string, productId int64) (int64
 	return int64(addedQty), nil
 }
 
-func updateItemQtyInGuestCart(
-	db *sql.DB,
-	unitsInStock, totalQty, itemQtyInCart, productId int64,
-	sessionId string) (string, int64, error) {
-
-	msg := "Item added successfully. "
-	qtyToAdd := itemQtyInCart + totalQty
-	if qtyToAdd > constants.MAX_ALLOWED_CART_ITEM_QTY {
-		qtyToAdd = constants.MAX_ALLOWED_CART_ITEM_QTY
-		msg = "Item reached max stock quantity. "
-	}
-	tx, err := db.Begin()
-	if err != nil {
-		log.Errorf(err.Error())
-		return "", -1, err
-	}
-	res, err := tx.Exec("UPDATE guest_cart_item set totalQty = ? where sessionId = ? and productId = ?", qtyToAdd, sessionId, productId)
-	if err != nil {
-		tx.Rollback()
-		log.Errorf(err.Error())
-		return "", -1, err
-	}
-	updatedGuestCartItemRow, _ := res.RowsAffected()
-
-	remainingUnitsInStock := unitsInStock - qtyToAdd
-	res, err = tx.Exec("UPDATE product SET unitsInStock = ? WHERE (productId = ?)", remainingUnitsInStock, productId)
-	if err != nil {
-		tx.Rollback()
-		log.Errorf(err.Error())
-		return "", -1, err
-	}
-	updatedProductRow, _ := res.RowsAffected()
-	if updatedGuestCartItemRow == 1 && updatedProductRow == 1 {
-		tx.Commit()
-		return msg, qtyToAdd, nil
-	} else {
-		tx.Rollback()
-		return "", -1, errors.New("cart update transaction failed")
-	}
-}
-
 func insertItemInGuestCart(db *sql.DB, unitsInStock, totalQty, productId int64, sessionId string) error {
-	tx, err := db.Begin()
+	res, err := db.Exec("INSERT INTO guest_cart_item (sessionId,totalQty,productId) VALUES (?, ?, ?)", sessionId, totalQty, productId)
 	if err != nil {
-		return err
-	}
-	res, err := tx.Exec("INSERT INTO guest_cart_item (sessionId,totalQty,productId) VALUES (?, ?, ?)", sessionId, totalQty, productId)
-	if err != nil {
-		tx.Rollback()
 		return err
 	}
 	insertedRow, err := res.RowsAffected()
 	if err != nil {
 		return err
 	}
-	remainingUnitsInStock := unitsInStock - totalQty
-
-	res, err = tx.Exec("UPDATE product SET unitsInStock = ? WHERE (productId = ?)", remainingUnitsInStock, productId)
-	if err != nil {
-		tx.Rollback()
-		log.Errorf(err.Error())
-		return err
-	}
-	updatedRow, _ := res.RowsAffected()
-	if insertedRow == 1 && updatedRow == 1 {
-		tx.Commit()
+	if insertedRow == 1 {
 		return nil
 	} else {
-		tx.Rollback()
 		return errors.New("cart insert transaction failed")
 	}
 }

@@ -3,6 +3,7 @@ package dao
 import (
 	"database/sql"
 	"e-food/models"
+	"errors"
 	"fmt"
 	"github.com/google/martian/log"
 )
@@ -34,3 +35,77 @@ func GetUserCart(db *sql.DB, email string) (models.CartPreview, error) {
 	}
 	return cart, nil
 }
+
+func AddItemToUserCart(db *sql.DB, email string, totalQty, productId int64) (*models.CartSuccessResponse, error) {
+	msg := "Item added to cart"
+	unitsInStock, err := GetUnitsInStock(db, productId)
+	if err != nil {
+		return nil, err
+	}
+	if unitsInStock < 1 {
+		return nil, errors.New("item out of stock")
+	}
+	if totalQty > unitsInStock {
+		totalQty = unitsInStock
+		msg = "Reached max stock quantity"
+	}
+	err = insertItemInUserCart(db, unitsInStock, totalQty, productId, email)
+	if err != nil {
+		return nil, err
+	}
+	var retVal = &models.CartSuccessResponse{
+		Success:  true,
+		Message:  msg,
+		QtyAdded: totalQty,
+	}
+	return retVal, nil
+}
+
+func insertItemInUserCart(db *sql.DB, unitsInStock, totalQty, productId int64, email string) error {
+	res, err := db.Exec("INSERT INTO user_cart_item (email,totalQty,productId) VALUES (?, ?, ?)", email, totalQty, productId)
+	if err != nil {
+		return err
+	}
+	insertedRow, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if insertedRow == 1 {
+		return nil
+	} else {
+		return errors.New("adding item to user cart failed")
+	}
+}
+
+//TODO: use this logic when the order is being created
+//func insertItemInUserCart(db *sql.DB, unitsInStock, totalQty, productId int64, email string) error {
+//	tx, err := db.Begin()
+//	if err != nil {
+//		return err
+//	}
+//	res, err := tx.Exec("INSERT INTO user_cart_item (email,totalQty,productId) VALUES (?, ?, ?)", email, totalQty, productId)
+//	if err != nil {
+//		tx.Rollback()
+//		return err
+//	}
+//	insertedRow, err := res.RowsAffected()
+//	if err != nil {
+//		return err
+//	}
+//	remainingUnitsInStock := unitsInStock - totalQty
+//
+//	res, err = tx.Exec("UPDATE product SET unitsInStock = ? WHERE (productId = ?)", remainingUnitsInStock, productId)
+//	if err != nil {
+//		tx.Rollback()
+//		log.Errorf(err.Error())
+//		return err
+//	}
+//	updatedRow, _ := res.RowsAffected()
+//	if insertedRow == 1 && updatedRow == 1 {
+//		tx.Commit()
+//		return nil
+//	} else {
+//		tx.Rollback()
+//		return errors.New("cart insert transaction failed")
+//	}
+//}
