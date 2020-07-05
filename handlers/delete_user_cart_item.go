@@ -25,10 +25,10 @@ func (impl *delUserCartItemImpl) Handle(params user.RemoveFromCartParams, princi
 	if err != nil {
 		return user.NewRemoveFromCartInternalServerError().WithPayload("error in parsing token")
 	}
-	isDelete, err := dao.RemoveItemFromUserCart(impl.dbClient, params.ProductID, email.(string))
+	err = dao.RemoveItemFromUserCart(impl.dbClient, params.ProductID, email.(string))
 	if err != nil {
 		log.Errorf(err.Error())
 		return user.NewRemoveFromCartInternalServerError().WithPayload("error while deleting item")
 	}
-	return user.NewRemoveFromCartOK().WithPayload(&models.SuccessResponse{Success: isDelete})
+	return user.NewRemoveFromCartOK().WithPayload(&models.SuccessResponse{Success: true})
 }

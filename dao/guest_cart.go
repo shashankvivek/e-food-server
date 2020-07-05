@@ -62,28 +62,28 @@ func AddItemToGuestCart(db *sql.DB, sessionId string, totalQty, productId int64)
 	return retVal, nil
 }
 
-func RemoveItemFromGuestCart(db *sql.DB, productId int64, sessionId string) (bool, error) {
-	itemQtyInCart, err := getItemQtyInGuestCart(db, sessionId, productId)
+func RemoveItemFromGuestCart(db *sql.DB, productId int64, sessionId string) error {
+	itemQtyInCart, err := GetItemQtyInGuestCart(db, sessionId, productId)
 	if err != nil {
 		log.Errorf(err.Error())
-		return false, err
+		return err
 	}
 	if itemQtyInCart < 1 {
-		return false, errors.New("item does not exist")
+		return errors.New("item does not exist")
 	}
 	res, err := db.Exec("DELETE from guest_cart_item where sessionId = ? and productId = ?", sessionId, productId)
 	if err != nil {
-		return false, err
+		return err
 	}
 	deletedRow, _ := res.RowsAffected()
 	if deletedRow == 1 {
-		return true, nil
+		return nil
 	} else {
-		return false, errors.New("error removing item from guest cart")
+		return errors.New("error removing item from guest cart")
 	}
 }
 
-func getItemQtyInGuestCart(db *sql.DB, sessionId string, productId int64) (int64, error) {
+func GetItemQtyInGuestCart(db *sql.DB, sessionId string, productId int64) (int64, error) {
 	addedQty := 0
 	row := db.QueryRow("SELECT totalQty from guest_cart_item where productId = ? and sessionId = ?", productId, sessionId)
 	err := row.Scan(&addedQty)
@@ -108,4 +108,15 @@ func insertItemInGuestCart(db *sql.DB, unitsInStock, totalQty, productId int64, 
 	} else {
 		return errors.New("cart insert transaction failed")
 	}
+}
+
+func EmptyGuestCartItem(db *sql.DB, sessionId string) error {
+	row, err := db.Exec("DELETE from guest_cart_item where sessionId = ? ", sessionId)
+	if err != nil {
+		return err
+	}
+	fmt.Print("Delete Guest Cart Item Count: ")
+	fmt.Println(row.RowsAffected())
+	fmt.Println("=============================")
+	return nil
 }

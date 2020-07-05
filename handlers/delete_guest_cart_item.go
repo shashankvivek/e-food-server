@@ -28,10 +28,10 @@ func (impl *deleteGuestCartItemImpl) Handle(params guest.RemoveItemParams) middl
 	if cookieInfo.Value == "" {
 		return guest.NewRemoveItemInternalServerError().WithPayload("error with cookie")
 	}
-	isDelete, err := dao.RemoveItemFromGuestCart(impl.dbClient, params.ProductID, cookieInfo.Value)
+	err = dao.RemoveItemFromGuestCart(impl.dbClient, params.ProductID, cookieInfo.Value)
 	if err != nil {
 		log.Errorf(err.Error())
 		return guest.NewRemoveItemInternalServerError().WithPayload("error while deleting item")
 	}
-	return guest.NewRemoveItemOK().WithPayload(&models.SuccessResponse{Success: isDelete})
+	return guest.NewRemoveItemOK().WithPayload(&models.SuccessResponse{Success: true})
 }

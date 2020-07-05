@@ -78,28 +78,28 @@ func insertItemInUserCart(db *sql.DB, totalQty, productId int64, email string) e
 	}
 }
 
-func RemoveItemFromUserCart(db *sql.DB, productId int64, email string) (bool, error) {
-	itemQtyInCart, err := getItemQtyInUserCart(db, email, productId)
+func RemoveItemFromUserCart(db *sql.DB, productId int64, email string) error {
+	itemQtyInCart, err := GetItemQtyInUserCart(db, email, productId)
 	if err != nil {
 		log.Errorf(err.Error())
-		return false, err
+		return err
 	}
 	if itemQtyInCart < 1 {
-		return false, errors.New("item does not exist")
+		return errors.New("item does not exist")
 	}
 	res, err := db.Exec("DELETE from user_cart_item where email = ? and productId = ?", email, productId)
 	if err != nil {
-		return false, err
+		return err
 	}
 	deletedRow, _ := res.RowsAffected()
 	if deletedRow == 1 {
-		return true, nil
+		return nil
 	} else {
-		return false, errors.New("error removing item from User cart")
+		return errors.New("error removing item from User cart")
 	}
 }
 
-func getItemQtyInUserCart(db *sql.DB, email string, productId int64) (int64, error) {
+func GetItemQtyInUserCart(db *sql.DB, email string, productId int64) (int64, error) {
 	addedQty := 0
 	row := db.QueryRow("SELECT totalQty from user_cart_item where productId = ? and email = ?", productId, email)
 	err := row.Scan(&addedQty)
