@@ -65,7 +65,7 @@ paths:
         - name: 'login'
           in: 'body'
           required: true
-          description: 'The user email ID'
+          description: 'Login Payload'
           schema:
             $ref: '#/definitions/LoginInfo'
       responses:
@@ -73,6 +73,35 @@ paths:
           description: Successful login
           schema:
             $ref: '#/definitions/LoginSuccess'
+        400:
+          description: Bad Request
+        404:
+          schema:
+            type: string
+          description: User not found
+        500:
+          schema:
+            type: string
+          description: Server error
+  /register:
+    post:
+      description: 'To register a new user'
+      tags: [user]
+      operationId: Register
+      consumes:
+        - 'application/json'
+      parameters:
+        - name: 'signup'
+          in: 'body'
+          required: true
+          description: 'Registeration Payload'
+          schema:
+            $ref: '#/definitions/RegisterUser'
+      responses:
+        200:
+          description: Successful registeration
+          schema:
+            $ref: '#/definitions/SuccessResponse'
         400:
           description: Bad Request
         404:
@@ -265,6 +294,19 @@ paths:
             type: string
           description: Server error
 definitions:
+  RegisterUser:
+    type: object
+    properties:
+      email:
+        type: string
+      fname:
+        type: string
+      lname:
+        type: string
+      password:
+        type: string
+      phoneNo:
+        type: integer
   LoginInfo:
     type: object
     properties:

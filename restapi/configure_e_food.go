@@ -58,6 +58,8 @@ func configureAPI(api *operations.EFoodAPI) http.Handler {
 
 	api.UserCheckoutHandler = handlers.NewCartCheckoutHandler(dbClient)
 
+	api.UserRegisterHandler = handlers.NewUserRegisterHandler(dbClient)
+
 	api.ServerShutdown = func() {}
 
 	return setupGlobalMiddleware(api.Serve(setupMiddlewares))

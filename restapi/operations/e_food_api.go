@@ -70,6 +70,9 @@ func NewEFoodAPI(spec *loads.Document) *EFoodAPI {
 		UserLoginHandler: user.LoginHandlerFunc(func(params user.LoginParams) middleware.Responder {
 			return middleware.NotImplemented("operation user.Login has not yet been implemented")
 		}),
+		UserRegisterHandler: user.RegisterHandlerFunc(func(params user.RegisterParams) middleware.Responder {
+			return middleware.NotImplemented("operation user.Register has not yet been implemented")
+		}),
 		UserRemoveFromCartHandler: user.RemoveFromCartHandlerFunc(func(params user.RemoveFromCartParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation user.RemoveFromCart has not yet been implemented")
 		}),
@@ -142,6 +145,8 @@ type EFoodAPI struct {
 	GuestGetItemsHandler guest.GetItemsHandler
 	// UserLoginHandler sets the operation handler for the login operation
 	UserLoginHandler user.LoginHandler
+	// UserRegisterHandler sets the operation handler for the register operation
+	UserRegisterHandler user.RegisterHandler
 	// UserRemoveFromCartHandler sets the operation handler for the remove from cart operation
 	UserRemoveFromCartHandler user.RemoveFromCartHandler
 	// GuestRemoveItemHandler sets the operation handler for the remove item operation
@@ -241,6 +246,9 @@ func (o *EFoodAPI) Validate() error {
 	}
 	if o.UserLoginHandler == nil {
 		unregistered = append(unregistered, "user.LoginHandler")
+	}
+	if o.UserRegisterHandler == nil {
+		unregistered = append(unregistered, "user.RegisterHandler")
 	}
 	if o.UserRemoveFromCartHandler == nil {
 		unregistered = append(unregistered, "user.RemoveFromCartHandler")
@@ -380,6 +388,10 @@ func (o *EFoodAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/login"] = user.NewLogin(o.context, o.UserLoginHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/register"] = user.NewRegister(o.context, o.UserRegisterHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}

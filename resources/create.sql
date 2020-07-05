@@ -144,7 +144,7 @@ CREATE TABLE `ecommerce`.`user_details`
     `firstName` VARCHAR(45) NOT NULL,
     `lastName`  VARCHAR(45) NULL,
     `phoneNo`   INT         NULL,
-    `password`  VARCHAR(45) NOT NULL,
+    `password`  VARCHAR(80) NOT NULL,
     PRIMARY KEY (`email`),
     UNIQUE INDEX `userEmail_UNIQUE` (`email` ASC) VISIBLE,
     UNIQUE INDEX `phoneNo_UNIQUE` (`phoneNo` ASC) VISIBLE

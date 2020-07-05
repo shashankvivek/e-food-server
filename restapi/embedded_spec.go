@@ -213,7 +213,7 @@ func init() {
         "operationId": "Login",
         "parameters": [
           {
-            "description": "The user email ID",
+            "description": "Login Payload",
             "name": "login",
             "in": "body",
             "required": true,
@@ -275,6 +275,52 @@ func init() {
           },
           "404": {
             "description": "Products not found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "/register": {
+      "post": {
+        "description": "To register a new user",
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "user"
+        ],
+        "operationId": "Register",
+        "parameters": [
+          {
+            "description": "Registeration Payload",
+            "name": "signup",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RegisterUser"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful login",
+            "schema": {
+              "$ref": "#/definitions/SuccessResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "User not found",
+            "schema": {
+              "type": "string"
+            }
           },
           "500": {
             "description": "Server error",
@@ -607,6 +653,26 @@ func init() {
       "type": "array",
       "items": {
         "$ref": "#/definitions/Product"
+      }
+    },
+    "RegisterUser": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "fname": {
+          "type": "string"
+        },
+        "lname": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "phoneNo": {
+          "type": "integer"
+        }
       }
     },
     "SubCategory": {
@@ -842,7 +908,7 @@ func init() {
         "operationId": "Login",
         "parameters": [
           {
-            "description": "The user email ID",
+            "description": "Login Payload",
             "name": "login",
             "in": "body",
             "required": true,
@@ -904,6 +970,52 @@ func init() {
           },
           "404": {
             "description": "Products not found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "/register": {
+      "post": {
+        "description": "To register a new user",
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "user"
+        ],
+        "operationId": "Register",
+        "parameters": [
+          {
+            "description": "Registeration Payload",
+            "name": "signup",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RegisterUser"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful login",
+            "schema": {
+              "$ref": "#/definitions/SuccessResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "User not found",
+            "schema": {
+              "type": "string"
+            }
           },
           "500": {
             "description": "Server error",
@@ -1236,6 +1348,26 @@ func init() {
       "type": "array",
       "items": {
         "$ref": "#/definitions/Product"
+      }
+    },
+    "RegisterUser": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "fname": {
+          "type": "string"
+        },
+        "lname": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "phoneNo": {
+          "type": "integer"
+        }
       }
     },
     "SubCategory": {
