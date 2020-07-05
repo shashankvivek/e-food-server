@@ -3,3 +3,5 @@
 3. do logging
 4. manage deactivated session Ids
 5. CSRF
+6. Manage headers on deployed server
+7. Add timestamp in session entries to clean them up later with some housekeeping script

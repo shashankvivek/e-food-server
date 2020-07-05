@@ -7,6 +7,7 @@ import (
 	"e-food/clients"
 	"e-food/handlers"
 	"e-food/restapi/operations"
+	"e-food/utils"
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/google/uuid"
@@ -47,7 +48,7 @@ func configureAPI(api *operations.EFoodAPI) http.Handler {
 
 	api.GuestAddSessionHandler = handlers.NewGuestAddSessionHandler(dbClient)
 
-	api.BearerAuth = handlers.ValidateHeader
+	api.BearerAuth = utils.ValidateHeader
 
 	api.CartCheckoutHandler = handlers.NewCartCheckoutHandler(dbClient)
 

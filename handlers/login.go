@@ -5,11 +5,9 @@ import (
 	"e-food/constants"
 	"e-food/models"
 	"e-food/restapi/operations/user"
-	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/google/martian/log"
-	"strings"
 	"time"
 )
 
@@ -25,20 +23,24 @@ func NewUserLoginHandler(db *sql.DB) user.LoginHandler {
 
 func (impl *loginImpl) Handle(params user.LoginParams) middleware.Responder {
 	//TODO: check username and pwd in DB and then generate token
-	token, err := generateJWT("test@gmail.com")
+	// Once validated, shift any guestCart item to customer cart item
+	// delete all entry from guestCart
+	token, err := generateJWT("test@gmail.com", "test", "user")
 	if err != nil {
 		return user.NewLoginInternalServerError().WithPayload("Error defining token")
 	}
 	return user.NewLoginOK().WithPayload(&models.LoginSuccess{Success: true, Token: token})
 }
 
-func generateJWT(userEmail string) (string, error) {
+func generateJWT(userEmail, fname, lname string) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
 
 	claims["authorized"] = true
 	claims["user"] = userEmail
-	claims["exp"] = time.Now().Add(time.Minute * 30).Unix()
+	claims["fname"] = fname
+	claims["lname"] = lname
+	claims["exp"] = time.Now().Add(time.Minute * 90).Unix()
 
 	tokenString, err := token.SignedString(constants.MySecretKeyForJWT)
 	if err != nil {
@@ -46,19 +48,4 @@ func generateJWT(userEmail string) (string, error) {
 		return "", err
 	}
 	return tokenString, nil
-}
-
-func ValidateHeader(bearerHeader string) (interface{}, error) {
-	bearerToken := strings.Split(bearerHeader, " ")[1]
-	token, err := jwt.Parse(bearerToken, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("error decoding token")
-		}
-		return constants.MySecretKeyForJWT, nil
-	})
-	if err != nil {
-		log.Errorf(err.Error())
-		return nil, err
-	}
-	return token.Valid, nil
 }
