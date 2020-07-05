@@ -40,17 +40,17 @@ func configureAPI(api *operations.EFoodAPI) http.Handler {
 
 	api.ProductsGetFromSubCategoryHandler = handlers.NewProductsFromSubCategoryHandler(dbClient)
 
-	api.CartGetItemsHandler = handlers.NewCartGetItemsHandler(dbClient)
+	api.GuestGetItemsHandler = handlers.NewCartGetItemsHandler(dbClient)
 
-	api.CartAddItemHandler = handlers.NewCartAddItemHandler(dbClient)
+	api.GuestAddItemHandler = handlers.NewCartAddItemHandler(dbClient)
 
-	api.CartRemoveItemHandler = handlers.NewCartRemoveItemHandler(dbClient)
+	api.GuestRemoveItemHandler = handlers.NewCartRemoveItemHandler(dbClient)
 
 	api.GuestAddSessionHandler = handlers.NewGuestAddSessionHandler(dbClient)
 
 	api.BearerAuth = utils.ValidateHeader
 
-	api.CartCheckoutHandler = handlers.NewCartCheckoutHandler(dbClient)
+	api.UserCheckoutHandler = handlers.NewCartCheckoutHandler(dbClient)
 
 	api.ServerShutdown = func() {}
 

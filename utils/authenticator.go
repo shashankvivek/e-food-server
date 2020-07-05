@@ -8,11 +8,16 @@ import (
 	"strings"
 )
 
-//type
+type TokenInfo struct {
+	IsValid bool
+	Email   string
+}
 
 func ValidateHeader(bearerHeader string) (interface{}, error) {
 	bearerToken := strings.Split(bearerHeader, " ")[1]
-	token, err := jwt.Parse(bearerToken, func(token *jwt.Token) (interface{}, error) {
+	claims := jwt.MapClaims{}
+	tokenInfo := &TokenInfo{}
+	token, err := jwt.ParseWithClaims(bearerToken, claims, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("error decoding token")
 		}
@@ -22,5 +27,7 @@ func ValidateHeader(bearerHeader string) (interface{}, error) {
 		log.Errorf(err.Error())
 		return nil, err
 	}
-	return token.Valid, nil
+	tokenInfo.IsValid = token.Valid
+	tokenInfo.Email = claims["user"].(string)
+	return tokenInfo, nil
 }

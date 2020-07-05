@@ -19,7 +19,6 @@ import (
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	"e-food/restapi/operations/cart"
 	"e-food/restapi/operations/guest"
 	"e-food/restapi/operations/menu"
 	"e-food/restapi/operations/products"
@@ -47,8 +46,8 @@ func NewEFoodAPI(spec *loads.Document) *EFoodAPI {
 
 		JSONProducer: runtime.JSONProducer(),
 
-		CartAddItemHandler: cart.AddItemHandlerFunc(func(params cart.AddItemParams) middleware.Responder {
-			return middleware.NotImplemented("operation cart.AddItem has not yet been implemented")
+		GuestAddItemHandler: guest.AddItemHandlerFunc(func(params guest.AddItemParams) middleware.Responder {
+			return middleware.NotImplemented("operation guest.AddItem has not yet been implemented")
 		}),
 		GuestAddSessionHandler: guest.AddSessionHandlerFunc(func(params guest.AddSessionParams) middleware.Responder {
 			return middleware.NotImplemented("operation guest.AddSession has not yet been implemented")
@@ -59,17 +58,17 @@ func NewEFoodAPI(spec *loads.Document) *EFoodAPI {
 		ProductsGetFromSubCategoryHandler: products.GetFromSubCategoryHandlerFunc(func(params products.GetFromSubCategoryParams) middleware.Responder {
 			return middleware.NotImplemented("operation products.GetFromSubCategory has not yet been implemented")
 		}),
-		CartGetItemsHandler: cart.GetItemsHandlerFunc(func(params cart.GetItemsParams) middleware.Responder {
-			return middleware.NotImplemented("operation cart.GetItems has not yet been implemented")
+		GuestGetItemsHandler: guest.GetItemsHandlerFunc(func(params guest.GetItemsParams) middleware.Responder {
+			return middleware.NotImplemented("operation guest.GetItems has not yet been implemented")
 		}),
 		UserLoginHandler: user.LoginHandlerFunc(func(params user.LoginParams) middleware.Responder {
 			return middleware.NotImplemented("operation user.Login has not yet been implemented")
 		}),
-		CartRemoveItemHandler: cart.RemoveItemHandlerFunc(func(params cart.RemoveItemParams) middleware.Responder {
-			return middleware.NotImplemented("operation cart.RemoveItem has not yet been implemented")
+		GuestRemoveItemHandler: guest.RemoveItemHandlerFunc(func(params guest.RemoveItemParams) middleware.Responder {
+			return middleware.NotImplemented("operation guest.RemoveItem has not yet been implemented")
 		}),
-		CartCheckoutHandler: cart.CheckoutHandlerFunc(func(params cart.CheckoutParams, principal interface{}) middleware.Responder {
-			return middleware.NotImplemented("operation cart.Checkout has not yet been implemented")
+		UserCheckoutHandler: user.CheckoutHandlerFunc(func(params user.CheckoutParams, principal interface{}) middleware.Responder {
+			return middleware.NotImplemented("operation user.Checkout has not yet been implemented")
 		}),
 
 		// Applies when the "Authorization" header is set
@@ -118,22 +117,22 @@ type EFoodAPI struct {
 	// APIAuthorizer provides access control (ACL/RBAC/ABAC) by providing access to the request and authenticated principal
 	APIAuthorizer runtime.Authorizer
 
-	// CartAddItemHandler sets the operation handler for the add item operation
-	CartAddItemHandler cart.AddItemHandler
+	// GuestAddItemHandler sets the operation handler for the add item operation
+	GuestAddItemHandler guest.AddItemHandler
 	// GuestAddSessionHandler sets the operation handler for the add session operation
 	GuestAddSessionHandler guest.AddSessionHandler
 	// MenuCategoryListHandler sets the operation handler for the category list operation
 	MenuCategoryListHandler menu.CategoryListHandler
 	// ProductsGetFromSubCategoryHandler sets the operation handler for the get from sub category operation
 	ProductsGetFromSubCategoryHandler products.GetFromSubCategoryHandler
-	// CartGetItemsHandler sets the operation handler for the get items operation
-	CartGetItemsHandler cart.GetItemsHandler
+	// GuestGetItemsHandler sets the operation handler for the get items operation
+	GuestGetItemsHandler guest.GetItemsHandler
 	// UserLoginHandler sets the operation handler for the login operation
 	UserLoginHandler user.LoginHandler
-	// CartRemoveItemHandler sets the operation handler for the remove item operation
-	CartRemoveItemHandler cart.RemoveItemHandler
-	// CartCheckoutHandler sets the operation handler for the checkout operation
-	CartCheckoutHandler cart.CheckoutHandler
+	// GuestRemoveItemHandler sets the operation handler for the remove item operation
+	GuestRemoveItemHandler guest.RemoveItemHandler
+	// UserCheckoutHandler sets the operation handler for the checkout operation
+	UserCheckoutHandler user.CheckoutHandler
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
 	ServeError func(http.ResponseWriter, *http.Request, error)
@@ -204,8 +203,8 @@ func (o *EFoodAPI) Validate() error {
 		unregistered = append(unregistered, "AuthorizationAuth")
 	}
 
-	if o.CartAddItemHandler == nil {
-		unregistered = append(unregistered, "cart.AddItemHandler")
+	if o.GuestAddItemHandler == nil {
+		unregistered = append(unregistered, "guest.AddItemHandler")
 	}
 	if o.GuestAddSessionHandler == nil {
 		unregistered = append(unregistered, "guest.AddSessionHandler")
@@ -216,17 +215,17 @@ func (o *EFoodAPI) Validate() error {
 	if o.ProductsGetFromSubCategoryHandler == nil {
 		unregistered = append(unregistered, "products.GetFromSubCategoryHandler")
 	}
-	if o.CartGetItemsHandler == nil {
-		unregistered = append(unregistered, "cart.GetItemsHandler")
+	if o.GuestGetItemsHandler == nil {
+		unregistered = append(unregistered, "guest.GetItemsHandler")
 	}
 	if o.UserLoginHandler == nil {
 		unregistered = append(unregistered, "user.LoginHandler")
 	}
-	if o.CartRemoveItemHandler == nil {
-		unregistered = append(unregistered, "cart.RemoveItemHandler")
+	if o.GuestRemoveItemHandler == nil {
+		unregistered = append(unregistered, "guest.RemoveItemHandler")
 	}
-	if o.CartCheckoutHandler == nil {
-		unregistered = append(unregistered, "cart.CheckoutHandler")
+	if o.UserCheckoutHandler == nil {
+		unregistered = append(unregistered, "user.CheckoutHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -328,7 +327,7 @@ func (o *EFoodAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/cart"] = cart.NewAddItem(o.context, o.CartAddItemHandler)
+	o.handlers["POST"]["/guest/cart"] = guest.NewAddItem(o.context, o.GuestAddItemHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
@@ -344,7 +343,7 @@ func (o *EFoodAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/cart"] = cart.NewGetItems(o.context, o.CartGetItemsHandler)
+	o.handlers["GET"]["/guest/cart"] = guest.NewGetItems(o.context, o.GuestGetItemsHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
@@ -352,11 +351,11 @@ func (o *EFoodAPI) initHandlerCache() {
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/cart"] = cart.NewRemoveItem(o.context, o.CartRemoveItemHandler)
+	o.handlers["DELETE"]["/guest/cart"] = guest.NewRemoveItem(o.context, o.GuestRemoveItemHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/checkoutCart"] = cart.NewCheckout(o.context, o.CartCheckoutHandler)
+	o.handlers["GET"]["/checkoutCart"] = user.NewCheckout(o.context, o.UserCheckoutHandler)
 }
 
 // Serve creates a http handler to serve the API over HTTP

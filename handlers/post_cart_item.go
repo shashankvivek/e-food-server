@@ -5,7 +5,7 @@ import (
 	"e-food/constants"
 	"e-food/dao"
 	"e-food/models"
-	"e-food/restapi/operations/cart"
+	"e-food/restapi/operations/guest"
 	"fmt"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/google/martian/log"
@@ -15,30 +15,30 @@ type addCartItemImpl struct {
 	dbClient *sql.DB
 }
 
-func NewCartAddItemHandler(dbClient *sql.DB) cart.AddItemHandler {
+func NewCartAddItemHandler(dbClient *sql.DB) guest.AddItemHandler {
 	return &addCartItemImpl{
 		dbClient: dbClient,
 	}
 }
 
-func (impl *addCartItemImpl) Handle(params cart.AddItemParams) middleware.Responder {
+func (impl *addCartItemImpl) Handle(params guest.AddItemParams) middleware.Responder {
 	//TODO: add check for logged in user and add item to cart accordingly
 	cookieInfo, err := params.HTTPRequest.Cookie("guest_session")
 	if err != nil {
 		log.Errorf(err.Error())
-		return cart.NewGetItemsInternalServerError().WithPayload("error with cookie")
+		return guest.NewGetItemsInternalServerError().WithPayload("error with cookie")
 	}
 	if cookieInfo.Value == "" {
-		return cart.NewGetItemsInternalServerError().WithPayload("Unable to add Item to cart")
+		return guest.NewGetItemsInternalServerError().WithPayload("Unable to add Item to cart")
 	}
 
 	if params.Body.TotalQty < 1 || params.Body.TotalQty > constants.MAX_ALLOWED_CART_ITEM_QTY {
-		return cart.NewAddItemOK().WithPayload(&models.CartSuccessResponse{Success: false, Message: "Quantity must be between 1 and 12", QtyAdded: 0})
+		return guest.NewAddItemOK().WithPayload(&models.CartSuccessResponse{Success: false, Message: "Quantity must be between 1 and 12", QtyAdded: 0})
 	}
 	retVal, err := dao.AddItemToGuestCart(impl.dbClient, cookieInfo.Value, params.Body.TotalQty, params.Body.ProductID)
 	if err != nil {
 		fmt.Println(err.Error())
-		return cart.NewGetItemsInternalServerError().WithPayload("Error in adding Item to cart")
+		return guest.NewAddItemInternalServerError().WithPayload("Error in adding Item to cart")
 	}
-	return cart.NewAddItemOK().WithPayload(retVal)
+	return guest.NewAddItemOK().WithPayload(retVal)
 }

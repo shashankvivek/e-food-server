@@ -35,110 +35,6 @@ func init() {
   "host": "e-food.com",
   "basePath": "/",
   "paths": {
-    "/cart": {
-      "get": {
-        "description": "Get All cart items",
-        "tags": [
-          "cart"
-        ],
-        "operationId": "GetItems",
-        "responses": {
-          "200": {
-            "description": "All items in cart",
-            "schema": {
-              "$ref": "#/definitions/CartPreview"
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Item Not Found"
-          },
-          "500": {
-            "description": "Server error",
-            "schema": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "post": {
-        "description": "This API adds product to cart / guest cart",
-        "consumes": [
-          "application/json"
-        ],
-        "tags": [
-          "cart"
-        ],
-        "operationId": "AddItem",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/ItemInfo"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success response when item is added successfully",
-            "schema": {
-              "$ref": "#/definitions/CartSuccessResponse"
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Item to be added Not Found"
-          },
-          "500": {
-            "description": "Server error",
-            "schema": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "delete": {
-        "description": "Remove item from cart",
-        "tags": [
-          "cart"
-        ],
-        "operationId": "RemoveItem",
-        "parameters": [
-          {
-            "type": "integer",
-            "name": "productId",
-            "in": "query",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success response when item is removed from cart",
-            "schema": {
-              "$ref": "#/definitions/SuccessResponse"
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Item to be deleted Not Found"
-          },
-          "500": {
-            "description": "Server error",
-            "schema": {
-              "type": "string"
-            }
-          }
-        }
-      }
-    },
     "/categories": {
       "get": {
         "tags": [
@@ -176,7 +72,7 @@ func init() {
         ],
         "description": "Get Checkout Cart with offers",
         "tags": [
-          "cart"
+          "user"
         ],
         "operationId": "checkout",
         "responses": {
@@ -191,6 +87,110 @@ func init() {
           },
           "404": {
             "description": "Item to be added Not Found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "/guest/cart": {
+      "get": {
+        "description": "Get All cart items",
+        "tags": [
+          "guest"
+        ],
+        "operationId": "GetItems",
+        "responses": {
+          "200": {
+            "description": "All items in cart",
+            "schema": {
+              "$ref": "#/definitions/CartPreview"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Item Not Found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "This API adds product to cart / guest cart",
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "guest"
+        ],
+        "operationId": "AddItem",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ItemInfo"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success response when item is added successfully",
+            "schema": {
+              "$ref": "#/definitions/CartSuccessResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Item to be added Not Found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Remove item from cart",
+        "tags": [
+          "guest"
+        ],
+        "operationId": "RemoveItem",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "productId",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success response when item is removed from cart",
+            "schema": {
+              "$ref": "#/definitions/SuccessResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Item to be deleted Not Found"
           },
           "500": {
             "description": "Server error",
@@ -542,110 +542,6 @@ func init() {
   "host": "e-food.com",
   "basePath": "/",
   "paths": {
-    "/cart": {
-      "get": {
-        "description": "Get All cart items",
-        "tags": [
-          "cart"
-        ],
-        "operationId": "GetItems",
-        "responses": {
-          "200": {
-            "description": "All items in cart",
-            "schema": {
-              "$ref": "#/definitions/CartPreview"
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Item Not Found"
-          },
-          "500": {
-            "description": "Server error",
-            "schema": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "post": {
-        "description": "This API adds product to cart / guest cart",
-        "consumes": [
-          "application/json"
-        ],
-        "tags": [
-          "cart"
-        ],
-        "operationId": "AddItem",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/ItemInfo"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success response when item is added successfully",
-            "schema": {
-              "$ref": "#/definitions/CartSuccessResponse"
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Item to be added Not Found"
-          },
-          "500": {
-            "description": "Server error",
-            "schema": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "delete": {
-        "description": "Remove item from cart",
-        "tags": [
-          "cart"
-        ],
-        "operationId": "RemoveItem",
-        "parameters": [
-          {
-            "type": "integer",
-            "name": "productId",
-            "in": "query",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success response when item is removed from cart",
-            "schema": {
-              "$ref": "#/definitions/SuccessResponse"
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Item to be deleted Not Found"
-          },
-          "500": {
-            "description": "Server error",
-            "schema": {
-              "type": "string"
-            }
-          }
-        }
-      }
-    },
     "/categories": {
       "get": {
         "tags": [
@@ -683,7 +579,7 @@ func init() {
         ],
         "description": "Get Checkout Cart with offers",
         "tags": [
-          "cart"
+          "user"
         ],
         "operationId": "checkout",
         "responses": {
@@ -698,6 +594,110 @@ func init() {
           },
           "404": {
             "description": "Item to be added Not Found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "/guest/cart": {
+      "get": {
+        "description": "Get All cart items",
+        "tags": [
+          "guest"
+        ],
+        "operationId": "GetItems",
+        "responses": {
+          "200": {
+            "description": "All items in cart",
+            "schema": {
+              "$ref": "#/definitions/CartPreview"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Item Not Found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "This API adds product to cart / guest cart",
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "guest"
+        ],
+        "operationId": "AddItem",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ItemInfo"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success response when item is added successfully",
+            "schema": {
+              "$ref": "#/definitions/CartSuccessResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Item to be added Not Found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Remove item from cart",
+        "tags": [
+          "guest"
+        ],
+        "operationId": "RemoveItem",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "productId",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success response when item is removed from cart",
+            "schema": {
+              "$ref": "#/definitions/SuccessResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Item to be deleted Not Found"
           },
           "500": {
             "description": "Server error",

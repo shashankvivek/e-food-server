@@ -86,7 +86,7 @@ paths:
   /checkoutCart:
     get:
       description: 'Get Checkout Cart with offers'
-      tags: [cart]
+      tags: [user]
       operationId: checkout
       security:
         - Bearer: []
@@ -103,10 +103,10 @@ paths:
           schema:
             type: string
           description: Server error
-  /cart:
+  /guest/cart:
     post:
       description: 'This API adds product to cart / guest cart'
-      tags: [cart]
+      tags: [guest]
       operationId: AddItem
       consumes:
         - "application/json"
@@ -131,7 +131,7 @@ paths:
           description: Server error
     get:
       description: 'Get All cart items'
-      tags: [cart]
+      tags: [guest]
       operationId: GetItems
       responses:
         200:
@@ -148,7 +148,7 @@ paths:
           description: Server error
     delete:
       description: 'Remove item from cart'
-      tags: [cart]
+      tags: [guest]
       operationId: RemoveItem
       parameters:
         - in : 'query'
