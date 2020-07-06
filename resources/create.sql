@@ -146,8 +146,7 @@ CREATE TABLE `ecommerce`.`user_details`
     `phoneNo`   INT         NULL,
     `password`  VARCHAR(80) NOT NULL,
     PRIMARY KEY (`email`),
-    UNIQUE INDEX `userEmail_UNIQUE` (`email` ASC) VISIBLE,
-    UNIQUE INDEX `phoneNo_UNIQUE` (`phoneNo` ASC) VISIBLE
+    UNIQUE INDEX `userEmail_UNIQUE` (`email` ASC) VISIBLE
 );
 
 INSERT INTO `ecommerce`.`user_details` (`email`, `firstName`, `lastName`, `phoneNo`, `password`)
