@@ -10,47 +10,41 @@ CREATE TABLE `ecommerce`.`broad_category` (
 
 
 INSERT INTO `ecommerce`.`broad_category`
+(`bcName`,
+ `bcDescription`)
+VALUES ("Fruits",
+        "These are juicy fruits");
+
+
+CREATE TABLE `ecommerce`.`sub_category`
 (
-`bcName`,
-`bcDescription`)
-VALUES
-("Fruits",
-"These are juicy fruits");
-
-
-CREATE TABLE `ecommerce`.`sub_category` (
-  `scId` INT NOT NULL  AUTO_INCREMENT,
-  `scName` VARCHAR(45) NULL,
-  `scDescription` VARCHAR(45) NULL,
-  `scImageUrl` VARCHAR(200) NULL,
-  `scIsActive` TINYINT NULL DEFAULT 1,
-  `bcId` INT NOT NULL,
-  PRIMARY KEY (`scId`),
-  CONSTRAINT `bcId`
-    FOREIGN KEY (`bcId`)
-    REFERENCES `ecommerce`.`broad_category` (`bcId`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE) AUTO_INCREMENT=2000;
+    `scId`          INT          NOT NULL AUTO_INCREMENT,
+    `scName`        VARCHAR(45)  NULL,
+    `scDescription` VARCHAR(45)  NULL,
+    `scImageUrl`    VARCHAR(200) NULL,
+    `scIsActive`    TINYINT      NULL DEFAULT 1,
+    `bcId`          INT          NOT NULL,
+    PRIMARY KEY (`scId`),
+    CONSTRAINT `bcId`
+        FOREIGN KEY (`bcId`)
+            REFERENCES `ecommerce`.`broad_category` (`bcId`)
+) AUTO_INCREMENT = 2000;
 
 INSERT INTO `ecommerce`.`sub_category`
-(
-`scName`,
-`scDescription`,
-`bcId`)
-VALUES
-("Apple",
-"This is an apple",
-1000);
+(`scName`,
+ `scDescription`,
+ `bcId`)
+VALUES ("Apple",
+        "This is an apple",
+        1000);
 
 
 INSERT INTO `ecommerce`.`sub_category`
-(
-`scName`,
-`scDescription`,
-`bcId`)
-VALUES
-("Oranges",
-"These are oranges",
+(`scName`,
+ `scDescription`,
+ `bcId`)
+VALUES ("Oranges",
+        "These are oranges",
 1000);
 
 
@@ -66,43 +60,47 @@ VALUES
 
 
 INSERT INTO `ecommerce`.`sub_category`
-(
-`scName`,
-`scDescription`,
-`bcId`)
-VALUES
-("Pears",
-"These are Pears",
-1000);
+(`scName`,
+ `scDescription`,
+ `bcId`)
+VALUES ("Pears",
+        "These are Pears",
+        1000);
 
 -- PRODUCT TABLE
-CREATE TABLE `ecommerce`.`product` (
-  `productId` INT NOT NULL  AUTO_INCREMENT,
-  `name` VARCHAR(50) NOT NULL,
-  `sku` VARCHAR(45) NULL,
-  `description` VARCHAR(500) NULL,
-  `bcId` INT NOT NULL,
-  `currency` VARCHAR(45) NOT NULL,
-  `unitsInStock` INT NOT NULL,
-  `imageUrl` VARCHAR(200) NULL,
-  `discountPercentage` DECIMAL(2) NULL DEFAULT 0,
-  `unitPrice` DECIMAL(2) NOT NULL,
-  `scId` INT NOT NULL,
-  PRIMARY KEY (`productId`),
-  CONSTRAINT `scId_p`
-    FOREIGN KEY (`scId`)
-    REFERENCES `ecommerce`.`sub_category` (`scId`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-  CONSTRAINT `bcId_p`
-    FOREIGN KEY (`bcId`)
-    REFERENCES `ecommerce`.`broad_category` (`bcId`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE);
+CREATE TABLE `ecommerce`.`product`
+(
+    `productId`          INT          NOT NULL AUTO_INCREMENT,
+    `name`               VARCHAR(50)  NOT NULL,
+    `sku`                VARCHAR(45)  NULL,
+    `description`        VARCHAR(500) NULL,
+    `bcId`               INT          NOT NULL,
+    `currency`           VARCHAR(45)  NOT NULL,
+    `unitsInStock`       INT          NOT NULL,
+    `imageUrl`           VARCHAR(200) NULL,
+    `discountPercentage` DECIMAL(2)   NULL DEFAULT 0,
+    `unitPrice`          DECIMAL(2)   NOT NULL,
+    `scId`               INT          NOT NULL,
+    PRIMARY KEY (`productId`),
+    CONSTRAINT `scId_p`
+        FOREIGN KEY (`scId`)
+            REFERENCES `ecommerce`.`sub_category` (`scId`),
+    CONSTRAINT `bcId_p`
+        FOREIGN KEY (`bcId`)
+            REFERENCES `ecommerce`.`broad_category` (`bcId`)
+);
 
-INSERT INTO `ecommerce`.`product` (`name`, `description`, `bcId`, `currency`, `unitsInStock`, `imageUrl`, `unitPrice`, `scId`) VALUES ('Red Apple', 'This is a red apply', '1000', 'Rs', '16', 'https://raw.githubusercontent.com/shashankvivek/e-food-client/master/e-food/src/assets/apple-1.png', '10', '2000');
+INSERT INTO `ecommerce`.`product` (`name`, `description`, `bcId`, `currency`, `unitsInStock`, `imageUrl`, `unitPrice`,
+                                   `scId`)
+VALUES ('Red Apple', 'This is a red apply', '1000', 'Rs', '16',
+        'https://raw.githubusercontent.com/shashankvivek/e-food-client/master/e-food/src/assets/apple-1.png', '10',
+        '2000');
 
-INSERT INTO `ecommerce`.`product` (`name`, `description`, `bcId`, `currency`, `unitsInStock`, `imageUrl`, `unitPrice`, `scId`) VALUES ('Green Apple', 'This is a Green Apple', '1000', 'Rs', '4', 'https://raw.githubusercontent.com/shashankvivek/e-food-client/master/e-food/src/assets/apple-3.jpg', '15', '2000');
+INSERT INTO `ecommerce`.`product` (`name`, `description`, `bcId`, `currency`, `unitsInStock`, `imageUrl`, `unitPrice`,
+                                   `scId`)
+VALUES ('Green Apple', 'This is a Green Apple', '1000', 'Rs', '4',
+        'https://raw.githubusercontent.com/shashankvivek/e-food-client/master/e-food/src/assets/apple-3.jpg', '15',
+        '2000');
 
 INSERT INTO `ecommerce`.`product` (`name`, `description`, `bcId`, `currency`, `unitsInStock`, `imageUrl`, `unitPrice`, `scId`) VALUES ('Banana', 'This is a Banana', '1000', 'Rs', '20', 'https://raw.githubusercontent.com/shashankvivek/e-food-client/master/e-food/src/assets/banana.jpg', '10', '2002');
 
@@ -119,22 +117,19 @@ CREATE TABLE `ecommerce`.`guest` (
 
 -- create Guest cart Item
 
-CREATE TABLE `ecommerce`.`guest_cart_item` (
-                                               `sessionId` VARCHAR(40) NOT NULL,
-                                               `totalQty` INT NOT NULL,
-                                               `productId` INT NULL,
-                                               INDEX `sessionId_idx` (`sessionId` ASC) VISIBLE,
-                                               INDEX `productId_idx` (`productId` ASC) VISIBLE,
-                                               CONSTRAINT `sessionId`
-                                                   FOREIGN KEY (`sessionId`)
-                                                       REFERENCES `ecommerce`.`guest` (`sessionId`)
-                                                       ON DELETE CASCADE
-                                                       ON UPDATE CASCADE,
-                                               CONSTRAINT `productId`
-                                                   FOREIGN KEY (`productId`)
-                                                       REFERENCES `ecommerce`.`product` (`productId`)
-                                                       ON DELETE CASCADE
-                                                       ON UPDATE CASCADE
+CREATE TABLE `ecommerce`.`guest_cart_item`
+(
+    `sessionId` VARCHAR(40) NOT NULL,
+    `totalQty`  INT         NOT NULL,
+    `productId` INT         NULL,
+    INDEX `sessionId_idx` (`sessionId` ASC) VISIBLE,
+    INDEX `productId_idx` (`productId` ASC) VISIBLE,
+    CONSTRAINT `sessionId`
+        FOREIGN KEY (`sessionId`)
+            REFERENCES `ecommerce`.`guest` (`sessionId`),
+    CONSTRAINT `productId`
+        FOREIGN KEY (`productId`)
+            REFERENCES `ecommerce`.`product` (`productId`)
 );
 
 -- create user table, work on password field later

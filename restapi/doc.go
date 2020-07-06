@@ -5,7 +5,7 @@
 //  Schemes:
 //    http
 //  Host: e-food.com
-//  BasePath: /
+//  BasePath: /v1
 //  Version: 1.0.0
 //
 //  Consumes:

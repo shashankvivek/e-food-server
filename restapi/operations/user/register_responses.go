@@ -16,7 +16,7 @@ import (
 // RegisterOKCode is the HTTP code returned for type RegisterOK
 const RegisterOKCode int = 200
 
-/*RegisterOK Successful login
+/*RegisterOK Successful registeration
 
 swagger:response registerOK
 */

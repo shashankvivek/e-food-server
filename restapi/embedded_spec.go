@@ -33,7 +33,7 @@ func init() {
     "version": "1.0.0"
   },
   "host": "e-food.com",
-  "basePath": "/",
+  "basePath": "/v1",
   "paths": {
     "/categories": {
       "get": {
@@ -308,7 +308,7 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "Successful login",
+            "description": "Successful registeration",
             "schema": {
               "$ref": "#/definitions/SuccessResponse"
             }
@@ -728,7 +728,7 @@ func init() {
     "version": "1.0.0"
   },
   "host": "e-food.com",
-  "basePath": "/",
+  "basePath": "/v1",
   "paths": {
     "/categories": {
       "get": {
@@ -1003,7 +1003,7 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "Successful login",
+            "description": "Successful registeration",
             "schema": {
               "$ref": "#/definitions/SuccessResponse"
             }

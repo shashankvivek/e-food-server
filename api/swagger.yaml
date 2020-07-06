@@ -4,7 +4,7 @@ info:
   title: E-Food
 schemes: [http]
 host: e-food.com
-basePath: /
+basePath: /v1
 consumes: [application/json]
 produces: [application/json]
 securityDefinitions:
