@@ -1,0 +1,27 @@
+[
+  {
+    "ruleId": "r1",
+    "ruleSet": [
+      {
+        "productId": 1,
+        "minQuantity": 6,
+        "operator": "greater"
+      }
+    ]
+  },
+  {
+    "ruleId": "r2",
+    "ruleSet": [
+      {
+        "productId": 3,
+        "minQuantity": 2,
+        "operator": "equal"
+      },
+      {
+        "productId": 5,
+        "minQuantity": 4,
+        "operator": "equal"
+      }
+    ]
+  }
+]
