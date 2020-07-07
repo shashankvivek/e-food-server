@@ -31,32 +31,18 @@ CREATE TABLE `ecommerce`.`sub_category`
 ) AUTO_INCREMENT = 2000;
 
 INSERT INTO `ecommerce`.`sub_category`
-(`scName`,
- `scDescription`,
- `bcId`)
-VALUES ("Apple",
-        "This is an apple",
-        1000);
+    (`scName`, `scDescription`, `bcId`)
+VALUES ("Apple", "This is an apple", 1000);
 
 
 INSERT INTO `ecommerce`.`sub_category`
-(`scName`,
- `scDescription`,
- `bcId`)
-VALUES ("Oranges",
-        "These are oranges",
-1000);
+    (`scName`, `scDescription`, `bcId`)
+VALUES ("Oranges", "These are oranges", 1000);
 
 
 INSERT INTO `ecommerce`.`sub_category`
-(
-`scName`,
-`scDescription`,
-`bcId`)
-VALUES
-("Bananas",
-"These are Bananas",
-1000);
+    (`scName`, `scDescription`, `bcId`)
+VALUES ("Bananas", "These are Bananas", 1000);
 
 
 INSERT INTO `ecommerce`.`sub_category`

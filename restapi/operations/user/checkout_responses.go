@@ -25,7 +25,7 @@ type CheckoutOK struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.CartSuccessResponse `json:"body,omitempty"`
+	Payload models.CartPreview `json:"body,omitempty"`
 }
 
 // NewCheckoutOK creates CheckoutOK with default headers values
@@ -35,13 +35,13 @@ func NewCheckoutOK() *CheckoutOK {
 }
 
 // WithPayload adds the payload to the checkout o k response
-func (o *CheckoutOK) WithPayload(payload *models.CartSuccessResponse) *CheckoutOK {
+func (o *CheckoutOK) WithPayload(payload models.CartPreview) *CheckoutOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the checkout o k response
-func (o *CheckoutOK) SetPayload(payload *models.CartSuccessResponse) {
+func (o *CheckoutOK) SetPayload(payload models.CartPreview) {
 	o.Payload = payload
 }
 
@@ -49,11 +49,14 @@ func (o *CheckoutOK) SetPayload(payload *models.CartSuccessResponse) {
 func (o *CheckoutOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(200)
-	if o.Payload != nil {
-		payload := o.Payload
-		if err := producer.Produce(rw, payload); err != nil {
-			panic(err) // let the recovery middleware deal with this
-		}
+	payload := o.Payload
+	if payload == nil {
+		// return empty array
+		payload = models.CartPreview{}
+	}
+
+	if err := producer.Produce(rw, payload); err != nil {
+		panic(err) // let the recovery middleware deal with this
 	}
 }
 

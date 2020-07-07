@@ -79,7 +79,7 @@ func init() {
           "200": {
             "description": "Success response when item is added successfully",
             "schema": {
-              "$ref": "#/definitions/CartSuccessResponse"
+              "$ref": "#/definitions/CartPreview"
             }
           },
           "400": {
@@ -774,7 +774,7 @@ func init() {
           "200": {
             "description": "Success response when item is added successfully",
             "schema": {
-              "$ref": "#/definitions/CartSuccessResponse"
+              "$ref": "#/definitions/CartPreview"
             }
           },
           "400": {
