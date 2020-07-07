@@ -51,7 +51,11 @@ func AddItemToGuestCart(db *sql.DB, sessionId string, totalQty, productId int64)
 		totalQty = unitsInStock
 		msg = "Reached max stock quantity"
 	}
-	err = insertItemInGuestCart(db, unitsInStock, totalQty, productId, sessionId)
+	err = deleteExistingGuestCartItemIfAny(db, sessionId, productId)
+	if err != nil {
+		return nil, err
+	}
+	err = insertItemInGuestCart(db, totalQty, productId, sessionId)
 	if err != nil {
 		return nil, err
 	}
@@ -61,6 +65,23 @@ func AddItemToGuestCart(db *sql.DB, sessionId string, totalQty, productId int64)
 		QtyAdded: totalQty,
 	}
 	return retVal, nil
+}
+
+func deleteExistingGuestCartItemIfAny(db *sql.DB, sessionId string, productId int64) error {
+	res, err := db.Exec("DELETE from guest_cart_item where productId = ? and sessionId = ?", productId, sessionId)
+	if err != nil && !strings.Contains(err.Error(), "no row") {
+		log.Errorf(err.Error())
+		return nil
+	}
+	deletedRow, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if deletedRow == 1 || deletedRow == 0 {
+		return nil
+	} else {
+		return errors.New("found more than 1 item to delete")
+	}
 }
 
 func RemoveItemFromGuestCart(db *sql.DB, productId int64, sessionId string) error {
@@ -95,7 +116,7 @@ func GetItemQtyInGuestCart(db *sql.DB, sessionId string, productId int64) (int64
 	return int64(addedQty), nil
 }
 
-func insertItemInGuestCart(db *sql.DB, unitsInStock, totalQty, productId int64, sessionId string) error {
+func insertItemInGuestCart(db *sql.DB, totalQty, productId int64, sessionId string) error {
 	res, err := db.Exec("INSERT INTO guest_cart_item (sessionId,totalQty,productId) VALUES (?, ?, ?)", sessionId, totalQty, productId)
 	if err != nil {
 		return err
@@ -112,12 +133,10 @@ func insertItemInGuestCart(db *sql.DB, unitsInStock, totalQty, productId int64, 
 }
 
 func EmptyGuestCartItem(db *sql.DB, sessionId string) error {
-	row, err := db.Exec("DELETE from guest_cart_item where sessionId = ? ", sessionId)
+	_, err := db.Exec("DELETE from guest_cart_item where sessionId = ? ", sessionId)
 	if err != nil {
 		return err
 	}
-	fmt.Print("Delete Guest Cart Item Count: ")
-	fmt.Println(row.RowsAffected())
-	fmt.Println("=============================")
+	//fmt.Println(row.RowsAffected())
 	return nil
 }

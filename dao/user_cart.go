@@ -51,6 +51,12 @@ func AddItemToUserCart(db *sql.DB, email string, totalQty, productId int64) (*mo
 		totalQty = unitsInStock
 		msg = "Reached max stock quantity"
 	}
+
+	err = deleteExistingUserCartItemIfAny(db, email, productId)
+	if err != nil {
+		return nil, err
+	}
+
 	err = insertItemInUserCart(db, totalQty, productId, email)
 	if err != nil {
 		return nil, err
@@ -61,6 +67,23 @@ func AddItemToUserCart(db *sql.DB, email string, totalQty, productId int64) (*mo
 		QtyAdded: totalQty,
 	}
 	return retVal, nil
+}
+
+func deleteExistingUserCartItemIfAny(db *sql.DB, email string, productId int64) error {
+	res, err := db.Exec("DELETE from user_cart_item where productId = ? and email = ?", productId, email)
+	if err != nil && !strings.Contains(err.Error(), "no row") {
+		log.Errorf(err.Error())
+		return err
+	}
+	deletedRow, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if deletedRow == 1 || deletedRow == 0 {
+		return nil
+	} else {
+		return errors.New("found more than 1 item to delete")
+	}
 }
 
 func insertItemInUserCart(db *sql.DB, totalQty, productId int64, email string) error {
