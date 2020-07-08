@@ -671,7 +671,7 @@ func init() {
           "type": "string"
         },
         "phoneNo": {
-          "type": "integer"
+          "type": "string"
         }
       }
     },
@@ -1366,7 +1366,7 @@ func init() {
           "type": "string"
         },
         "phoneNo": {
-          "type": "integer"
+          "type": "string"
         }
       }
     },

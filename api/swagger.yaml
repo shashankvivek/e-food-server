@@ -306,7 +306,7 @@ definitions:
       password:
         type: string
       phoneNo:
-        type: integer
+        type: string
   LoginInfo:
     type: object
     properties:

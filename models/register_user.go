@@ -28,7 +28,7 @@ type RegisterUser struct {
 	Password string `json:"password,omitempty"`
 
 	// phone no
-	PhoneNo int64 `json:"phoneNo,omitempty"`
+	PhoneNo string `json:"phoneNo,omitempty"`
 }
 
 // Validate validates this register user

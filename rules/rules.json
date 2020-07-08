@@ -4,8 +4,7 @@
     "ruleSet": [
       {
         "productId": 1,
-        "minQuantity": 6,
-        "operator": "greater"
+        "minQuantity": 6
       }
     ]
   },
@@ -15,12 +14,12 @@
       {
         "productId": 3,
         "minQuantity": 2,
-        "operator": "equal"
+        "maxQuantity": 2
       },
       {
         "productId": 5,
         "minQuantity": 4,
-        "operator": "equal"
+        "maxQuantity": 4
       }
     ]
   }

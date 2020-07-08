@@ -110,7 +110,7 @@ CREATE TABLE `ecommerce`.`guest_cart_item`
     `productId` INT         NULL,
     INDEX `sessionId_idx` (`sessionId` ASC) VISIBLE,
     INDEX `productId_idx` (`productId` ASC) VISIBLE,
-    CONSTRAINT `sessionId`
+    CONSTRAINT `gsessionId`
         FOREIGN KEY (`sessionId`)
             REFERENCES `ecommerce`.`guest` (`sessionId`),
     CONSTRAINT `productId`
@@ -118,34 +118,71 @@ CREATE TABLE `ecommerce`.`guest_cart_item`
             REFERENCES `ecommerce`.`product` (`productId`)
 );
 
+
 -- create user table, work on password field later
-CREATE TABLE `ecommerce`.`user_details`
+
+CREATE TABLE `ecommerce`.`customer`
 (
-    `email`     VARCHAR(45) NOT NULL,
-    `firstName` VARCHAR(45) NOT NULL,
-    `lastName`  VARCHAR(45) NULL,
-    `phoneNo`   INT         NULL,
-    `password`  VARCHAR(80) NOT NULL,
-    PRIMARY KEY (`email`),
-    UNIQUE INDEX `userEmail_UNIQUE` (`email` ASC) VISIBLE
+    `customerId` INT          NOT NULL AUTO_INCREMENT,
+    `firstName`  VARCHAR(45)  NOT NULL,
+    `lastName`   VARCHAR(45)  NULL,
+    `phoneNo`    INT          NULL,
+    `password`   VARCHAR(100) NULL,
+    `email`      VARCHAR(60)  NULL,
+    PRIMARY KEY (`customerId`),
+    UNIQUE INDEX `phoneNo_UNIQUE` (`phoneNo` ASC) VISIBLE,
+    UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE
 );
 
-INSERT INTO `ecommerce`.`user_details` (`email`, `firstName`, `lastName`, `phoneNo`, `password`)
-VALUES ('test@gmail.com', 'Shashank', 'Vivek', '99999999', '123123');
+-- create coupon table
+CREATE TABLE `ecommerce`.`coupons`
+(
+    `couponId`           VARCHAR(10)   NOT NULL,
+    `expiryDate`         DATETIME      NULL,
+    `RuleSet`            VARCHAR(1000) NULL,
+    `discountPercentage` DECIMAL(2)    NULL,
+    PRIMARY KEY (`couponId`)
+);
+
+-- create cart for customer
+
+CREATE TABLE `ecommerce`.`cart`
+(
+    `cartId`          INT         NOT NULL AUTO_INCREMENT,
+    `customerId`      INT         NOT NULL,
+    `couponId`        VARCHAR(10) NULL,
+    `totalCartPrice`  DECIMAL(2)  NOT NULL,
+    `totalCartSaving` DECIMAL(2)  NOT NULL,
+    `createdAt`       DATETIME    NULL,
+    PRIMARY KEY (`cartId`),
+    INDEX `cUserId_idx` (`customerId` ASC) VISIBLE,
+    CONSTRAINT `cUserId`
+        FOREIGN KEY (`customerId`)
+            REFERENCES `ecommerce`.`customer` (`customerId`)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION
+);
+
 
 -- create User cart Item
 
-CREATE TABLE `ecommerce`.`user_cart_item`
+CREATE TABLE `ecommerce`.`customer_cart_item`
 (
-    `email`     VARCHAR(40) NOT NULL,
-    `totalQty`  INT         NOT NULL,
-    `productId` INT         NULL,
-    INDEX `sessionId_idx` (`email` ASC) VISIBLE,
-    INDEX `productId_idx` (`productId` ASC) VISIBLE,
-    CONSTRAINT `email`
-        FOREIGN KEY (`email`)
-            REFERENCES `ecommerce`.`user_details` (`email`),
-    CONSTRAINT `cartProductId`
+    `cartId`      INT        NOT NULL,
+    `totalQty`    INT        NOT NULL,
+    `totalSaving` DECIMAL(2) NULL,
+    `totalPrice`  DECIMAL(2) NOT NULL,
+    `productId`   INT        NOT NULL,
+    INDEX `cartId_idx` (`cartId` ASC) VISIBLE,
+    INDEX `prodId_idx` (`productId` ASC) VISIBLE,
+    CONSTRAINT `cartId`
+        FOREIGN KEY (`cartId`)
+            REFERENCES `ecommerce`.`cart` (`cartId`)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION,
+    CONSTRAINT `prodId`
         FOREIGN KEY (`productId`)
             REFERENCES `ecommerce`.`product` (`productId`)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION
 );

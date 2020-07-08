@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"e-food/models"
 	"errors"
-	"fmt"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -32,8 +31,7 @@ func RegisterNewUser(db *sql.DB, userInfo *models.RegisterUser) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(string(hashedPassword))
-	row, err := db.Exec("INSERT into user_details (email, firstName, lastName, phoneNo, password) values (?,?,?,?,?)", userInfo.Email, userInfo.Fname, userInfo.Lname, userInfo.PhoneNo, hashedPassword)
+	row, err := db.Exec("INSERT into customer (email, firstName, lastName, phoneNo, password) values (?,?,?,?,?)", userInfo.Email, userInfo.Fname, userInfo.Lname, userInfo.PhoneNo, hashedPassword)
 	if err != nil {
 		return err
 	}
