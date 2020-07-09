@@ -22,7 +22,6 @@ func NewUserLoginHandler(db *sql.DB) user.LoginHandler {
 }
 
 func (impl *loginImpl) Handle(params user.LoginParams) middleware.Responder {
-	//TODO: check username and pwd in DB and then generate token
 	cookieInfo, err := params.HTTPRequest.Cookie("guest_session")
 	if err != nil {
 		return user.NewLoginInternalServerError().WithPayload("error with cookie")

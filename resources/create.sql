@@ -128,10 +128,10 @@ CREATE TABLE `ecommerce`.`customer`
     `lastName`   VARCHAR(45)  NULL,
     `phoneNo`    INT          NULL,
     `password`   VARCHAR(100) NULL,
-    `email`      VARCHAR(60)  NULL,
-    PRIMARY KEY (`customerId`),
+    `email`      VARCHAR(60)  NOT NULL,
+    PRIMARY KEY (`email`),
     UNIQUE INDEX `phoneNo_UNIQUE` (`phoneNo` ASC) VISIBLE,
-    UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE
+    UNIQUE INDEX `id_UNIQUE` (`customerId` ASC) VISIBLE
 );
 
 -- create coupon table
@@ -149,20 +149,20 @@ CREATE TABLE `ecommerce`.`coupons`
 CREATE TABLE `ecommerce`.`cart`
 (
     `cartId`          INT         NOT NULL AUTO_INCREMENT,
-    `customerId`      INT         NOT NULL,
+    `email`           VARCHAR(60) NOT NULL,
     `couponId`        VARCHAR(10) NULL,
-    `totalCartPrice`  DECIMAL(2)  NOT NULL,
-    `totalCartSaving` DECIMAL(2)  NOT NULL,
+    `totalCartPrice`  DECIMAL(2),
+    `totalCartSaving` DECIMAL(2),
     `createdAt`       DATETIME    NULL,
     PRIMARY KEY (`cartId`),
-    INDEX `cUserId_idx` (`customerId` ASC) VISIBLE,
+    UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE,
+    INDEX `cUserId_idx` (`email` ASC) VISIBLE,
     CONSTRAINT `cUserId`
-        FOREIGN KEY (`customerId`)
-            REFERENCES `ecommerce`.`customer` (`customerId`)
+        FOREIGN KEY (`email`)
+            REFERENCES `ecommerce`.`customer` (`email`)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 );
-
 
 -- create User cart Item
 
@@ -170,8 +170,6 @@ CREATE TABLE `ecommerce`.`customer_cart_item`
 (
     `cartId`      INT        NOT NULL,
     `totalQty`    INT        NOT NULL,
-    `totalSaving` DECIMAL(2) NULL,
-    `totalPrice`  DECIMAL(2) NOT NULL,
     `productId`   INT        NOT NULL,
     INDEX `cartId_idx` (`cartId` ASC) VISIBLE,
     INDEX `prodId_idx` (`productId` ASC) VISIBLE,

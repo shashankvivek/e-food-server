@@ -10,8 +10,12 @@ import (
 )
 
 func GetUserCart(db *sql.DB, email string) (models.CartPreview, error) {
-	q := fmt.Sprintf("SELECT p.productId,p.name,p.currency, uc.totalQty,p.unitPrice, p.imageUrl FROM user_cart_item uc INNER JOIN product p where uc.productId = p.productId and uc.email='%s'", email)
-	rows, err := db.Query(q)
+	_, err := createOrGetCartId(db, email)
+	if err != nil {
+		fmt.Println(err.Error())
+		return nil, err
+	}
+	rows, err := db.Query("SELECT p.productId,p.name,p.currency, ci.totalQty,p.unitPrice, p.imageUrl FROM customer_cart_item ci ,  product p , cart c where ci.productId = p.productId and c.email=?", email)
 	if err != nil {
 		log.Errorf(err.Error())
 		return nil, err
@@ -39,6 +43,10 @@ func GetUserCart(db *sql.DB, email string) (models.CartPreview, error) {
 }
 
 func AddItemToUserCart(db *sql.DB, email string, totalQty, productId int64) (*models.CartSuccessResponse, error) {
+	cartId, err := createOrGetCartId(db, email)
+	if err != nil {
+		return nil, err
+	}
 	msg := "Item added to cart"
 	unitsInStock, err := GetUnitsInStock(db, productId)
 	if err != nil {
@@ -52,12 +60,12 @@ func AddItemToUserCart(db *sql.DB, email string, totalQty, productId int64) (*mo
 		msg = "Reached max stock quantity"
 	}
 
-	err = deleteExistingUserCartItemIfAny(db, email, productId)
+	err = deleteExistingUserCartItemIfAny(db, cartId, productId)
 	if err != nil {
 		return nil, err
 	}
 
-	err = insertItemInUserCart(db, totalQty, productId, email)
+	err = insertItemInUserCart(db, totalQty, productId, cartId)
 	if err != nil {
 		return nil, err
 	}
@@ -69,8 +77,22 @@ func AddItemToUserCart(db *sql.DB, email string, totalQty, productId int64) (*mo
 	return retVal, nil
 }
 
-func deleteExistingUserCartItemIfAny(db *sql.DB, email string, productId int64) error {
-	res, err := db.Exec("DELETE from user_cart_item where productId = ? and email = ?", productId, email)
+func createOrGetCartId(db *sql.DB, email string) (int64, error) {
+	_, err := db.Exec("INSERT into cart (email) values (?)", email)
+	if err != nil && !strings.Contains(err.Error(), "Duplicate entry") {
+		return -1, err
+	}
+	row := db.QueryRow("SELECT cartId from cart where email = ?", email)
+	var cartId int64
+	err = row.Scan(&cartId)
+	if err != nil {
+		return -1, err
+	}
+	return cartId, nil
+}
+
+func deleteExistingUserCartItemIfAny(db *sql.DB, cartId, productId int64) error {
+	res, err := db.Exec("DELETE from customer_cart_item where productId = ? and cartId = ?", productId, cartId)
 	if err != nil && !strings.Contains(err.Error(), "no row") {
 		log.Errorf(err.Error())
 		return err
@@ -86,8 +108,8 @@ func deleteExistingUserCartItemIfAny(db *sql.DB, email string, productId int64) 
 	}
 }
 
-func insertItemInUserCart(db *sql.DB, totalQty, productId int64, email string) error {
-	res, err := db.Exec("INSERT INTO user_cart_item (email,totalQty,productId) VALUES (?, ?, ?)", email, totalQty, productId)
+func insertItemInUserCart(db *sql.DB, totalQty, cartId, productId int64) error {
+	res, err := db.Exec("INSERT INTO customer_cart_item (cartId,totalQty,productId) VALUES (?, ?, ?)", cartId, totalQty, productId)
 	if err != nil {
 		return err
 	}
@@ -103,35 +125,20 @@ func insertItemInUserCart(db *sql.DB, totalQty, productId int64, email string) e
 }
 
 func RemoveItemFromUserCart(db *sql.DB, productId int64, email string) error {
-	itemQtyInCart, err := GetItemQtyInUserCart(db, email, productId)
-	if err != nil {
-		log.Errorf(err.Error())
-		return err
-	}
-	if itemQtyInCart < 1 {
-		return errors.New("item does not exist")
-	}
-	res, err := db.Exec("DELETE from user_cart_item where email = ? and productId = ?", email, productId)
+	cartId, err := createOrGetCartId(db, email)
 	if err != nil {
 		return err
 	}
-	deletedRow, _ := res.RowsAffected()
-	if deletedRow == 1 {
-		return nil
-	} else {
-		return errors.New("error removing item from User cart")
+	res, err := db.Exec("DELETE from customer_cart_item where cartId = ? and productId = ?", cartId, productId)
+	if err != nil {
+		fmt.Println(err)
+		return err
 	}
-}
-
-func GetItemQtyInUserCart(db *sql.DB, email string, productId int64) (int64, error) {
-	addedQty := 0
-	row := db.QueryRow("SELECT totalQty from user_cart_item where productId = ? and email = ?", productId, email)
-	err := row.Scan(&addedQty)
-	if err != nil && !strings.Contains(err.Error(), "no row") {
-		log.Errorf(err.Error())
-		return 0, err
+	_, err = res.RowsAffected()
+	if err != nil {
+		return err
 	}
-	return int64(addedQty), nil
+	return nil
 }
 
 //TODO: use this logic when the order is being created

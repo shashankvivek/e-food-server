@@ -8,7 +8,7 @@ import (
 )
 
 func FetchUserDetails(db *sql.DB, email string) (*models.RegisterUser, error) {
-	row := db.QueryRow("SELECT email,password,firstName,lastName,phoneNo from user_details where email = ?", email)
+	row := db.QueryRow("SELECT email,password,firstName,lastName,phoneNo from customer where email = ?", email)
 	userInfo := models.RegisterUser{}
 
 	err := row.Scan(&userInfo.Email,
