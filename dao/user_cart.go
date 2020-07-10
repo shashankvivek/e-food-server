@@ -65,7 +65,7 @@ func AddItemToUserCart(db *sql.DB, email string, totalQty, productId int64) (*mo
 		return nil, err
 	}
 
-	err = insertItemInUserCart(db, totalQty, productId, cartId)
+	err = insertItemInUserCart(db, totalQty, cartId, productId)
 	if err != nil {
 		return nil, err
 	}
@@ -129,12 +129,7 @@ func RemoveItemFromUserCart(db *sql.DB, productId int64, email string) error {
 	if err != nil {
 		return err
 	}
-	res, err := db.Exec("DELETE from customer_cart_item where cartId = ? and productId = ?", cartId, productId)
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
-	_, err = res.RowsAffected()
+	err = deleteExistingUserCartItemIfAny(db, cartId, productId)
 	if err != nil {
 		return err
 	}
