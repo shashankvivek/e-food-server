@@ -2,10 +2,10 @@ package handlers
 
 import (
 	"database/sql"
-	"e-food/dao"
+	"e-food/pkg/dao"
+	"e-food/pkg/rules"
+	"e-food/pkg/utils"
 	"e-food/restapi/operations/user"
-	"e-food/rules"
-	"e-food/utils"
 	"fmt"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/google/martian/log"
@@ -26,7 +26,7 @@ func (impl *cartPreviewImpl) Handle(params user.CheckoutParams, principal interf
 	if err != nil {
 		return user.NewCheckoutInternalServerError().WithPayload("error in parsing token")
 	}
-	cartItems, err := dao.GetUserCart(impl.dbClient, email.(string))
+	cartItems, err := dao.GetCustomerCart(impl.dbClient, email.(string))
 	ruleBooks, err := rules.LoadRuleBook()
 	fmt.Println("===============")
 	for _, v := range ruleBooks {

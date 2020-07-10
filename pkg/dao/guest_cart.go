@@ -85,24 +85,11 @@ func deleteExistingGuestCartItemIfAny(db *sql.DB, sessionId string, productId in
 }
 
 func RemoveItemFromGuestCart(db *sql.DB, productId int64, sessionId string) error {
-	itemQtyInCart, err := GetItemQtyInGuestCart(db, sessionId, productId)
-	if err != nil {
-		log.Errorf(err.Error())
-		return err
-	}
-	if itemQtyInCart < 1 {
-		return errors.New("item does not exist")
-	}
-	res, err := db.Exec("DELETE from guest_cart_item where sessionId = ? and productId = ?", sessionId, productId)
+	err := deleteExistingGuestCartItemIfAny(db, sessionId, productId)
 	if err != nil {
 		return err
 	}
-	deletedRow, _ := res.RowsAffected()
-	if deletedRow == 1 {
-		return nil
-	} else {
-		return errors.New("error removing item from guest cart")
-	}
+	return nil
 }
 
 func GetItemQtyInGuestCart(db *sql.DB, sessionId string, productId int64) (int64, error) {

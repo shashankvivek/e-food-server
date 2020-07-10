@@ -2,10 +2,10 @@ package handlers
 
 import (
 	"database/sql"
-	"e-food/dao"
 	"e-food/models"
+	"e-food/pkg/dao"
+	"e-food/pkg/utils"
 	"e-food/restapi/operations/user"
-	"e-food/utils"
 	"fmt"
 	"github.com/go-openapi/runtime/middleware"
 	"golang.org/x/crypto/bcrypt"
@@ -38,7 +38,7 @@ func (impl *loginImpl) Handle(params user.LoginParams) middleware.Responder {
 		return user.NewRegisterNotFound()
 	}
 	if cookieInfo.Value != "" {
-		err := utils.ShiftGuestCartItemsToUserCart(impl.dbClient, cookieInfo.Value, email)
+		err := dao.ShiftGuestCartItemsToCustomer(impl.dbClient, cookieInfo.Value, email)
 		if err != nil {
 			user.NewLoginInternalServerError().WithPayload("Error shifting cart items")
 		}

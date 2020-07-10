@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"database/sql"
-	"e-food/dao"
 	"e-food/models"
+	"e-food/pkg/dao"
 	"e-food/restapi/operations/user"
 	"fmt"
 	"github.com/go-openapi/runtime/middleware"

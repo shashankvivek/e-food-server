@@ -151,8 +151,6 @@ CREATE TABLE `ecommerce`.`cart`
     `cartId`          INT         NOT NULL AUTO_INCREMENT,
     `email`           VARCHAR(60) NOT NULL,
     `couponId`        VARCHAR(10) NULL,
-    `totalCartPrice`  DECIMAL(2),
-    `totalCartSaving` DECIMAL(2),
     `createdAt`       DATETIME    NULL,
     PRIMARY KEY (`cartId`),
     UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE,

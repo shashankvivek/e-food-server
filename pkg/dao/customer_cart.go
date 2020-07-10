@@ -7,9 +7,10 @@ import (
 	"fmt"
 	"github.com/google/martian/log"
 	"strings"
+	"time"
 )
 
-func GetUserCart(db *sql.DB, email string) (models.CartPreview, error) {
+func GetCustomerCart(db *sql.DB, email string) (models.CartPreview, error) {
 	_, err := createOrGetCartId(db, email)
 	if err != nil {
 		fmt.Println(err.Error())
@@ -42,7 +43,7 @@ func GetUserCart(db *sql.DB, email string) (models.CartPreview, error) {
 	return cart, nil
 }
 
-func AddItemToUserCart(db *sql.DB, email string, totalQty, productId int64) (*models.CartSuccessResponse, error) {
+func AddItemToCustomerCart(db *sql.DB, email string, totalQty, productId int64) (*models.CartSuccessResponse, error) {
 	cartId, err := createOrGetCartId(db, email)
 	if err != nil {
 		return nil, err
@@ -78,7 +79,7 @@ func AddItemToUserCart(db *sql.DB, email string, totalQty, productId int64) (*mo
 }
 
 func createOrGetCartId(db *sql.DB, email string) (int64, error) {
-	_, err := db.Exec("INSERT into cart (email) values (?)", email)
+	_, err := db.Exec("INSERT into cart (email,createdAt) values (?,?)", email, time.Now().UTC())
 	if err != nil && !strings.Contains(err.Error(), "Duplicate entry") {
 		return -1, err
 	}
@@ -124,7 +125,7 @@ func insertItemInUserCart(db *sql.DB, totalQty, cartId, productId int64) error {
 	}
 }
 
-func RemoveItemFromUserCart(db *sql.DB, productId int64, email string) error {
+func RemoveItemFromCustomerCart(db *sql.DB, productId int64, email string) error {
 	cartId, err := createOrGetCartId(db, email)
 	if err != nil {
 		return err
@@ -133,6 +134,25 @@ func RemoveItemFromUserCart(db *sql.DB, productId int64, email string) error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func ShiftGuestCartItemsToCustomer(db *sql.DB, sessionId, email string) error {
+	guestCartItems, err := GetGuestCart(db, sessionId)
+	if err != nil {
+		return err
+	}
+	//look for each productId and email in user_cart_item table, if found "Update" else insert
+	for _, gCartItem := range guestCartItems {
+		//delete any prev entry of this product
+		_ = RemoveItemFromCustomerCart(db, gCartItem.ProductID, email)
+		_, err = AddItemToCustomerCart(db, email, gCartItem.Quantity, gCartItem.ProductID)
+		if err != nil {
+			return err
+		}
+	}
+	//clean up guest_cart_item table
+	_ = EmptyGuestCartItem(db, sessionId)
 	return nil
 }
 
