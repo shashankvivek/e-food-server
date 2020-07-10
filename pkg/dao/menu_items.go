@@ -2,7 +2,7 @@ package dao
 
 import (
 	"database/sql"
-	"e-food/integration/mysql"
+	"e-food/constants"
 	"e-food/models"
 	"fmt"
 )
@@ -18,7 +18,7 @@ type CategoryJoin struct {
 
 func GetMenuItems(dbClient *sql.DB) (models.Categories, error) {
 	q := fmt.Sprintf("select b.bcID ,bcNAME,bcIsActive,scId,scName,scIsActive "+
-		"from %s as B INNER JOIN %s as S where b.bcId = s.bcId", mysql.BroadCategoryTable, mysql.SubCategoryTable)
+		"from %s as B INNER JOIN %s as S where b.bcId = s.bcId", constants.BroadCategoryTable, constants.SubCategoryTable)
 	fmt.Println(q)
 	rows, err := dbClient.Query(q)
 	if err != nil {

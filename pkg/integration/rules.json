@@ -1,7 +1,7 @@
 [
   {
     "ruleId": "r1",
-    "ruleSet": [
+    "filters": [
       {
         "productId": 1,
         "minQuantity": 6
@@ -10,7 +10,7 @@
   },
   {
     "ruleId": "r2",
-    "ruleSet": [
+    "filters": [
       {
         "productId": 3,
         "minQuantity": 2,

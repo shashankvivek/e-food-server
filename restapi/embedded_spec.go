@@ -79,7 +79,7 @@ func init() {
           "200": {
             "description": "Success response when item is added successfully",
             "schema": {
-              "$ref": "#/definitions/CartPreview"
+              "$ref": "#/definitions/BillableCart"
             }
           },
           "400": {
@@ -493,6 +493,58 @@ func init() {
     }
   },
   "definitions": {
+    "BillableCart": {
+      "type": "object",
+      "properties": {
+        "currency": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BillingItem"
+          }
+        },
+        "offerItems": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OfferItem"
+          }
+        },
+        "totalPrice": {
+          "type": "number"
+        },
+        "totalSaving": {
+          "type": "number"
+        }
+      }
+    },
+    "BillingItem": {
+      "type": "object",
+      "properties": {
+        "currency": {
+          "type": "string"
+        },
+        "imageUrl": {
+          "type": "string"
+        },
+        "productId": {
+          "type": "integer"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "quantity": {
+          "type": "integer"
+        },
+        "totalPrice": {
+          "type": "number"
+        },
+        "unitPrice": {
+          "type": "number"
+        }
+      }
+    },
     "CartItem": {
       "type": "object",
       "properties": {
@@ -603,6 +655,17 @@ func init() {
         },
         "token": {
           "type": "string"
+        }
+      }
+    },
+    "OfferItem": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "$ref": "#/definitions/BillingItem"
+        },
+        "ruleSetId": {
+          "type": "integer"
         }
       }
     },
@@ -774,7 +837,7 @@ func init() {
           "200": {
             "description": "Success response when item is added successfully",
             "schema": {
-              "$ref": "#/definitions/CartPreview"
+              "$ref": "#/definitions/BillableCart"
             }
           },
           "400": {
@@ -1188,6 +1251,58 @@ func init() {
     }
   },
   "definitions": {
+    "BillableCart": {
+      "type": "object",
+      "properties": {
+        "currency": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BillingItem"
+          }
+        },
+        "offerItems": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OfferItem"
+          }
+        },
+        "totalPrice": {
+          "type": "number"
+        },
+        "totalSaving": {
+          "type": "number"
+        }
+      }
+    },
+    "BillingItem": {
+      "type": "object",
+      "properties": {
+        "currency": {
+          "type": "string"
+        },
+        "imageUrl": {
+          "type": "string"
+        },
+        "productId": {
+          "type": "integer"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "quantity": {
+          "type": "integer"
+        },
+        "totalPrice": {
+          "type": "number"
+        },
+        "unitPrice": {
+          "type": "number"
+        }
+      }
+    },
     "CartItem": {
       "type": "object",
       "properties": {
@@ -1298,6 +1413,17 @@ func init() {
         },
         "token": {
           "type": "string"
+        }
+      }
+    },
+    "OfferItem": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "$ref": "#/definitions/BillingItem"
+        },
+        "ruleSetId": {
+          "type": "integer"
         }
       }
     },
