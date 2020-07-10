@@ -123,7 +123,7 @@ paths:
         200:
           description: "Success response when item is added successfully"
           schema:
-            $ref: "#/definitions/CartPreview"
+            $ref: "#/definitions/BillableCart"
         400:
           description: Bad Request
         404:
@@ -432,6 +432,49 @@ definitions:
     properties:
       extraInfo:
         type: string
+  BillableCart:
+    type: object
+    properties:
+      totalPrice:
+        type: number
+      totalSaving:
+        type: number
+      currency:
+        type: string
+      offerItems:
+        type: array
+        items:
+          $ref: '#/definitions/OfferItem'
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/BillingItem'
+  OfferItem:
+    type: object
+    properties:
+      ruleSetId:
+        type: integer
+      items:
+        $ref: '#/definitions/BillingItem'
+  BillingItem:
+    type: object
+    properties:
+      productId:
+        type: integer
+      productName:
+        type: string
+      quantity:
+        type: integer
+      unitPrice:
+        type: number
+      imageUrl:
+        type: string
+      currency:
+        type: string
+      totalPrice:
+        type: number
+
+
 
 
 

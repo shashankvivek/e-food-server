@@ -4,4 +4,7 @@ package constants
 
 const (
 	MAX_ALLOWED_CART_ITEM_QTY = 12
+	DatabaseSchema            = "ecommerce"
+	BroadCategoryTable        = "broad_category"
+	SubCategoryTable          = "sub_category"
 )
