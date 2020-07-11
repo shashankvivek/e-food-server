@@ -453,9 +453,11 @@ definitions:
     type: object
     properties:
       ruleSetId:
-        type: integer
+        type: string
       items:
-        $ref: '#/definitions/BillingItem'
+        type: array
+        items:
+          $ref: '#/definitions/BillingItem'
   BillingItem:
     type: object
     properties:

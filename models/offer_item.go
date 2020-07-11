@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"strconv"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -17,10 +19,10 @@ import (
 type OfferItem struct {
 
 	// items
-	Items *BillingItem `json:"items,omitempty"`
+	Items []*BillingItem `json:"items"`
 
 	// rule set Id
-	RuleSetID int64 `json:"ruleSetId,omitempty"`
+	RuleSetID string `json:"ruleSetId,omitempty"`
 }
 
 // Validate validates this offer item
@@ -43,13 +45,20 @@ func (m *OfferItem) validateItems(formats strfmt.Registry) error {
 		return nil
 	}
 
-	if m.Items != nil {
-		if err := m.Items.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("items")
-			}
-			return err
+	for i := 0; i < len(m.Items); i++ {
+		if swag.IsZero(m.Items[i]) { // not required
+			continue
 		}
+
+		if m.Items[i] != nil {
+			if err := m.Items[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("items" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
 	}
 
 	return nil

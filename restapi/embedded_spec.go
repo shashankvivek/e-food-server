@@ -662,10 +662,13 @@ func init() {
       "type": "object",
       "properties": {
         "items": {
-          "$ref": "#/definitions/BillingItem"
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BillingItem"
+          }
         },
         "ruleSetId": {
-          "type": "integer"
+          "type": "string"
         }
       }
     },
@@ -1420,10 +1423,13 @@ func init() {
       "type": "object",
       "properties": {
         "items": {
-          "$ref": "#/definitions/BillingItem"
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BillingItem"
+          }
         },
         "ruleSetId": {
-          "type": "integer"
+          "type": "string"
         }
       }
     },
