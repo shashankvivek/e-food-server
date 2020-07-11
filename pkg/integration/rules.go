@@ -72,6 +72,7 @@ func extractProductsWithOffer(rule *Rule, cartItems []*models.CartItem) ([]*mode
 		}
 	}
 	maxSetPossible := int64(999999999)
+
 	for _, product := range eligibleItems {
 		filterRule := rule.RuleSet[strconv.FormatInt(product.ProductID, 10)]
 		// min limit and no max limit

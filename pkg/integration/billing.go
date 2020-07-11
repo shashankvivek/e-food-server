@@ -7,7 +7,7 @@ import (
 
 func PrepareBilling(cartItems []*models.CartItem) (*models.BillableCart, error) {
 	rules, err := CreateRuleBook()
-	currencyVal := ""
+	currencyVal := cartItems[0].Currency
 	if err != nil {
 		fmt.Println(err.Error())
 		return nil, err
@@ -15,7 +15,6 @@ func PrepareBilling(cartItems []*models.CartItem) (*models.BillableCart, error) 
 	offerItems, remainingItems, _ := rules.ApplyRules(cartItems)
 	var nonOfferItems []*models.BillingItem
 	for _, v := range remainingItems {
-		currencyVal = v.Currency
 		nonOfferItems = append(nonOfferItems, &models.BillingItem{
 			Currency:    v.Currency,
 			TotalPrice:  float64(v.Quantity) * v.UnitPrice,
