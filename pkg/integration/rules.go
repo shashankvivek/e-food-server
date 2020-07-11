@@ -104,10 +104,17 @@ func extractProductsWithOffer(rule *Rule, cartItems []*models.CartItem) ([]*mode
 				maxSetPossible = setPossible
 			}
 		}
-
 	}
 
-	leftOverItems := []*models.CartItem{}
+	leftOverItems, offering := groupItemsByOffer(rule, eligibleItems, maxSetPossible)
+	remainingCartItems = append(remainingCartItems, leftOverItems...)
+	return offering, remainingCartItems
+
+}
+
+func groupItemsByOffer(rule *Rule, eligibleItems []*models.CartItem, maxSetPossible int64) ([]*models.CartItem, []*models.OfferItem) {
+	var leftOverItems []*models.CartItem
+	var offering []*models.OfferItem
 	for 0 < maxSetPossible {
 		totalOfferItemPrice := 0.0
 		var items []*models.BillingItem
@@ -134,28 +141,12 @@ func extractProductsWithOffer(rule *Rule, cartItems []*models.CartItem) ([]*mode
 		})
 		maxSetPossible--
 	}
-
 	for _, prod := range eligibleItems {
 		if prod.Quantity != 0 {
 			leftOverItems = append(leftOverItems, prod)
 		}
 	}
-
-	remainingCartItems = append(remainingCartItems, leftOverItems...)
-
-	return offering, remainingCartItems
-
-	//if *filter.MaxQuantity == *filter.MinQuantity {
-	//	// exact match
-	//} else if filter.MinQuantity == nil && filter.MaxQuantity != nil {
-	//	// max limit is set
-	//} else if filter.MinQuantity != nil && filter.MaxQuantity == nil {
-	//	// min limit and no max limit
-	//} else if *filter.MinQuantity <= *filter.MaxQuantity {
-	//	// there is a range in min and max qty
-	//} else {
-	//	return errors.New("invalid rule: min can't be greater than max qty :" + rule.RuleId)
-	//}
+	return leftOverItems, offering
 }
 
 func getItemIndexInCart(item models.CartItem, items []*models.CartItem) int {
@@ -178,11 +169,3 @@ func checkForMatchingProducts(ruleSet map[string]*Filter, cartItems []*models.Ca
 	}
 	return matchedProdCount == len(ruleSet)
 }
-
-func exactMatchRule() {}
-
-func maxLimitRule() {}
-
-func minLimitRule() {}
-
-func rangeLimitRule() {}
