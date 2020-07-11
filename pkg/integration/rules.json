@@ -1,26 +1,25 @@
 [
   {
     "ruleId": "r1",
-    "filters": [
-      {
-        "productId": 1,
-        "minQuantity": 6
+    "discount": 10.00,
+    "filters": {
+      "1": {
+        "minQuantity": 7
       }
-    ]
+    }
   },
   {
     "ruleId": "r2",
-    "filters": [
-      {
-        "productId": 3,
+    "discount": 30.00,
+    "filters": {
+      "3": {
         "minQuantity": 2,
         "maxQuantity": 2
       },
-      {
-        "productId": 5,
+      "5": {
         "minQuantity": 4,
         "maxQuantity": 4
       }
-    ]
+    }
   }
 ]

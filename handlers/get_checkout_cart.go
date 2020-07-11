@@ -7,7 +7,6 @@ import (
 	"e-food/pkg/utils"
 	"e-food/restapi/operations/user"
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/google/martian/log"
 )
 
 type cartPreviewImpl struct {
@@ -26,11 +25,12 @@ func (impl *cartPreviewImpl) Handle(params user.CheckoutParams, principal interf
 		return user.NewCheckoutInternalServerError().WithPayload("error in parsing token")
 	}
 	cartItems, err := dao.GetCustomerCart(impl.dbClient, email.(string))
-	_, err = integration.PrepareBilling(cartItems)
-
 	if err != nil {
-		log.Errorf(err.Error())
-		return user.NewCheckoutInternalServerError().WithPayload("Error getting info")
+		return user.NewCheckoutInternalServerError().WithPayload("error getting cart details")
 	}
-	return user.NewCheckoutOK().WithPayload(cartItems)
+	billedCart, err := integration.PrepareBilling(cartItems)
+	if err != nil {
+		return user.NewCheckoutInternalServerError().WithPayload("error creating billing")
+	}
+	return user.NewCheckoutOK().WithPayload(billedCart)
 }
