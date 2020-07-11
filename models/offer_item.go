@@ -18,6 +18,15 @@ import (
 // swagger:model OfferItem
 type OfferItem struct {
 
+	// actual price
+	ActualPrice float64 `json:"actualPrice,omitempty"`
+
+	// discount percent
+	DiscountPercent float64 `json:"discountPercent,omitempty"`
+
+	// discounted price
+	DiscountedPrice float64 `json:"discountedPrice,omitempty"`
+
 	// items
 	Items []*BillingItem `json:"items"`
 

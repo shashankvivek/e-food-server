@@ -7,16 +7,18 @@ import (
 
 func PrepareBilling(cartItems []*models.CartItem) (*models.BillableCart, error) {
 	rules, err := CreateRuleBook()
+	currencyVal := ""
 	if err != nil {
 		fmt.Println(err.Error())
 		return nil, err
 	}
-	offerItems, remainingItems, err := rules.ApplyRules(cartItems)
-	var bItem []*models.BillingItem
+	offerItems, remainingItems, _ := rules.ApplyRules(cartItems)
+	var nonOfferItems []*models.BillingItem
 	for _, v := range remainingItems {
-		bItem = append(bItem, &models.BillingItem{
+		currencyVal = v.Currency
+		nonOfferItems = append(nonOfferItems, &models.BillingItem{
 			Currency:    v.Currency,
-			TotalPrice:  0,
+			TotalPrice:  float64(v.Quantity) * v.UnitPrice,
 			ProductID:   v.ProductID,
 			Quantity:    v.Quantity,
 			ProductName: v.ProductName,
@@ -25,13 +27,28 @@ func PrepareBilling(cartItems []*models.CartItem) (*models.BillableCart, error) 
 		})
 	}
 
+	totalCartPrice, totalSavedAmount := getTotalCartPrice(offerItems, nonOfferItems)
 	finalCart := &models.BillableCart{
-		TotalPrice:  0,
-		Currency:    "Rs",
-		TotalSaving: 66,
+		TotalPrice:  totalCartPrice,
+		Currency:    currencyVal,
+		TotalSaving: totalSavedAmount,
 		OfferItems:  offerItems,
-		Items:       bItem,
+		Items:       nonOfferItems,
 	}
 
 	return finalCart, nil
+}
+
+func getTotalCartPrice(OfferItems []*models.OfferItem, nonOfferItems []*models.BillingItem) (float64, float64) {
+	totalPrice := 0.0
+	totalSaving := 0.0
+	for _, item := range OfferItems {
+		totalPrice = totalPrice + item.DiscountedPrice
+		totalSaving = totalSaving + item.ActualPrice - item.DiscountedPrice
+	}
+	for _, item := range nonOfferItems {
+		totalPrice = totalPrice + item.TotalPrice
+	}
+
+	return totalPrice, totalSaving
 }

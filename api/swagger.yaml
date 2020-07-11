@@ -458,6 +458,12 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/BillingItem'
+      actualPrice:
+        type: number
+      discountPercent:
+        type: number
+      discountedPrice:
+        type: number
   BillingItem:
     type: object
     properties:

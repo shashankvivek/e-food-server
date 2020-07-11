@@ -47,12 +47,9 @@ func CreateRuleBook() (*RuleCollection, error) {
 
 func (r *RuleCollection) ApplyRules(cartItems []*models.CartItem) ([]*models.OfferItem, []*models.CartItem, error) {
 	var offerCartItems []*models.OfferItem
-	//var nonOfferCartItems []models.BillingItem
 	for _, rule := range r.RuleBook {
 		productsFound := checkForMatchingProducts(rule.RuleSet, cartItems)
 		if productsFound {
-			fmt.Println("=====================================")
-			fmt.Println(rule.RuleId)
 			var offerItem []*models.OfferItem
 			offerItem, cartItems = extractProductsWithOffer(&rule, cartItems)
 			offerCartItems = append(offerCartItems, offerItem...)
@@ -60,8 +57,6 @@ func (r *RuleCollection) ApplyRules(cartItems []*models.CartItem) ([]*models.Off
 			fmt.Println("Not matched: " + rule.RuleId)
 		}
 	}
-	fmt.Println(offerCartItems)
-	fmt.Println(cartItems)
 	return offerCartItems, cartItems, nil
 }
 
@@ -84,7 +79,10 @@ func extractProductsWithOffer(rule *Rule, cartItems []*models.CartItem) ([]*mode
 			filterRule.MaxQuantity == nil &&
 			product.Quantity >= *filterRule.MinQuantity {
 			offering = append(offering, &models.OfferItem{
-				RuleSetID: rule.RuleId,
+				RuleSetID:       rule.RuleId,
+				ActualPrice:     product.UnitPrice * float64(product.Quantity),
+				DiscountPercent: rule.Discount,
+				DiscountedPrice: (product.UnitPrice * float64(product.Quantity)) * (1 - (rule.Discount / 100)),
 				Items: []*models.BillingItem{
 					{
 						ProductID:   product.ProductID,
@@ -99,7 +97,6 @@ func extractProductsWithOffer(rule *Rule, cartItems []*models.CartItem) ([]*mode
 			})
 			indexInMainCart := getItemIndexInCart(*product, cartItems)
 			return offering, append(cartItems[:indexInMainCart], cartItems[indexInMainCart+1:]...)
-			//remove this entire item from cartItems
 		} else if *filterRule.MaxQuantity == *filterRule.MinQuantity {
 			//exact limit for rule
 			setPossible := product.Quantity / *filterRule.MinQuantity
@@ -109,10 +106,12 @@ func extractProductsWithOffer(rule *Rule, cartItems []*models.CartItem) ([]*mode
 		}
 
 	}
-	//loopCount := int64(0)
+
+	leftOverItems := []*models.CartItem{}
 	for 0 < maxSetPossible {
+		totalOfferItemPrice := 0.0
 		var items []*models.BillingItem
-		for i, product := range eligibleItems {
+		for _, product := range eligibleItems {
 			qtyAsPerFilter := *rule.RuleSet[strconv.FormatInt(product.ProductID, 10)].MinQuantity
 			items = append(items, &models.BillingItem{
 				ProductID:   product.ProductID,
@@ -123,18 +122,25 @@ func extractProductsWithOffer(rule *Rule, cartItems []*models.CartItem) ([]*mode
 				ProductName: product.ProductName,
 				TotalPrice:  product.UnitPrice * float64(qtyAsPerFilter),
 			})
-			product.Quantity = product.Quantity - *rule.RuleSet[strconv.FormatInt(product.ProductID, 10)].MinQuantity
-			if product.Quantity == 0 {
-				eligibleItems = append(eligibleItems[:i], eligibleItems[i+1:]...)
-			}
+			product.Quantity = product.Quantity - qtyAsPerFilter
+			totalOfferItemPrice = totalOfferItemPrice + product.UnitPrice*float64(qtyAsPerFilter)
 		}
 		offering = append(offering, &models.OfferItem{
-			RuleSetID: rule.RuleId,
-			Items:     items,
+			RuleSetID:       rule.RuleId,
+			ActualPrice:     totalOfferItemPrice,
+			DiscountPercent: rule.Discount,
+			DiscountedPrice: totalOfferItemPrice * (1 - (rule.Discount / 100)),
+			Items:           items,
 		})
 		maxSetPossible--
 	}
-	leftOverItems := eligibleItems
+
+	for _, prod := range eligibleItems {
+		if prod.Quantity != 0 {
+			leftOverItems = append(leftOverItems, prod)
+		}
+	}
+
 	remainingCartItems = append(remainingCartItems, leftOverItems...)
 
 	return offering, remainingCartItems

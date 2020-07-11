@@ -661,6 +661,15 @@ func init() {
     "OfferItem": {
       "type": "object",
       "properties": {
+        "actualPrice": {
+          "type": "number"
+        },
+        "discountPercent": {
+          "type": "number"
+        },
+        "discountedPrice": {
+          "type": "number"
+        },
         "items": {
           "type": "array",
           "items": {
@@ -1422,6 +1431,15 @@ func init() {
     "OfferItem": {
       "type": "object",
       "properties": {
+        "actualPrice": {
+          "type": "number"
+        },
+        "discountPercent": {
+          "type": "number"
+        },
+        "discountedPrice": {
+          "type": "number"
+        },
         "items": {
           "type": "array",
           "items": {
