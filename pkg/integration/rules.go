@@ -12,6 +12,14 @@ type RuleCollection struct {
 	RuleBook []Rule
 }
 
+/*
+Note :
+1. rules.json will be created based on some rule-system exposed to sellers. It'll not be in DB.
+2. The rule-system will be responsible for maintaining the valid struct of "rules.json"
+3. The "filters" property has "ProductId" as "key"
+4. The "ProductId" will contain "minQuantity" or  "eqQunatity", which can be combined to create different scenarios.
+*/
+
 type Rule struct {
 	RuleId   string             `json:"ruleId"`
 	Discount float64            `json:"discount,omitempty"`
@@ -48,7 +56,6 @@ func CreateRuleBook() (*RuleCollection, error) {
 func (r *RuleCollection) ApplyRules(cartItems []*models.CartItem) ([]*models.OfferItem, []*models.CartItem, error) {
 	var offerCartItems []*models.OfferItem
 	for _, rule := range r.RuleBook {
-		//TODO: check why banana is coming as -1
 		productsFound := checkForMatchingProducts(rule.RuleSet, cartItems)
 		if productsFound {
 			var offerItem []*models.OfferItem
