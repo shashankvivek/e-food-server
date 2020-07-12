@@ -71,8 +71,14 @@ func NewEFoodAPI(spec *loads.Document) *EFoodAPI {
 		GuestGetItemsHandler: guest.GetItemsHandlerFunc(func(params guest.GetItemsParams) middleware.Responder {
 			return middleware.NotImplemented("operation guest.GetItems has not yet been implemented")
 		}),
+		UserInitPayHandler: user.InitPayHandlerFunc(func(params user.InitPayParams, principal interface{}) middleware.Responder {
+			return middleware.NotImplemented("operation user.InitPay has not yet been implemented")
+		}),
 		UserLoginHandler: user.LoginHandlerFunc(func(params user.LoginParams) middleware.Responder {
 			return middleware.NotImplemented("operation user.Login has not yet been implemented")
+		}),
+		UserPostValidatePaymentHandler: user.PostValidatePaymentHandlerFunc(func(params user.PostValidatePaymentParams, principal interface{}) middleware.Responder {
+			return middleware.NotImplemented("operation user.PostValidatePayment has not yet been implemented")
 		}),
 		UserRegisterHandler: user.RegisterHandlerFunc(func(params user.RegisterParams) middleware.Responder {
 			return middleware.NotImplemented("operation user.Register has not yet been implemented")
@@ -155,8 +161,12 @@ type EFoodAPI struct {
 	ProductsGetFromSubCategoryHandler products.GetFromSubCategoryHandler
 	// GuestGetItemsHandler sets the operation handler for the get items operation
 	GuestGetItemsHandler guest.GetItemsHandler
+	// UserInitPayHandler sets the operation handler for the init pay operation
+	UserInitPayHandler user.InitPayHandler
 	// UserLoginHandler sets the operation handler for the login operation
 	UserLoginHandler user.LoginHandler
+	// UserPostValidatePaymentHandler sets the operation handler for the post validate payment operation
+	UserPostValidatePaymentHandler user.PostValidatePaymentHandler
 	// UserRegisterHandler sets the operation handler for the register operation
 	UserRegisterHandler user.RegisterHandler
 	// UserRemoveFromCartHandler sets the operation handler for the remove from cart operation
@@ -263,8 +273,14 @@ func (o *EFoodAPI) Validate() error {
 	if o.GuestGetItemsHandler == nil {
 		unregistered = append(unregistered, "guest.GetItemsHandler")
 	}
+	if o.UserInitPayHandler == nil {
+		unregistered = append(unregistered, "user.InitPayHandler")
+	}
 	if o.UserLoginHandler == nil {
 		unregistered = append(unregistered, "user.LoginHandler")
+	}
+	if o.UserPostValidatePaymentHandler == nil {
+		unregistered = append(unregistered, "user.PostValidatePaymentHandler")
 	}
 	if o.UserRegisterHandler == nil {
 		unregistered = append(unregistered, "user.RegisterHandler")
@@ -416,7 +432,15 @@ func (o *EFoodAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
+	o.handlers["POST"]["/initiatePayment"] = user.NewInitPay(o.context, o.UserInitPayHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
 	o.handlers["POST"]["/login"] = user.NewLogin(o.context, o.UserLoginHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/validatePayment"] = user.NewPostValidatePayment(o.context, o.UserPostValidatePaymentHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}

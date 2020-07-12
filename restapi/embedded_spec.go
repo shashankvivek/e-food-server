@@ -324,6 +324,55 @@ func init() {
         }
       }
     },
+    "/initiatePayment": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "description": "uses RazorPay",
+        "tags": [
+          "user"
+        ],
+        "summary": "To initiate payment",
+        "operationId": "InitPay",
+        "parameters": [
+          {
+            "name": "pre_order",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PreOrder"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Item to be added Not Found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
     "/login": {
       "post": {
         "description": "Returns token for authorized User",
@@ -613,6 +662,59 @@ func init() {
           }
         }
       }
+    },
+    "/validatePayment": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "user"
+        ],
+        "summary": "api to validate the payment",
+        "parameters": [
+          {
+            "name": "pre_order",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "properties": {
+                "razorpay_order_id": {
+                  "type": "string"
+                },
+                "razorpay_payment_id": {
+                  "type": "string"
+                },
+                "razorpay_signature": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success response when payment is valid",
+            "schema": {
+              "$ref": "#/definitions/SuccessResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Item to be deleted Not Found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -831,6 +933,17 @@ func init() {
           }
         },
         "ruleSetId": {
+          "type": "string"
+        }
+      }
+    },
+    "PreOrder": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "integer"
+        },
+        "currency": {
           "type": "string"
         }
       }
@@ -1254,6 +1367,55 @@ func init() {
         }
       }
     },
+    "/initiatePayment": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "description": "uses RazorPay",
+        "tags": [
+          "user"
+        ],
+        "summary": "To initiate payment",
+        "operationId": "InitPay",
+        "parameters": [
+          {
+            "name": "pre_order",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PreOrder"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Item to be added Not Found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
     "/login": {
       "post": {
         "description": "Returns token for authorized User",
@@ -1543,6 +1705,59 @@ func init() {
           }
         }
       }
+    },
+    "/validatePayment": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": [
+          "user"
+        ],
+        "summary": "api to validate the payment",
+        "parameters": [
+          {
+            "name": "pre_order",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "properties": {
+                "razorpay_order_id": {
+                  "type": "string"
+                },
+                "razorpay_payment_id": {
+                  "type": "string"
+                },
+                "razorpay_signature": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success response when payment is valid",
+            "schema": {
+              "$ref": "#/definitions/SuccessResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Item to be deleted Not Found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -1761,6 +1976,17 @@ func init() {
           }
         },
         "ruleSetId": {
+          "type": "string"
+        }
+      }
+    },
+    "PreOrder": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "integer"
+        },
+        "currency": {
           "type": "string"
         }
       }

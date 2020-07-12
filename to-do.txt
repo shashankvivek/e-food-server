@@ -7,3 +7,4 @@
 7. Add timestamp in session entries to clean them up later with some housekeeping script
 8. when order is placed, reduce coupon userLimit count and inventory item count from products
 9. added description in coupon
+10. added price precision will 2 digit after decimal

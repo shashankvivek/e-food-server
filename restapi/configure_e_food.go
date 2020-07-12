@@ -34,6 +34,8 @@ func configureAPI(api *operations.EFoodAPI) http.Handler {
 
 	dbClient := clientBuilder.BuildSqlClient()
 
+	razorClient := clientBuilder.BuildRazorPayClient()
+
 	api.BearerAuth = utils.ValidateHeader
 
 	api.UserLoginHandler = handlers.NewUserLoginHandler(dbClient)
@@ -65,6 +67,10 @@ func configureAPI(api *operations.EFoodAPI) http.Handler {
 	api.UserRegisterHandler = handlers.NewUserRegisterHandler(dbClient)
 
 	api.AdminGenerateCouponHandler = handlers.NewAdminGenerateCouponHandler(dbClient)
+
+	api.UserInitPayHandler = handlers.NewUserInitPayHandler(razorClient, dbClient)
+
+	api.UserPostValidatePaymentHandler = handlers.NewUserPostValidatePaymentHandler(razorClient, dbClient)
 
 	api.ServerShutdown = func() {}
 

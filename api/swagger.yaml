@@ -252,6 +252,66 @@ paths:
           schema:
             type: string
           description: Server error
+  /initiatePayment:
+    post:
+      summary: 'To initiate payment'
+      description: 'uses RazorPay'
+      operationId: InitPay
+      security:
+        - Bearer: []
+      tags: [user]
+      parameters:
+        - in: "body"
+          name: "pre_order"
+          required: true
+          schema:
+            $ref: "#/definitions/PreOrder"
+      responses:
+        200:
+          description: OK
+          schema:
+            properties:
+              id:
+                type: string
+        400:
+          description: Bad Request
+        404:
+          description: Item to be added Not Found
+        500:
+          schema:
+            type: string
+          description: Server error
+  /validatePayment:
+    post:
+      summary: 'api to validate the payment'
+      security:
+        - Bearer: []
+      tags: [user]
+      parameters:
+        - in: "body"
+          name: "pre_order"
+          required: true
+          schema:
+            properties:
+              razorpay_order_id:
+                type: string
+              razorpay_payment_id:
+                type: string
+              razorpay_signature:
+                type: string
+      responses:
+        200:
+          description: "Success response when payment is valid"
+          schema:
+            $ref: "#/definitions/SuccessResponse"
+        400:
+          description: Bad Request
+        404:
+          description: Item to be deleted Not Found
+        500:
+          schema:
+            type: string
+          description: Server error
   /guest/cart:
     post:
       description: 'This API adds product to cart / guest cart'
@@ -368,6 +428,13 @@ paths:
             type: string
           description: Server error
 definitions:
+  PreOrder:
+    type: object
+    properties:
+      amount:
+        type: integer
+      currency:
+        type: string
   CouponConfig:
     type: object
     default:

@@ -2,7 +2,9 @@ package clients
 
 import (
 	"database/sql"
+	"e-food/constants"
 	_ "github.com/go-sql-driver/mysql"
+	razorpay "github.com/razorpay/razorpay-go"
 	"log"
 )
 
@@ -21,4 +23,10 @@ func (b ClientBuilder) BuildSqlClient() *sql.DB {
 		log.Fatal("error connecting DB : ", err.Error())
 	}
 	return db
+}
+
+func (b ClientBuilder) BuildRazorPayClient() *razorpay.Client {
+	// move keys to secrets.json
+	client := razorpay.NewClient(constants.MyRazorKey, constants.MyRazorSecret)
+	return client
 }
