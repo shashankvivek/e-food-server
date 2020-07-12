@@ -44,13 +44,17 @@ func (impl *validatePayImpl) Handle(params user.PostValidatePaymentParams, p int
 		// fetch cart Detail from Razor pay
 		body, err := impl.client.Order.Fetch(params.PreOrder.RazorpayOrderID, nil, nil)
 		if err != nil {
-			fmt.Println("==================")
 			fmt.Println(err.Error())
-			fmt.Println("==================")
+			// todo: return a response when some error happens while calling
+			// Razorpay endpoint
 		}
 		cartId := body["receipt"]
 		fmt.Println(cartId)
 		// convert cart to order
+
+		// delete cart data from cart table
 	}
+
+	//return orderId
 	return user.NewPostValidatePaymentOK().WithPayload(&models.SuccessResponse{Success: isSuccess})
 }
