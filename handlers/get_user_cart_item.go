@@ -24,7 +24,7 @@ func (impl *userCartItemsImpl) Handle(params user.GetCartParams, principal inter
 	if err != nil {
 		return user.NewGetCartInternalServerError().WithPayload("error in parsing token")
 	}
-	cartItems, err := dao.GetCustomerCart(impl.dbClient, email.(string))
+	cartItems, _, err := dao.GetCustomerCart(impl.dbClient, email.(string))
 	if err != nil {
 		log.Errorf(err.Error())
 		return user.NewGetCartInternalServerError().WithPayload("Error getting info")

@@ -532,6 +532,8 @@ definitions:
         type: number
       currency:
         type: string
+      couponId:
+        type: string
       offerItems:
         type: array
         items:
@@ -572,8 +574,4 @@ definitions:
         type: string
       totalPrice:
         type: number
-
-
-
-
 

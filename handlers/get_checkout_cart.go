@@ -3,6 +3,7 @@ package handlers
 import (
 	"database/sql"
 	"e-food/pkg/dao"
+	"e-food/pkg/entities"
 	"e-food/pkg/integration"
 	"e-food/pkg/utils"
 	"e-food/restapi/operations/user"
@@ -24,14 +25,19 @@ func (impl *cartPreviewImpl) Handle(params user.CheckoutParams, principal interf
 	if err != nil {
 		return user.NewCheckoutInternalServerError().WithPayload("error in parsing token")
 	}
-	cartItems, err := dao.GetCustomerCart(impl.dbClient, email.(string))
+	cartItems, couponId, err := dao.GetCustomerCart(impl.dbClient, email.(string))
 	if err != nil {
 		return user.NewCheckoutInternalServerError().WithPayload("error getting cart details")
 	}
 	if len(cartItems) == 0 {
 		return user.NewCheckoutNotFound()
 	}
-	billedCart, err := integration.PrepareBilling(cartItems)
+	var couponInfo *entities.CouponEntity
+	if couponId != "" {
+		couponInfo, _ = dao.GetCouponDetails(impl.dbClient, couponId, email.(string))
+
+	}
+	billedCart, err := integration.PrepareBilling(cartItems, couponInfo)
 	if err != nil {
 		return user.NewCheckoutInternalServerError().WithPayload("error creating billing")
 	}

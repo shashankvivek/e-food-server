@@ -9,12 +9,14 @@ import (
 func PrepareBilling(cartItems []*models.CartItem, couponInfo *entities.CouponEntity) (*models.BillableCart, error) {
 	rules, err := CreateRuleBook()
 	currencyVal := cartItems[0].Currency
+	couponId := ""
 	if err != nil {
 		fmt.Println(err.Error())
 		return nil, err
 	}
 	if couponInfo != nil {
 		rules.AppendNewRules(couponInfo.Rule)
+		couponId = couponInfo.CouponId
 	}
 
 	offerItems, remainingItems, _ := rules.ApplyRules(cartItems)
@@ -38,6 +40,7 @@ func PrepareBilling(cartItems []*models.CartItem, couponInfo *entities.CouponEnt
 		TotalSaving: totalSavedAmount,
 		OfferItems:  offerItems,
 		Items:       nonOfferItems,
+		CouponID:    couponId,
 	}
 
 	return finalCart, nil

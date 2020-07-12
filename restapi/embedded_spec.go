@@ -619,6 +619,9 @@ func init() {
     "BillableCart": {
       "type": "object",
       "properties": {
+        "couponId": {
+          "type": "string"
+        },
         "currency": {
           "type": "string"
         },
@@ -1546,6 +1549,9 @@ func init() {
     "BillableCart": {
       "type": "object",
       "properties": {
+        "couponId": {
+          "type": "string"
+        },
         "currency": {
           "type": "string"
         },

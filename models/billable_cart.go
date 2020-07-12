@@ -18,6 +18,9 @@ import (
 // swagger:model BillableCart
 type BillableCart struct {
 
+	// coupon Id
+	CouponID string `json:"couponId,omitempty"`
+
 	// currency
 	Currency string `json:"currency,omitempty"`
 
