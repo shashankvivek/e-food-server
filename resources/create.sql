@@ -148,10 +148,10 @@ CREATE TABLE `ecommerce`.`coupons`
 
 CREATE TABLE `ecommerce`.`cart`
 (
-    `cartId`          INT         NOT NULL AUTO_INCREMENT,
-    `email`           VARCHAR(60) NOT NULL,
-    `couponId`        VARCHAR(10) NULL,
-    `createdAt`       DATETIME    NULL,
+    `cartId`    INT         NOT NULL AUTO_INCREMENT,
+    `email`     VARCHAR(60) NOT NULL,
+    `couponId`  VARCHAR(10) NOT NULL,
+    `createdAt` DATETIME    NULL,
     PRIMARY KEY (`cartId`),
     UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE,
     INDEX `cUserId_idx` (`email` ASC) VISIBLE,

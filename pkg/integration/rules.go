@@ -2,6 +2,7 @@ package integration
 
 import (
 	"e-food/models"
+	"e-food/pkg/entities"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -9,7 +10,7 @@ import (
 )
 
 type RuleCollection struct {
-	RuleBook []Rule
+	RuleBook []entities.Rule
 }
 
 /*
@@ -20,30 +21,13 @@ Note :
 4. The "ProductId" will contain "minQuantity" or  "eqQunatity", which can be combined to create different scenarios.
 */
 
-type Rule struct {
-	RuleId   string             `json:"ruleId"`
-	Discount float64            `json:"discount,omitempty"`
-	RuleSet  map[string]*Filter `json:"filters"`
-}
-
-type Filter struct {
-	MinQuantity *int64 `json:"minQuantity,omitempty"`
-	EqQunatity  *int64 `json:"eqQunatity,omitempty"`
-}
-
-type EngineTempItem struct {
-	NumberOfGroupInSet     int
-	TempItem               *models.CartItem
-	ToBeReducedQtyFromCart int64
-}
-
 func CreateRuleBook() (*RuleCollection, error) {
 
 	data, err := ioutil.ReadFile("./resources/rules.json")
 	if err != nil {
 		return nil, err
 	}
-	var ruleBook []Rule
+	var ruleBook []entities.Rule
 	err = json.Unmarshal(data, &ruleBook)
 	if err != nil {
 		return nil, err
@@ -51,6 +35,10 @@ func CreateRuleBook() (*RuleCollection, error) {
 	return &RuleCollection{
 		RuleBook: ruleBook,
 	}, nil
+}
+
+func (r *RuleCollection) AppendNewRules(newRule entities.Rule) {
+	r.RuleBook = append(r.RuleBook, newRule)
 }
 
 func (r *RuleCollection) ApplyRules(cartItems []*models.CartItem) ([]*models.OfferItem, []*models.CartItem, error) {
@@ -68,7 +56,7 @@ func (r *RuleCollection) ApplyRules(cartItems []*models.CartItem) ([]*models.Off
 	return offerCartItems, cartItems, nil
 }
 
-func extractProductsWithOffer(rule *Rule, cartItems []*models.CartItem) ([]*models.OfferItem, []*models.CartItem) {
+func extractProductsWithOffer(rule *entities.Rule, cartItems []*models.CartItem) ([]*models.OfferItem, []*models.CartItem) {
 	var remainingCartItems []*models.CartItem
 	var eligibleItems []*models.CartItem
 	var offering []*models.OfferItem
@@ -117,7 +105,7 @@ func extractProductsWithOffer(rule *Rule, cartItems []*models.CartItem) ([]*mode
 	return offering, remainingCartItems
 }
 
-func WithBothRule(rule *Rule, eligibleItems []*models.CartItem) ([]*models.CartItem, []*models.OfferItem) {
+func WithBothRule(rule *entities.Rule, eligibleItems []*models.CartItem) ([]*models.CartItem, []*models.OfferItem) {
 	var offering []*models.BillingItem
 	var leftOverItems []*models.CartItem
 	actualPrice := float64(0)
@@ -169,7 +157,7 @@ func WithBothRule(rule *Rule, eligibleItems []*models.CartItem) ([]*models.CartI
 
 }
 
-func withJustMinValue(rule *Rule, eligibleItems []*models.CartItem) ([]*models.CartItem, []*models.OfferItem) {
+func withJustMinValue(rule *entities.Rule, eligibleItems []*models.CartItem) ([]*models.CartItem, []*models.OfferItem) {
 	var items []*models.BillingItem
 	actualPrice := float64(0)
 
@@ -197,7 +185,7 @@ func withJustMinValue(rule *Rule, eligibleItems []*models.CartItem) ([]*models.C
 	}
 }
 
-func groupItemsByOfferWithEqualQtyRule(rule *Rule, eligibleItems []*models.CartItem, maxSetPossible int64) ([]*models.CartItem, []*models.OfferItem) {
+func groupItemsByOfferWithEqualQtyRule(rule *entities.Rule, eligibleItems []*models.CartItem, maxSetPossible int64) ([]*models.CartItem, []*models.OfferItem) {
 	var leftOverItems []*models.CartItem
 	var offering []*models.OfferItem
 	for 0 < maxSetPossible {
@@ -234,7 +222,7 @@ func groupItemsByOfferWithEqualQtyRule(rule *Rule, eligibleItems []*models.CartI
 	return leftOverItems, offering
 }
 
-func CheckForMatchingProductsWithRuleSets(ruleSet map[string]*Filter, cartItems []*models.CartItem) bool {
+func CheckForMatchingProductsWithRuleSets(ruleSet map[string]*entities.Filter, cartItems []*models.CartItem) bool {
 	found := false
 	matchedProdCount := 0
 	for _, item := range cartItems {

@@ -11,21 +11,21 @@ import (
 	"time"
 )
 
-func GetCustomerCart(db *sql.DB, email string) (models.CartPreview, error) {
-	_, err := createOrGetCartId(db, email)
+func GetCustomerCart(db *sql.DB, email string) (models.CartPreview, string, error) {
+	_, couponId, err := createOrGetCartDetails(db, email)
 	if err != nil {
 		fmt.Println(err.Error())
-		return nil, err
+		return nil, "", err
 	}
 	rows, err := db.Query("SELECT p.productId,p.name,p.currency, ci.totalQty,p.unitPrice, p.imageUrl FROM customer_cart_item ci ,  product p , cart c where ci.productId = p.productId and c.email=?", email)
 	if err != nil {
 		log.Errorf(err.Error())
-		return nil, err
+		return nil, "", err
 	}
 	defer rows.Close()
 	if err := rows.Err(); err != nil {
 		log.Errorf(err.Error())
-		return nil, err
+		return nil, "", err
 	}
 	var cart models.CartPreview
 
@@ -41,11 +41,11 @@ func GetCustomerCart(db *sql.DB, email string) (models.CartPreview, error) {
 		)
 		cart = append(cart, &item)
 	}
-	return cart, nil
+	return cart, couponId, nil
 }
 
 func AddItemToCustomerCart(db *sql.DB, email string, totalQty, productId int64) (*models.CartSuccessResponse, error) {
-	cartId, err := createOrGetCartId(db, email)
+	cartId, _, err := createOrGetCartDetails(db, email)
 	if err != nil {
 		return nil, err
 	}
@@ -79,18 +79,19 @@ func AddItemToCustomerCart(db *sql.DB, email string, totalQty, productId int64) 
 	return retVal, nil
 }
 
-func createOrGetCartId(db *sql.DB, email string) (int64, error) {
+func createOrGetCartDetails(db *sql.DB, email string) (int64, string, error) {
 	_, err := db.Exec("INSERT into cart (email,createdAt) values (?,?)", email, time.Now().UTC())
 	if err != nil && !strings.Contains(err.Error(), "Duplicate entry") {
-		return -1, err
+		return -1, "", err
 	}
-	row := db.QueryRow("SELECT cartId from cart where email = ?", email)
+	row := db.QueryRow("SELECT cartId, couponId from cart where email = ?", email)
 	var cartId int64
-	err = row.Scan(&cartId)
+	var couponId string
+	err = row.Scan(&cartId, &couponId)
 	if err != nil {
-		return -1, err
+		return -1, "", err
 	}
-	return cartId, nil
+	return cartId, couponId, nil
 }
 
 func deleteExistingUserCartItemIfAny(db *sql.DB, cartId, productId int64) error {
@@ -127,7 +128,7 @@ func insertItemInUserCart(db *sql.DB, totalQty, cartId, productId int64) error {
 }
 
 func RemoveItemFromCustomerCart(db *sql.DB, productId int64, email string) error {
-	cartId, err := createOrGetCartId(db, email)
+	cartId, _, err := createOrGetCartDetails(db, email)
 	if err != nil {
 		return err
 	}
@@ -158,11 +159,11 @@ func ShiftGuestCartItemsToCustomer(db *sql.DB, sessionId, email string) error {
 }
 
 func ApplyCouponToCart(db *sql.DB, coupon, email string) error {
-	couponEntity, err := GetCouponDetails(db, coupon)
+	couponEntity, err := GetCouponDetails(db, coupon, email)
 	if err != nil {
 		return err
 	}
-	cartItems, err := GetCustomerCart(db, email)
+	cartItems, _, err := GetCustomerCart(db, email)
 	if err != nil {
 		return err
 	}
@@ -171,7 +172,7 @@ func ApplyCouponToCart(db *sql.DB, coupon, email string) error {
 		return errors.New("coupon condition not satisfied")
 	}
 
-	cartId, err := createOrGetCartId(db, email)
+	cartId, _, err := createOrGetCartDetails(db, email)
 	if err != nil {
 		return err
 	}
@@ -183,7 +184,7 @@ func ApplyCouponToCart(db *sql.DB, coupon, email string) error {
 }
 
 func RemoveCouponFromCart(db *sql.DB, email string) error {
-	_, err := db.Exec("UPDATE cart set couponId = NULL where email= ?", email)
+	_, err := db.Exec("UPDATE cart set couponId = '' where email= ?", email)
 	if err != nil {
 		return err
 	}

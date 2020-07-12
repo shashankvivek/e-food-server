@@ -2,16 +2,21 @@ package integration
 
 import (
 	"e-food/models"
+	"e-food/pkg/entities"
 	"fmt"
 )
 
-func PrepareBilling(cartItems []*models.CartItem) (*models.BillableCart, error) {
+func PrepareBilling(cartItems []*models.CartItem, couponInfo *entities.CouponEntity) (*models.BillableCart, error) {
 	rules, err := CreateRuleBook()
 	currencyVal := cartItems[0].Currency
 	if err != nil {
 		fmt.Println(err.Error())
 		return nil, err
 	}
+	if couponInfo != nil {
+		rules.AppendNewRules(couponInfo.Rule)
+	}
+
 	offerItems, remainingItems, _ := rules.ApplyRules(cartItems)
 	var nonOfferItems []*models.BillingItem
 	for _, v := range remainingItems {
