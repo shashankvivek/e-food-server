@@ -4,6 +4,8 @@ import (
 	"crypto/rand"
 	"database/sql"
 	"encoding/base32"
+	"errors"
+	"fmt"
 	"strings"
 	"time"
 )
@@ -20,6 +22,28 @@ func InsertNewCoupon(db *sql.DB, userLimit int, expTime time.Time, ruleSet strin
 		return "", err
 	}
 	return randId, nil
+}
+
+func CheckValidityOfCoupon(db *sql.DB, coupon string) error {
+	row := db.QueryRow("SELECT userLimit,expiryDate from coupons where couponId = ? ", coupon)
+	var userLimit int
+	var expTime time.Time
+	err := row.Scan(&userLimit, &expTime)
+	if err != nil {
+		return err
+	}
+	currentDate := time.Now().UTC()
+	if expTime.After(currentDate) && userLimit > 0 {
+		return nil
+	} else {
+		if userLimit < 1 {
+			fmt.Println("User limit reached")
+		}
+		if expTime.Before(currentDate) {
+			fmt.Println("coupon has expired")
+		}
+		return errors.New("invalid coupon")
+	}
 }
 
 func insertWithUniqueId(db *sql.DB, userLimit int, expTime time.Time, ruleSet, randId string) error {

@@ -31,7 +31,6 @@ func (impl *generateCouponImpl) Handle(params admin.GenerateCouponParams) middle
 	if err != nil {
 		return admin.NewGenerateCouponInternalServerError().WithPayload("error decoding rule")
 	}
-
 	couponCode, err := dao.InsertNewCoupon(impl.dbClient, userLimit, expirationTime, defaultRuleSet)
 	if err != nil {
 		fmt.Println(err.Error())

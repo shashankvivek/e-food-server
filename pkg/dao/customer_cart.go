@@ -156,6 +156,22 @@ func ShiftGuestCartItemsToCustomer(db *sql.DB, sessionId, email string) error {
 	return nil
 }
 
+func ApplyCouponToCart(db *sql.DB, coupon, email string) error {
+	err := CheckValidityOfCoupon(db, coupon)
+	if err != nil {
+		return err
+	}
+	cartId, err := createOrGetCartId(db, email)
+	if err != nil {
+		return err
+	}
+	_, err = db.Exec("UPDATE cart SET couponId = ? where cartId = ? ", coupon, cartId)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 //TODO: use this logic when the order is being created
 //func insertItemInUserCart(db *sql.DB, unitsInStock, totalQty, productId int64, email string) error {
 //	tx, err := db.Begin()

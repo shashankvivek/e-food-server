@@ -58,6 +58,10 @@ func configureAPI(api *operations.EFoodAPI) http.Handler {
 
 	api.UserCheckoutHandler = handlers.NewCartCheckoutHandler(dbClient)
 
+	api.UserApplyCouponHandler = handlers.NewUserApplyCouponHandler(dbClient)
+
+	api.UserRemoveCouponHandler = handlers.NewUserRemoveCouponHandler(dbClient)
+
 	api.UserRegisterHandler = handlers.NewUserRegisterHandler(dbClient)
 
 	api.AdminGenerateCouponHandler = handlers.NewAdminGenerateCouponHandler(dbClient)
