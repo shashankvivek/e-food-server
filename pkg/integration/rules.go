@@ -56,7 +56,7 @@ func CreateRuleBook() (*RuleCollection, error) {
 func (r *RuleCollection) ApplyRules(cartItems []*models.CartItem) ([]*models.OfferItem, []*models.CartItem, error) {
 	var offerCartItems []*models.OfferItem
 	for _, rule := range r.RuleBook {
-		productsFound := checkForMatchingProducts(rule.RuleSet, cartItems)
+		productsFound := CheckForMatchingProductsWithRuleSets(rule.RuleSet, cartItems)
 		if productsFound {
 			var offerItem []*models.OfferItem
 			offerItem, cartItems = extractProductsWithOffer(&rule, cartItems)
@@ -234,7 +234,7 @@ func groupItemsByOfferWithEqualQtyRule(rule *Rule, eligibleItems []*models.CartI
 	return leftOverItems, offering
 }
 
-func checkForMatchingProducts(ruleSet map[string]*Filter, cartItems []*models.CartItem) bool {
+func CheckForMatchingProductsWithRuleSets(ruleSet map[string]*Filter, cartItems []*models.CartItem) bool {
 	found := false
 	matchedProdCount := 0
 	for _, item := range cartItems {

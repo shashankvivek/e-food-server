@@ -3,6 +3,7 @@ package dao
 import (
 	"database/sql"
 	"e-food/models"
+	"e-food/pkg/integration"
 	"errors"
 	"fmt"
 	"github.com/google/martian/log"
@@ -157,11 +158,18 @@ func ShiftGuestCartItemsToCustomer(db *sql.DB, sessionId, email string) error {
 }
 
 func ApplyCouponToCart(db *sql.DB, coupon, email string) error {
-	err := CheckValidityOfCoupon(db, coupon)
+	couponEntity, err := GetCouponDetails(db, coupon)
 	if err != nil {
 		return err
 	}
-	//TODO: check if the rule set is applicable for cartItem
+	cartItems, err := GetCustomerCart(db, email)
+	if err != nil {
+		return err
+	}
+	productsFound := integration.CheckForMatchingProductsWithRuleSets(couponEntity.Rule.RuleSet, cartItems)
+	if !productsFound {
+		return errors.New("coupon condition not satisfied")
+	}
 
 	cartId, err := createOrGetCartId(db, email)
 	if err != nil {

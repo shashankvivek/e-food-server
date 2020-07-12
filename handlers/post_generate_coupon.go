@@ -23,7 +23,7 @@ func NewAdminGenerateCouponHandler(db *sql.DB) admin.GenerateCouponHandler {
 }
 
 func (impl *generateCouponImpl) Handle(params admin.GenerateCouponParams) middleware.Responder {
-	defaultRuleSet := "{\"ruleId\": \"c1\",\"discount\": 30.00,\"filters\": {\"4\": {\"minQunatity\": 1}}}"
+	defaultRuleSet := "{\"ruleId\": \"c1\",\"discount\": 30.00,\"filters\": {\"4\": {\"minQuantity\": 1}}}"
 	expirationTime := time.Now().UTC().Add(900 * time.Second)
 	userLimit := 1
 	rule := &integration.Rule{}

@@ -3,12 +3,21 @@ package dao
 import (
 	"crypto/rand"
 	"database/sql"
+	"e-food/pkg/integration"
 	"encoding/base32"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
 	"time"
 )
+
+type CouponEntity struct {
+	CouponId   string
+	ExpiryDate time.Time
+	Rule       integration.Rule
+	UserLimit  int
+}
 
 func InsertNewCoupon(db *sql.DB, userLimit int, expTime time.Time, ruleSet string) (string, error) {
 	randId := getToken(10)
@@ -24,25 +33,30 @@ func InsertNewCoupon(db *sql.DB, userLimit int, expTime time.Time, ruleSet strin
 	return randId, nil
 }
 
-func CheckValidityOfCoupon(db *sql.DB, coupon string) error {
-	row := db.QueryRow("SELECT userLimit,expiryDate from coupons where couponId = ? ", coupon)
-	var userLimit int
-	var expTime time.Time
-	err := row.Scan(&userLimit, &expTime)
+func GetCouponDetails(db *sql.DB, coupon string) (*CouponEntity, error) {
+	row := db.QueryRow("SELECT userLimit,expiryDate,RuleSet from coupons where couponId = ? ", coupon)
+	var couponDetail CouponEntity
+	var ruleInfo string
+	err := row.Scan(&couponDetail.UserLimit, &couponDetail.ExpiryDate, &ruleInfo)
 	if err != nil {
-		return err
+		return nil, err
 	}
+	couponDetail.CouponId = coupon
 	currentDate := time.Now().UTC()
-	if expTime.After(currentDate) && userLimit > 0 {
-		return nil
+	if couponDetail.ExpiryDate.After(currentDate) && couponDetail.UserLimit > 0 {
+		err := json.Unmarshal([]byte(ruleInfo), &couponDetail.Rule)
+		if err != nil {
+			return nil, err
+		}
+		return &couponDetail, nil
 	} else {
-		if userLimit < 1 {
+		if couponDetail.UserLimit < 1 {
 			fmt.Println("User limit reached")
 		}
-		if expTime.Before(currentDate) {
+		if couponDetail.ExpiryDate.Before(currentDate) {
 			fmt.Println("coupon has expired")
 		}
-		return errors.New("invalid coupon")
+		return nil, errors.New("invalid coupon")
 	}
 }
 
