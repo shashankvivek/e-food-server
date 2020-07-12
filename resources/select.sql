@@ -1,1 +1,0 @@
-select b.bcID ,bcNAME,bcIsActive,scId,scName,scIsActive from broad_category as B INNER JOIN sub_category as S where b.bcId = s.bcId

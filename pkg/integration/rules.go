@@ -39,7 +39,7 @@ type EngineTempItem struct {
 
 func CreateRuleBook() (*RuleCollection, error) {
 
-	data, err := ioutil.ReadFile("./pkg/integration/rules.json")
+	data, err := ioutil.ReadFile("./resources/rules.json")
 	if err != nil {
 		return nil, err
 	}

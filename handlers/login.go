@@ -27,23 +27,23 @@ func (impl *loginImpl) Handle(params user.LoginParams) middleware.Responder {
 		return user.NewLoginInternalServerError().WithPayload("error with cookie")
 	}
 	email := params.Login.Email
-	userInfo, err := dao.FetchUserDetails(impl.dbClient, email)
+	userInfo, err := dao.FetchUserDetails(impl.dbClient, *email)
 	if err != nil {
 		fmt.Println(err.Error())
 		return user.NewLoginInternalServerError().WithPayload("Error fetching user details")
 	}
-	err = bcrypt.CompareHashAndPassword([]byte(userInfo.Password), []byte(params.Login.Password))
+	err = bcrypt.CompareHashAndPassword([]byte(*userInfo.Password), []byte(*params.Login.Password))
 	if err != nil {
 		fmt.Println(err)
 		return user.NewRegisterNotFound()
 	}
 	if cookieInfo.Value != "" {
-		err := dao.ShiftGuestCartItemsToCustomer(impl.dbClient, cookieInfo.Value, email)
+		err := dao.ShiftGuestCartItemsToCustomer(impl.dbClient, cookieInfo.Value, *email)
 		if err != nil {
 			user.NewLoginInternalServerError().WithPayload("Error shifting cart items")
 		}
 	}
-	token, err := utils.GenerateJWT(email, userInfo.Fname, userInfo.Lname)
+	token, err := utils.GenerateJWT(*email, *userInfo.Fname, userInfo.Lname)
 	if err != nil {
 		return user.NewLoginInternalServerError().WithPayload("Error defining token")
 	}

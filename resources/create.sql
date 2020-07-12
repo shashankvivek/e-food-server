@@ -137,10 +137,10 @@ CREATE TABLE `ecommerce`.`customer`
 -- create coupon table
 CREATE TABLE `ecommerce`.`coupons`
 (
-    `couponId`           VARCHAR(10)   NOT NULL,
-    `expiryDate`         DATETIME      NULL,
-    `RuleSet`            VARCHAR(1000) NULL,
-    `discountPercentage` DECIMAL(2)    NULL,
+    `couponId`   VARCHAR(10) NOT NULL,
+    `expiryDate` DATETIME    NULL,
+    `RuleSet`    LONGTEXT    NOT NULL,
+    `userLimit`  INT         NULL,
     PRIMARY KEY (`couponId`)
 );
 

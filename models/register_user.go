@@ -6,8 +6,10 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // RegisterUser register user
@@ -16,23 +18,84 @@ import (
 type RegisterUser struct {
 
 	// email
-	Email string `json:"email,omitempty"`
+	// Required: true
+	Email *string `json:"email"`
 
 	// fname
-	Fname string `json:"fname,omitempty"`
+	// Required: true
+	Fname *string `json:"fname"`
 
 	// lname
 	Lname string `json:"lname,omitempty"`
 
 	// password
-	Password string `json:"password,omitempty"`
+	// Required: true
+	Password *string `json:"password"`
 
 	// phone no
-	PhoneNo string `json:"phoneNo,omitempty"`
+	// Required: true
+	PhoneNo *string `json:"phoneNo"`
 }
 
 // Validate validates this register user
 func (m *RegisterUser) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateEmail(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateFname(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validatePassword(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validatePhoneNo(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *RegisterUser) validateEmail(formats strfmt.Registry) error {
+
+	if err := validate.Required("email", "body", m.Email); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *RegisterUser) validateFname(formats strfmt.Registry) error {
+
+	if err := validate.Required("fname", "body", m.Fname); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *RegisterUser) validatePassword(formats strfmt.Registry) error {
+
+	if err := validate.Required("password", "body", m.Password); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *RegisterUser) validatePhoneNo(formats strfmt.Registry) error {
+
+	if err := validate.Required("phoneNo", "body", m.PhoneNo); err != nil {
+		return err
+	}
+
 	return nil
 }
 

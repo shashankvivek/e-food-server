@@ -60,6 +60,8 @@ func configureAPI(api *operations.EFoodAPI) http.Handler {
 
 	api.UserRegisterHandler = handlers.NewUserRegisterHandler(dbClient)
 
+	api.AdminGenerateCouponHandler = handlers.NewAdminGenerateCouponHandler(dbClient)
+
 	api.ServerShutdown = func() {}
 
 	return setupGlobalMiddleware(api.Serve(setupMiddlewares))

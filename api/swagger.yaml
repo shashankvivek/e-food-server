@@ -293,9 +293,48 @@ paths:
           schema:
             type: string
           description: Server error
+  /generateCouponCode:
+    post:
+      description: 'Generate coupon code'
+      tags: [admin]
+      operationId: GenerateCoupon
+      consumes:
+        - 'application/json'
+      parameters:
+        - in: 'body'
+          name: 'config'
+          schema:
+            $ref: '#/definitions/CouponConfig'
+      responses:
+        200:
+          description: "valid coupon code"
+          schema:
+            $ref: "#/definitions/SuccessResponse"
+        400:
+          description: Bad Request
+        404:
+          description: request Not Found
+        500:
+          schema:
+            type: string
+          description: Server error
 definitions:
+  CouponConfig:
+    type: object
+    properties:
+      userLimit:
+        type: integer
+        default: 1
+      expirationDate:
+        description: 'In UTC time'
+        type: string
+        format: date-time
+      ruleSet:
+        description: 'This has to be provided by another rule-engine system with structural validations'
+        type: string
   RegisterUser:
     type: object
+    required: [email,fname,password,phoneNo]
     properties:
       email:
         type: string
@@ -309,6 +348,7 @@ definitions:
         type: string
   LoginInfo:
     type: object
+    required: [email,password]
     properties:
       email:
         type: string
@@ -403,6 +443,7 @@ definitions:
         description: False if Product is out of stock
   ItemInfo:
     type: object
+    required: [totalQty , productId]
     properties:
       totalQty:
         type: integer

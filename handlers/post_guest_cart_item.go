@@ -32,10 +32,10 @@ func (impl *addCartItemImpl) Handle(params guest.AddItemParams) middleware.Respo
 		return guest.NewGetItemsInternalServerError().WithPayload("Unable to add Item to cart")
 	}
 
-	if params.Body.TotalQty < 1 || params.Body.TotalQty > constants.MAX_ALLOWED_CART_ITEM_QTY {
+	if *params.Body.TotalQty < 1 || *params.Body.TotalQty > constants.MAX_ALLOWED_CART_ITEM_QTY {
 		return guest.NewAddItemOK().WithPayload(&models.CartSuccessResponse{Success: false, Message: "Quantity must be between 1 and 12", QtyAdded: 0})
 	}
-	retVal, err := dao.AddItemToGuestCart(impl.dbClient, cookieInfo.Value, params.Body.TotalQty, params.Body.ProductID)
+	retVal, err := dao.AddItemToGuestCart(impl.dbClient, cookieInfo.Value, *params.Body.TotalQty, *params.Body.ProductID)
 	if err != nil {
 		fmt.Println(err.Error())
 		return guest.NewAddItemInternalServerError().WithPayload("Error in adding Item to cart")

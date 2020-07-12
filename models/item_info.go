@@ -6,8 +6,10 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // ItemInfo item info
@@ -16,14 +18,47 @@ import (
 type ItemInfo struct {
 
 	// product Id
-	ProductID int64 `json:"productId,omitempty"`
+	// Required: true
+	ProductID *int64 `json:"productId"`
 
 	// total qty
-	TotalQty int64 `json:"totalQty,omitempty"`
+	// Required: true
+	TotalQty *int64 `json:"totalQty"`
 }
 
 // Validate validates this item info
 func (m *ItemInfo) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateProductID(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTotalQty(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ItemInfo) validateProductID(formats strfmt.Registry) error {
+
+	if err := validate.Required("productId", "body", m.ProductID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ItemInfo) validateTotalQty(formats strfmt.Registry) error {
+
+	if err := validate.Required("totalQty", "body", m.TotalQty); err != nil {
+		return err
+	}
+
 	return nil
 }
 

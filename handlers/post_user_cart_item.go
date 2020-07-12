@@ -26,10 +26,10 @@ func (impl *postsUserCartItem) Handle(params user.AddToCartParams, principal int
 	if err != nil {
 		return user.NewAddToCartInternalServerError().WithPayload("error in parsing token")
 	}
-	if params.Body.TotalQty < 1 || params.Body.TotalQty > constants.MAX_ALLOWED_CART_ITEM_QTY {
+	if *params.Body.TotalQty < 1 || *params.Body.TotalQty > constants.MAX_ALLOWED_CART_ITEM_QTY {
 		return user.NewAddToCartOK().WithPayload(&models.CartSuccessResponse{Success: false, Message: "Quantity must be between 1 and 12", QtyAdded: 0})
 	}
-	retVal, err := dao.AddItemToCustomerCart(impl.dbClient, email.(string), params.Body.TotalQty, params.Body.ProductID)
+	retVal, err := dao.AddItemToCustomerCart(impl.dbClient, email.(string), *params.Body.TotalQty, *params.Body.ProductID)
 	if err != nil {
 		fmt.Println(err.Error())
 		return user.NewAddToCartInternalServerError().WithPayload("Error in adding Item to cart")

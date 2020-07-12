@@ -97,6 +97,47 @@ func init() {
         }
       }
     },
+    "/generateCouponCode": {
+      "post": {
+        "description": "Generate coupon code",
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "admin"
+        ],
+        "operationId": "GenerateCoupon",
+        "parameters": [
+          {
+            "name": "config",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/CouponConfig"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "valid coupon code",
+            "schema": {
+              "$ref": "#/definitions/SuccessResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "request Not Found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
     "/guest/cart": {
       "get": {
         "description": "Get All cart items",
@@ -617,6 +658,24 @@ func init() {
         }
       }
     },
+    "CouponConfig": {
+      "type": "object",
+      "properties": {
+        "expirationDate": {
+          "description": "In UTC time",
+          "type": "string",
+          "format": "date-time"
+        },
+        "ruleSet": {
+          "description": "This has to be provided by another rule-engine system with structural validations",
+          "type": "string"
+        },
+        "userLimit": {
+          "type": "integer",
+          "default": 1
+        }
+      }
+    },
     "GuestSession": {
       "type": "object",
       "properties": {
@@ -627,6 +686,10 @@ func init() {
     },
     "ItemInfo": {
       "type": "object",
+      "required": [
+        "totalQty",
+        "productId"
+      ],
       "properties": {
         "productId": {
           "type": "integer"
@@ -638,6 +701,10 @@ func init() {
     },
     "LoginInfo": {
       "type": "object",
+      "required": [
+        "email",
+        "password"
+      ],
       "properties": {
         "email": {
           "type": "string"
@@ -732,6 +799,12 @@ func init() {
     },
     "RegisterUser": {
       "type": "object",
+      "required": [
+        "email",
+        "fname",
+        "password",
+        "phoneNo"
+      ],
       "properties": {
         "email": {
           "type": "string"
@@ -867,6 +940,47 @@ func init() {
         }
       }
     },
+    "/generateCouponCode": {
+      "post": {
+        "description": "Generate coupon code",
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "admin"
+        ],
+        "operationId": "GenerateCoupon",
+        "parameters": [
+          {
+            "name": "config",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/CouponConfig"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "valid coupon code",
+            "schema": {
+              "$ref": "#/definitions/SuccessResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "request Not Found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
     "/guest/cart": {
       "get": {
         "description": "Get All cart items",
@@ -1387,6 +1501,24 @@ func init() {
         }
       }
     },
+    "CouponConfig": {
+      "type": "object",
+      "properties": {
+        "expirationDate": {
+          "description": "In UTC time",
+          "type": "string",
+          "format": "date-time"
+        },
+        "ruleSet": {
+          "description": "This has to be provided by another rule-engine system with structural validations",
+          "type": "string"
+        },
+        "userLimit": {
+          "type": "integer",
+          "default": 1
+        }
+      }
+    },
     "GuestSession": {
       "type": "object",
       "properties": {
@@ -1397,6 +1529,10 @@ func init() {
     },
     "ItemInfo": {
       "type": "object",
+      "required": [
+        "totalQty",
+        "productId"
+      ],
       "properties": {
         "productId": {
           "type": "integer"
@@ -1408,6 +1544,10 @@ func init() {
     },
     "LoginInfo": {
       "type": "object",
+      "required": [
+        "email",
+        "password"
+      ],
       "properties": {
         "email": {
           "type": "string"
@@ -1502,6 +1642,12 @@ func init() {
     },
     "RegisterUser": {
       "type": "object",
+      "required": [
+        "email",
+        "fname",
+        "password",
+        "phoneNo"
+      ],
       "properties": {
         "email": {
           "type": "string"

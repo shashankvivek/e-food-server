@@ -24,7 +24,7 @@ func FetchUserDetails(db *sql.DB, email string) (*models.RegisterUser, error) {
 }
 
 func RegisterNewUser(db *sql.DB, userInfo *models.RegisterUser) error {
-	password := []byte(userInfo.Password)
+	password := []byte(*userInfo.Password)
 
 	// Hashing the password with the default cost of 10
 	hashedPassword, err := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)

@@ -19,6 +19,7 @@ import (
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
+	"e-food/restapi/operations/admin"
 	"e-food/restapi/operations/guest"
 	"e-food/restapi/operations/menu"
 	"e-food/restapi/operations/products"
@@ -57,6 +58,9 @@ func NewEFoodAPI(spec *loads.Document) *EFoodAPI {
 		}),
 		MenuCategoryListHandler: menu.CategoryListHandlerFunc(func(params menu.CategoryListParams) middleware.Responder {
 			return middleware.NotImplemented("operation menu.CategoryList has not yet been implemented")
+		}),
+		AdminGenerateCouponHandler: admin.GenerateCouponHandlerFunc(func(params admin.GenerateCouponParams) middleware.Responder {
+			return middleware.NotImplemented("operation admin.GenerateCoupon has not yet been implemented")
 		}),
 		UserGetCartHandler: user.GetCartHandlerFunc(func(params user.GetCartParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation user.GetCart has not yet been implemented")
@@ -137,6 +141,8 @@ type EFoodAPI struct {
 	UserAddToCartHandler user.AddToCartHandler
 	// MenuCategoryListHandler sets the operation handler for the category list operation
 	MenuCategoryListHandler menu.CategoryListHandler
+	// AdminGenerateCouponHandler sets the operation handler for the generate coupon operation
+	AdminGenerateCouponHandler admin.GenerateCouponHandler
 	// UserGetCartHandler sets the operation handler for the get cart operation
 	UserGetCartHandler user.GetCartHandler
 	// ProductsGetFromSubCategoryHandler sets the operation handler for the get from sub category operation
@@ -234,6 +240,9 @@ func (o *EFoodAPI) Validate() error {
 	}
 	if o.MenuCategoryListHandler == nil {
 		unregistered = append(unregistered, "menu.CategoryListHandler")
+	}
+	if o.AdminGenerateCouponHandler == nil {
+		unregistered = append(unregistered, "admin.GenerateCouponHandler")
 	}
 	if o.UserGetCartHandler == nil {
 		unregistered = append(unregistered, "user.GetCartHandler")
@@ -372,6 +381,10 @@ func (o *EFoodAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/categories"] = menu.NewCategoryList(o.context, o.MenuCategoryListHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/generateCouponCode"] = admin.NewGenerateCoupon(o.context, o.AdminGenerateCouponHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
