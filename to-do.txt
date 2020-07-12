@@ -5,3 +5,4 @@
 5. CSRF
 6. Manage headers on deployed server
 7. Add timestamp in session entries to clean them up later with some housekeeping script
+8. when order is placed, reduce coupon userLimit count and inventory item count from products

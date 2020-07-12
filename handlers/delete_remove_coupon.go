@@ -2,6 +2,9 @@ package handlers
 
 import (
 	"database/sql"
+	"e-food/models"
+	"e-food/pkg/dao"
+	"e-food/pkg/utils"
 	"e-food/restapi/operations/user"
 	"github.com/go-openapi/runtime/middleware"
 )
@@ -16,6 +19,14 @@ func NewUserRemoveCouponHandler(db *sql.DB) user.RemoveCouponHandler {
 	}
 }
 
-func (impl *removeCouponImpl) Handle(param user.RemoveCouponParams, principal interface{}) middleware.Responder {
-	return nil
+func (impl *removeCouponImpl) Handle(params user.RemoveCouponParams, principal interface{}) middleware.Responder {
+	email, err := utils.ValidateHeader(params.HTTPRequest.Header.Get("Authorization"))
+	if err != nil {
+		return user.NewRemoveCouponInternalServerError().WithPayload("error in parsing token")
+	}
+	err = dao.RemoveCouponFromCart(impl.dbClient, email.(string))
+	if err != nil {
+		return user.NewRemoveCouponInternalServerError().WithPayload("unable to remove coupon")
+	}
+	return user.NewRemoveCouponOK().WithPayload(&models.SuccessResponse{Success: true, Message: "coupon removed successfully"})
 }

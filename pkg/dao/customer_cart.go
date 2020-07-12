@@ -161,11 +161,21 @@ func ApplyCouponToCart(db *sql.DB, coupon, email string) error {
 	if err != nil {
 		return err
 	}
+	//TODO: check if the rule set is applicable for cartItem
+
 	cartId, err := createOrGetCartId(db, email)
 	if err != nil {
 		return err
 	}
 	_, err = db.Exec("UPDATE cart SET couponId = ? where cartId = ? ", coupon, cartId)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func RemoveCouponFromCart(db *sql.DB, email string) error {
+	_, err := db.Exec("UPDATE cart set couponId = NULL where email= ?", email)
 	if err != nil {
 		return err
 	}
