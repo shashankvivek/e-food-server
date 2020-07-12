@@ -83,8 +83,14 @@ func NewEFoodAPI(spec *loads.Document) *EFoodAPI {
 		GuestRemoveItemHandler: guest.RemoveItemHandlerFunc(func(params guest.RemoveItemParams) middleware.Responder {
 			return middleware.NotImplemented("operation guest.RemoveItem has not yet been implemented")
 		}),
+		UserApplyCouponHandler: user.ApplyCouponHandlerFunc(func(params user.ApplyCouponParams, principal interface{}) middleware.Responder {
+			return middleware.NotImplemented("operation user.ApplyCoupon has not yet been implemented")
+		}),
 		UserCheckoutHandler: user.CheckoutHandlerFunc(func(params user.CheckoutParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation user.Checkout has not yet been implemented")
+		}),
+		UserRemoveCouponHandler: user.RemoveCouponHandlerFunc(func(params user.RemoveCouponParams, principal interface{}) middleware.Responder {
+			return middleware.NotImplemented("operation user.RemoveCoupon has not yet been implemented")
 		}),
 
 		// Applies when the "Authorization" header is set
@@ -157,8 +163,12 @@ type EFoodAPI struct {
 	UserRemoveFromCartHandler user.RemoveFromCartHandler
 	// GuestRemoveItemHandler sets the operation handler for the remove item operation
 	GuestRemoveItemHandler guest.RemoveItemHandler
+	// UserApplyCouponHandler sets the operation handler for the apply coupon operation
+	UserApplyCouponHandler user.ApplyCouponHandler
 	// UserCheckoutHandler sets the operation handler for the checkout operation
 	UserCheckoutHandler user.CheckoutHandler
+	// UserRemoveCouponHandler sets the operation handler for the remove coupon operation
+	UserRemoveCouponHandler user.RemoveCouponHandler
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
 	ServeError func(http.ResponseWriter, *http.Request, error)
@@ -265,8 +275,14 @@ func (o *EFoodAPI) Validate() error {
 	if o.GuestRemoveItemHandler == nil {
 		unregistered = append(unregistered, "guest.RemoveItemHandler")
 	}
+	if o.UserApplyCouponHandler == nil {
+		unregistered = append(unregistered, "user.ApplyCouponHandler")
+	}
 	if o.UserCheckoutHandler == nil {
 		unregistered = append(unregistered, "user.CheckoutHandler")
+	}
+	if o.UserRemoveCouponHandler == nil {
+		unregistered = append(unregistered, "user.RemoveCouponHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -413,10 +429,18 @@ func (o *EFoodAPI) initHandlerCache() {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/guest/cart"] = guest.NewRemoveItem(o.context, o.GuestRemoveItemHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/coupon"] = user.NewApplyCoupon(o.context, o.UserApplyCouponHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/checkoutCart"] = user.NewCheckout(o.context, o.UserCheckoutHandler)
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/coupon"] = user.NewRemoveCoupon(o.context, o.UserRemoveCouponHandler)
 }
 
 // Serve creates a http handler to serve the API over HTTP

@@ -97,6 +97,88 @@ func init() {
         }
       }
     },
+    "/coupon": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "description": "Apply coupon code",
+        "tags": [
+          "user"
+        ],
+        "operationId": "applyCoupon",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "couponCode",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "response when coupon is consumed",
+            "schema": {
+              "$ref": "#/definitions/SuccessResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Item to be added Not Found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "description": "Remove coupon code",
+        "tags": [
+          "user"
+        ],
+        "operationId": "removeCoupon",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "couponCode",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "response when coupon is consumed",
+            "schema": {
+              "$ref": "#/definitions/SuccessResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Item to be added Not Found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
     "/generateCouponCode": {
       "post": {
         "description": "Generate coupon code",
@@ -660,6 +742,9 @@ func init() {
     },
     "CouponConfig": {
       "type": "object",
+      "default": {
+        "userLimit": 1
+      },
       "properties": {
         "expirationDate": {
           "description": "In UTC time",
@@ -671,8 +756,7 @@ func init() {
           "type": "string"
         },
         "userLimit": {
-          "type": "integer",
-          "default": 1
+          "type": "integer"
         }
       }
     },
@@ -940,6 +1024,88 @@ func init() {
         }
       }
     },
+    "/coupon": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "description": "Apply coupon code",
+        "tags": [
+          "user"
+        ],
+        "operationId": "applyCoupon",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "couponCode",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "response when coupon is consumed",
+            "schema": {
+              "$ref": "#/definitions/SuccessResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Item to be added Not Found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "description": "Remove coupon code",
+        "tags": [
+          "user"
+        ],
+        "operationId": "removeCoupon",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "couponCode",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "response when coupon is consumed",
+            "schema": {
+              "$ref": "#/definitions/SuccessResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Item to be added Not Found"
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
     "/generateCouponCode": {
       "post": {
         "description": "Generate coupon code",
@@ -1503,6 +1669,9 @@ func init() {
     },
     "CouponConfig": {
       "type": "object",
+      "default": {
+        "userLimit": 1
+      },
       "properties": {
         "expirationDate": {
           "description": "In UTC time",
@@ -1514,8 +1683,7 @@ func init() {
           "type": "string"
         },
         "userLimit": {
-          "type": "integer",
-          "default": 1
+          "type": "integer"
         }
       }
     },

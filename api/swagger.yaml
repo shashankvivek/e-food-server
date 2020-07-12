@@ -132,6 +132,55 @@ paths:
           schema:
             type: string
           description: Server error
+  /coupon:
+    delete:
+      description: 'Remove coupon code'
+      tags: [user]
+      operationId: removeCoupon
+      security:
+        - Bearer: []
+      parameters:
+        - in: 'query'
+          name: 'couponCode'
+          required: true
+          type: string
+      responses:
+        200:
+          description: "response when coupon is consumed"
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        400:
+          description: Bad Request
+        404:
+          description: Item to be added Not Found
+        500:
+          schema:
+            type: string
+          description: Server error
+    post:
+      description: 'Apply coupon code'
+      tags: [user]
+      operationId: applyCoupon
+      security:
+        - Bearer: []
+      parameters:
+        - in: 'query'
+          name: 'couponCode'
+          required: true
+          type: string
+      responses:
+        200:
+          description: "response when coupon is consumed"
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        400:
+          description: Bad Request
+        404:
+          description: Item to be added Not Found
+        500:
+          schema:
+            type: string
+          description: Server error
   /user/cart:
     post:
       description: 'This API adds product to cart / guest cart'
@@ -321,10 +370,11 @@ paths:
 definitions:
   CouponConfig:
     type: object
+    default:
+      userLimit: 1
     properties:
       userLimit:
         type: integer
-        default: 1
       expirationDate:
         description: 'In UTC time'
         type: string

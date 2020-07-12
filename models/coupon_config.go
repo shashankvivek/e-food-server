@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -25,7 +27,20 @@ type CouponConfig struct {
 	RuleSet string `json:"ruleSet,omitempty"`
 
 	// user limit
-	UserLimit *int64 `json:"userLimit,omitempty"`
+	UserLimit int64 `json:"userLimit,omitempty"`
+}
+
+func (m *CouponConfig) UnmarshalJSON(b []byte) error {
+	type CouponConfigAlias CouponConfig
+	var t CouponConfigAlias
+	if err := json.Unmarshal([]byte("{\"userLimit\":1}"), &t); err != nil {
+		return err
+	}
+	if err := json.Unmarshal(b, &t); err != nil {
+		return err
+	}
+	*m = CouponConfig(t)
+	return nil
 }
 
 // Validate validates this coupon config
