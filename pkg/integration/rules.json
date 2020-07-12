@@ -13,12 +13,10 @@
     "discount": 30.00,
     "filters": {
       "3": {
-        "minQuantity": 2,
-        "maxQuantity": 2
+        "eqQunatity": 2
       },
       "5": {
-        "minQuantity": 4,
-        "maxQuantity": 4
+        "eqQunatity": 4
       }
     }
   }

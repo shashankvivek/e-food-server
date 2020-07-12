@@ -28,6 +28,9 @@ func (impl *cartPreviewImpl) Handle(params user.CheckoutParams, principal interf
 	if err != nil {
 		return user.NewCheckoutInternalServerError().WithPayload("error getting cart details")
 	}
+	if len(cartItems) == 0 {
+		return user.NewCheckoutNotFound()
+	}
 	billedCart, err := integration.PrepareBilling(cartItems)
 	if err != nil {
 		return user.NewCheckoutInternalServerError().WithPayload("error creating billing")

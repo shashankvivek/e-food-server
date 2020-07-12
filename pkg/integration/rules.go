@@ -19,8 +19,8 @@ type Rule struct {
 }
 
 type Filter struct {
-	MinQuantity *int64 `json:"minQuantity"`
-	MaxQuantity *int64 `json:"maxQuantity"`
+	MinQuantity *int64 `json:"minQuantity,omitempty"`
+	EqQunatity  *int64 `json:"eqQunatity,omitempty"`
 }
 
 type EngineTempItem struct {
@@ -30,7 +30,7 @@ type EngineTempItem struct {
 }
 
 func CreateRuleBook() (*RuleCollection, error) {
-	// assumption that min and max qty are checked by system before being consumed here
+
 	data, err := ioutil.ReadFile("./pkg/integration/rules.json")
 	if err != nil {
 		return nil, err
@@ -48,6 +48,7 @@ func CreateRuleBook() (*RuleCollection, error) {
 func (r *RuleCollection) ApplyRules(cartItems []*models.CartItem) ([]*models.OfferItem, []*models.CartItem, error) {
 	var offerCartItems []*models.OfferItem
 	for _, rule := range r.RuleBook {
+		//TODO: check why banana is coming as -1
 		productsFound := checkForMatchingProducts(rule.RuleSet, cartItems)
 		if productsFound {
 			var offerItem []*models.OfferItem
@@ -64,6 +65,7 @@ func extractProductsWithOffer(rule *Rule, cartItems []*models.CartItem) ([]*mode
 	var remainingCartItems []*models.CartItem
 	var eligibleItems []*models.CartItem
 	var offering []*models.OfferItem
+	var leftOverItems []*models.CartItem
 	for _, item := range cartItems {
 		if rule.RuleSet[strconv.FormatInt(item.ProductID, 10)] != nil {
 			eligibleItems = append(eligibleItems, item)
@@ -72,55 +74,130 @@ func extractProductsWithOffer(rule *Rule, cartItems []*models.CartItem) ([]*mode
 		}
 	}
 	maxSetPossible := int64(999999999)
-
+	hasEqualQuantityRule := false
+	hasMinQuantityRule := false
 	for _, product := range eligibleItems {
 		filterRule := rule.RuleSet[strconv.FormatInt(product.ProductID, 10)]
-		// min limit and no max limit
-		if filterRule.MinQuantity != nil &&
-			filterRule.MaxQuantity == nil &&
+		//exact limit for rule
+		if filterRule.EqQunatity != nil {
+			hasEqualQuantityRule = true
+			setPossible := product.Quantity / *filterRule.EqQunatity
+			if maxSetPossible > setPossible {
+				maxSetPossible = setPossible
+			}
+		} else if filterRule.MinQuantity != nil &&
 			product.Quantity >= *filterRule.MinQuantity {
-			offering = append(offering, &models.OfferItem{
-				RuleSetID:       rule.RuleId,
-				ActualPrice:     product.UnitPrice * float64(product.Quantity),
-				DiscountPercent: rule.Discount,
-				DiscountedPrice: (product.UnitPrice * float64(product.Quantity)) * (1 - (rule.Discount / 100)),
-				Items: []*models.BillingItem{
-					{
-						ProductID:   product.ProductID,
-						Quantity:    product.Quantity,
-						Currency:    product.Currency,
-						UnitPrice:   product.UnitPrice,
-						ImageURL:    product.ImageURL,
-						ProductName: product.ProductName,
-						TotalPrice:  product.UnitPrice * float64(product.Quantity),
-					},
-				},
-			})
-			indexInMainCart := getItemIndexInCart(*product, cartItems)
-			return offering, append(cartItems[:indexInMainCart], cartItems[indexInMainCart+1:]...)
-		} else if *filterRule.MaxQuantity == *filterRule.MinQuantity {
-			//exact limit for rule
-			setPossible := product.Quantity / *filterRule.MinQuantity
+			hasMinQuantityRule = true
+			setPossible := int64(0)
+			if product.Quantity >= *filterRule.MinQuantity {
+				setPossible = 1
+			}
 			if maxSetPossible > setPossible {
 				maxSetPossible = setPossible
 			}
 		}
 	}
+	if hasMinQuantityRule && hasEqualQuantityRule {
+		leftOverItems, offering = WithBothRule(rule, eligibleItems)
+	} else if hasEqualQuantityRule {
+		leftOverItems, offering = groupItemsByOfferWithEqualQtyRule(rule, eligibleItems, maxSetPossible)
+	} else if hasMinQuantityRule {
+		leftOverItems, offering = withJustMinValue(rule, eligibleItems)
+	}
 
-	leftOverItems, offering := groupItemsByOffer(rule, eligibleItems, maxSetPossible)
 	remainingCartItems = append(remainingCartItems, leftOverItems...)
+
 	return offering, remainingCartItems
+}
+
+func WithBothRule(rule *Rule, eligibleItems []*models.CartItem) ([]*models.CartItem, []*models.OfferItem) {
+	var offering []*models.BillingItem
+	var leftOverItems []*models.CartItem
+	actualPrice := float64(0)
+	for _, product := range eligibleItems {
+		eqQtyAsPerFilter := rule.RuleSet[strconv.FormatInt(product.ProductID, 10)].EqQunatity
+		minQtyAsPerFilterRef := rule.RuleSet[strconv.FormatInt(product.ProductID, 10)].MinQuantity
+		if minQtyAsPerFilterRef != nil {
+			// push all items as offer item
+			offering = append(offering, &models.BillingItem{
+				ProductID:   product.ProductID,
+				Quantity:    product.Quantity,
+				Currency:    product.Currency,
+				UnitPrice:   product.UnitPrice,
+				ImageURL:    product.ImageURL,
+				ProductName: product.ProductName,
+				TotalPrice:  product.UnitPrice * float64(product.Quantity),
+			})
+			product.Quantity = 0
+			actualPrice = actualPrice + product.UnitPrice*float64(product.Quantity)
+		} else {
+			offering = append(offering, &models.BillingItem{
+				ProductID:   product.ProductID,
+				Quantity:    *eqQtyAsPerFilter,
+				Currency:    product.Currency,
+				UnitPrice:   product.UnitPrice,
+				ImageURL:    product.ImageURL,
+				ProductName: product.ProductName,
+				TotalPrice:  product.UnitPrice * float64(product.Quantity),
+			})
+			product.Quantity = product.Quantity - *eqQtyAsPerFilter
+			actualPrice = actualPrice + product.UnitPrice*float64(*eqQtyAsPerFilter)
+		}
+	}
+
+	for _, prod := range eligibleItems {
+		if prod.Quantity != 0 {
+			leftOverItems = append(leftOverItems, prod)
+		}
+	}
+	return leftOverItems, []*models.OfferItem{
+		{
+			ActualPrice:     actualPrice,
+			RuleSetID:       rule.RuleId,
+			DiscountedPrice: actualPrice * (1 - (rule.Discount / 100)),
+			DiscountPercent: rule.Discount,
+			Items:           offering,
+		},
+	}
 
 }
 
-func groupItemsByOffer(rule *Rule, eligibleItems []*models.CartItem, maxSetPossible int64) ([]*models.CartItem, []*models.OfferItem) {
+func withJustMinValue(rule *Rule, eligibleItems []*models.CartItem) ([]*models.CartItem, []*models.OfferItem) {
+	var items []*models.BillingItem
+	actualPrice := float64(0)
+
+	// there is no possibility of sets creation
+	for _, product := range eligibleItems {
+		items = append(items, &models.BillingItem{
+			ProductID:   product.ProductID,
+			Quantity:    product.Quantity,
+			Currency:    product.Currency,
+			UnitPrice:   product.UnitPrice,
+			ImageURL:    product.ImageURL,
+			ProductName: product.ProductName,
+			TotalPrice:  product.UnitPrice * float64(product.Quantity),
+		})
+		actualPrice = actualPrice + product.UnitPrice*float64(product.Quantity)
+	}
+	return nil, []*models.OfferItem{
+		{
+			RuleSetID:       rule.RuleId,
+			Items:           items,
+			ActualPrice:     actualPrice,
+			DiscountPercent: rule.Discount,
+			DiscountedPrice: actualPrice * (1 - (rule.Discount / 100)),
+		},
+	}
+}
+
+func groupItemsByOfferWithEqualQtyRule(rule *Rule, eligibleItems []*models.CartItem, maxSetPossible int64) ([]*models.CartItem, []*models.OfferItem) {
 	var leftOverItems []*models.CartItem
 	var offering []*models.OfferItem
 	for 0 < maxSetPossible {
 		totalOfferItemPrice := 0.0
 		var items []*models.BillingItem
 		for _, product := range eligibleItems {
-			qtyAsPerFilter := *rule.RuleSet[strconv.FormatInt(product.ProductID, 10)].MinQuantity
+			qtyAsPerFilter := *rule.RuleSet[strconv.FormatInt(product.ProductID, 10)].EqQunatity
 			items = append(items, &models.BillingItem{
 				ProductID:   product.ProductID,
 				Quantity:    qtyAsPerFilter,
@@ -150,23 +227,56 @@ func groupItemsByOffer(rule *Rule, eligibleItems []*models.CartItem, maxSetPossi
 	return leftOverItems, offering
 }
 
-func getItemIndexInCart(item models.CartItem, items []*models.CartItem) int {
-	for i, v := range items {
-		if v.ProductID == item.ProductID {
-			return i
-		}
-	}
-	return -1
-}
 func checkForMatchingProducts(ruleSet map[string]*Filter, cartItems []*models.CartItem) bool {
 	found := false
 	matchedProdCount := 0
 	for _, item := range cartItems {
 		filterParams := ruleSet[strconv.FormatInt(item.ProductID, 10)]
 		found = filterParams != nil
-		if found && (filterParams.MinQuantity == nil || item.Quantity >= *filterParams.MinQuantity) {
+		if found &&
+			((filterParams.MinQuantity != nil && item.Quantity >= *filterParams.MinQuantity) ||
+				(filterParams.EqQunatity != nil && item.Quantity >= *filterParams.EqQunatity)) {
 			matchedProdCount++
 		}
+
 	}
 	return matchedProdCount == len(ruleSet)
 }
+
+/**
+[
+  {
+    "ruleId": "r1",
+    "discount": 10.00,
+    "filters": {
+      "1": {
+        "minQuantity": 7
+      }
+    }
+  },
+  {
+    "ruleId": "r2",
+    "discount": 30.00,
+    "filters": {
+      "2": {
+        "minQuantity": 5
+      },
+      "3": {
+        "eqQunatity": 2
+      },
+      "5": {
+        "eqQunatity": 4
+      }
+    }
+  },
+  {
+    "ruleId": "r3",
+    "discount": 10.00,
+    "filters": {
+      "4": {
+        "eqQunatity": 4
+      }
+    }
+  }
+]
+*/
