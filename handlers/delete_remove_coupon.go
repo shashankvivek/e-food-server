@@ -10,12 +10,14 @@ import (
 )
 
 type removeCouponImpl struct {
-	dbClient *sql.DB
+	dbClient            *sql.DB
+	customerCartHandler dao.CustomerCartHandler
 }
 
-func NewUserRemoveCouponHandler(db *sql.DB) user.RemoveCouponHandler {
+func NewUserRemoveCouponHandler(db *sql.DB, customerCartHandler dao.CustomerCartHandler) user.RemoveCouponHandler {
 	return &removeCouponImpl{
-		dbClient: db,
+		dbClient:            db,
+		customerCartHandler: customerCartHandler,
 	}
 }
 
@@ -24,7 +26,7 @@ func (impl *removeCouponImpl) Handle(params user.RemoveCouponParams, principal i
 	if err != nil {
 		return user.NewRemoveCouponInternalServerError().WithPayload("error in parsing token")
 	}
-	err = dao.RemoveCouponFromCart(impl.dbClient, email.(string))
+	err = impl.customerCartHandler.RemoveCouponFromCart(impl.dbClient, email.(string))
 	if err != nil {
 		return user.NewRemoveCouponInternalServerError().WithPayload("unable to remove coupon")
 	}

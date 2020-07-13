@@ -9,17 +9,19 @@ import (
 )
 
 type subCategoryImpl struct {
-	dbClient *sql.DB
+	dbClient    *sql.DB
+	prodHandler dao.ProductHandler
 }
 
-func NewProductsFromSubCategoryHandler(dbClient *sql.DB) products.GetFromSubCategoryHandler {
+func NewProductsFromSubCategoryHandler(dbClient *sql.DB, prodHandler dao.ProductHandler) products.GetFromSubCategoryHandler {
 	return &subCategoryImpl{
-		dbClient: dbClient,
+		dbClient:    dbClient,
+		prodHandler: prodHandler,
 	}
 }
 
 func (impl *subCategoryImpl) Handle(params products.GetFromSubCategoryParams) middleware.Responder {
-	productList, err := dao.GetProductsBySubCategory(impl.dbClient, params.ID)
+	productList, err := impl.prodHandler.GetProductsBySubCategory(impl.dbClient, params.ID)
 	if err != nil {
 		log.Errorf(err.Error())
 		return products.NewGetFromSubCategoryInternalServerError()

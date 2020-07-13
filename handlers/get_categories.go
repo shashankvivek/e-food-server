@@ -9,18 +9,20 @@ import (
 )
 
 type menuImpl struct {
-	dbClient *sql.DB
+	dbClient    *sql.DB
+	menuHandler dao.MenuHandler
 }
 
-func NewMenuCategoryHandler(dbClient *sql.DB) menu.CategoryListHandler {
+func NewMenuCategoryHandler(dbClient *sql.DB, menuHandler dao.MenuHandler) menu.CategoryListHandler {
 	return &menuImpl{
-		dbClient: dbClient,
+		dbClient:    dbClient,
+		menuHandler: menuHandler,
 	}
 }
 
 func (impl *menuImpl) Handle(param menu.CategoryListParams) middleware.Responder {
 
-	retVal, err := dao.GetMenuItems(impl.dbClient)
+	retVal, err := impl.menuHandler.GetMenuItems(impl.dbClient)
 	if err != nil {
 		log.Errorf(err.Error())
 		return menu.NewCategoryListInternalServerError().WithPayload("Server ERROR")

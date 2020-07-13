@@ -7,7 +7,12 @@ import (
 	"fmt"
 )
 
-type CategoryJoin struct {
+type MenuHandler interface {
+	GetMenuItems(dbClient *sql.DB) (models.Categories, error)
+	getCategoriesInStructure(categories []category) models.Categories
+}
+
+type category struct {
 	bcId       int64
 	bcName     string
 	bcIsActive bool
@@ -16,7 +21,11 @@ type CategoryJoin struct {
 	scIsActive bool
 }
 
-func GetMenuItems(dbClient *sql.DB) (models.Categories, error) {
+func CreateMenuHandler() MenuHandler {
+	return &category{}
+}
+
+func (c *category) GetMenuItems(dbClient *sql.DB) (models.Categories, error) {
 	q := fmt.Sprintf("select b.bcID ,bcNAME,bcIsActive,scId,scName,scIsActive "+
 		"from %s as B INNER JOIN %s as S where b.bcId = s.bcId", constants.BroadCategoryTable, constants.SubCategoryTable)
 	fmt.Println(q)
@@ -25,12 +34,12 @@ func GetMenuItems(dbClient *sql.DB) (models.Categories, error) {
 		return nil, err
 	}
 	defer rows.Close()
-	var retVal []CategoryJoin
+	var retVal []category
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
 	for rows.Next() {
-		cat := CategoryJoin{}
+		cat := category{}
 		err = rows.Scan(&cat.bcId, &cat.bcName, &cat.bcIsActive, &cat.scId, &cat.scName, &cat.scIsActive)
 		if err != nil {
 			return nil, err
@@ -38,12 +47,12 @@ func GetMenuItems(dbClient *sql.DB) (models.Categories, error) {
 		retVal = append(retVal, cat)
 	}
 
-	menu := getCategoriesInStructure(retVal)
+	menu := c.getCategoriesInStructure(retVal)
 	return menu, nil
 
 }
 
-func getCategoriesInStructure(categories []CategoryJoin) models.Categories {
+func (c *category) getCategoriesInStructure(categories []category) models.Categories {
 	groupedMap := make(map[int64]*models.Category)
 	for _, category := range categories {
 		if _, ok := groupedMap[category.bcId]; ok {

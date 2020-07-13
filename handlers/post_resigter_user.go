@@ -11,17 +11,19 @@ import (
 )
 
 type registerImpl struct {
-	dbClient *sql.DB
+	dbClient            *sql.DB
+	customerInfoHandler dao.CustomerInfoHandler
 }
 
-func NewUserRegisterHandler(db *sql.DB) user.RegisterHandler {
+func NewUserRegisterHandler(db *sql.DB, customerInfoHandler dao.CustomerInfoHandler) user.RegisterHandler {
 	return &registerImpl{
-		dbClient: db,
+		dbClient:            db,
+		customerInfoHandler: customerInfoHandler,
 	}
 }
 
 func (impl *registerImpl) Handle(params user.RegisterParams) middleware.Responder {
-	err := dao.RegisterNewUser(impl.dbClient, params.Signup)
+	err := impl.customerInfoHandler.RegisterNewUser(impl.dbClient, params.Signup)
 	if err != nil {
 		fmt.Println(err.Error())
 		if strings.Contains(err.Error(), "Duplicate entry") {

@@ -28,7 +28,7 @@ It includes:
       - coupon code can be used to get a 30% discount on oranges, if applied to the cart, otherwise oranges are full price
       - the `/generateCouponCode` can easily be configured to generate different coupons with different product rules
       - a coupon can only be applied once (this is also configurable in `/generateCouponCode` which accepts `userLimit` to restrict the number of times a coupon can be consumed)          
-      - Has a configurable expiry timeout (10 seconds has been hard-coded in API for testing purposes) once generated.
+      - Has a configurable expiry timeout (90 seconds (10 sec is too short to test) has been hard-coded in API for testing purposes) once generated.
 6. Checkout cart shows:
       - Total price
       - Total Saving

@@ -10,12 +10,14 @@ import (
 )
 
 type userCartItemsImpl struct {
-	dbClient *sql.DB
+	dbClient            *sql.DB
+	customerCartHandler dao.CustomerCartHandler
 }
 
-func NewUserGetCartHandler(db *sql.DB) user.GetCartHandler {
+func NewUserGetCartHandler(db *sql.DB, customerCartHandler dao.CustomerCartHandler) user.GetCartHandler {
 	return &userCartItemsImpl{
-		dbClient: db,
+		dbClient:            db,
+		customerCartHandler: customerCartHandler,
 	}
 }
 
@@ -24,7 +26,7 @@ func (impl *userCartItemsImpl) Handle(params user.GetCartParams, principal inter
 	if err != nil {
 		return user.NewGetCartInternalServerError().WithPayload("error in parsing token")
 	}
-	cartItems, _, err := dao.GetCustomerCart(impl.dbClient, email.(string))
+	cartItems, _, err := impl.customerCartHandler.GetCustomerCart(impl.dbClient, email.(string))
 	if err != nil {
 		log.Errorf(err.Error())
 		return user.NewGetCartInternalServerError().WithPayload("Error getting info")

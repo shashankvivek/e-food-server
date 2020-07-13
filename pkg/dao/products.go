@@ -7,7 +7,11 @@ import (
 	"github.com/google/martian/log"
 )
 
-type Product struct {
+type ProductHandler interface {
+	GetUnitsInStock(db *sql.DB, productId int64) (int64, error)
+	GetProductsBySubCategory(dbClient *sql.DB, scId int64) (models.Products, error)
+}
+type product struct {
 	BcID               int64
 	Currency           string
 	Description        string
@@ -22,7 +26,11 @@ type Product struct {
 	UnitsInStock       int
 }
 
-func GetUnitsInStock(db *sql.DB, productId int64) (int64, error) {
+func CreateProductHandler() ProductHandler {
+	return &product{}
+}
+
+func (p *product) GetUnitsInStock(db *sql.DB, productId int64) (int64, error) {
 	var unitsInStock = 0
 	row := db.QueryRow("SELECT unitsInStock FROM ecommerce.product where productId=?", productId)
 
@@ -33,7 +41,7 @@ func GetUnitsInStock(db *sql.DB, productId int64) (int64, error) {
 	return int64(unitsInStock), nil
 }
 
-func GetProductsBySubCategory(dbClient *sql.DB, scId int64) (models.Products, error) {
+func (p *product) GetProductsBySubCategory(dbClient *sql.DB, scId int64) (models.Products, error) {
 	q := fmt.Sprintf("SELECT productId,name,description,bcId,currency,imageUrl,discountPercentage,unitPrice,scId,unitsInStock FROM ecommerce.product where scId=%d", scId)
 	fmt.Println(q)
 	rows, err := dbClient.Query(q)
@@ -48,7 +56,7 @@ func GetProductsBySubCategory(dbClient *sql.DB, scId int64) (models.Products, er
 		return nil, err
 	}
 	for rows.Next() {
-		product := Product{}
+		product := product{}
 		err = rows.Scan(
 			&product.ProductID,
 			&product.Name,

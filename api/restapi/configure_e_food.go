@@ -32,48 +32,51 @@ func configureAPI(api *operations.EFoodAPI) http.Handler {
 	api.JSONProducer = runtime.JSONProducer()
 
 	clientBuilder := clients.NewClientBuilder()
-
 	dbClient := clientBuilder.BuildSqlClient()
-
-	GuestCartHandle := dao.CreateGuestHandler()
-
+	guestCartHandle := dao.CreateGuestCartHandler()
+	guestInfoHandle := dao.CreateGuestInfoHandler()
+	couponHandle := dao.CreateCouponHandler()
+	customerInfoHandle := dao.CreateCustomerInfoHandler()
+	productHandle := dao.CreateProductHandler()
+	menuHandle := dao.CreateMenuHandler()
+	customerCartHandle := dao.CreateCustomerCartHandler()
 	razorClient := clientBuilder.BuildRazorPayClient()
 
 	api.BearerAuth = utils.ValidateHeader
 
-	api.UserLoginHandler = handlers.NewUserLoginHandler(dbClient, GuestCartHandle)
+	api.UserLoginHandler = handlers.NewUserLoginHandler(dbClient, guestCartHandle, customerInfoHandle, productHandle, customerCartHandle)
 
-	api.MenuCategoryListHandler = handlers.NewMenuCategoryHandler(dbClient)
+	api.MenuCategoryListHandler = handlers.NewMenuCategoryHandler(dbClient, menuHandle)
 
-	api.ProductsGetFromSubCategoryHandler = handlers.NewProductsFromSubCategoryHandler(dbClient)
+	api.ProductsGetFromSubCategoryHandler = handlers.NewProductsFromSubCategoryHandler(dbClient, productHandle)
 
-	api.GuestGetItemsHandler = handlers.NewGuestCartGetItemsHandler(dbClient, GuestCartHandle)
+	api.GuestGetItemsHandler = handlers.NewGuestCartGetItemsHandler(dbClient, guestCartHandle)
 
-	api.GuestAddItemHandler = handlers.NewGuestCartAddItemHandler(dbClient, GuestCartHandle)
+	api.GuestAddItemHandler = handlers.NewGuestCartAddItemHandler(dbClient, guestCartHandle, productHandle)
 
-	api.GuestRemoveItemHandler = handlers.NewGuestCartRemoveItemHandler(dbClient, GuestCartHandle)
+	api.GuestRemoveItemHandler = handlers.NewGuestCartRemoveItemHandler(dbClient, guestCartHandle)
 
-	api.GuestAddSessionHandler = handlers.NewGuestAddSessionHandler(dbClient)
+	api.GuestAddSessionHandler = handlers.NewGuestAddSessionHandler(dbClient, guestInfoHandle)
 
-	api.UserAddToCartHandler = handlers.NewUserAddToCartHandler(dbClient)
+	api.UserAddToCartHandler = handlers.NewUserAddToCartHandler(dbClient, productHandle, customerCartHandle)
 
-	api.UserGetCartHandler = handlers.NewUserGetCartHandler(dbClient)
+	api.UserGetCartHandler = handlers.NewUserGetCartHandler(dbClient, customerCartHandle)
 
-	api.UserRemoveFromCartHandler = handlers.NewUserRemoveFromCartHandler(dbClient)
+	api.UserRemoveFromCartHandler = handlers.NewUserRemoveFromCartHandler(dbClient, customerCartHandle)
 
-	api.UserCheckoutHandler = handlers.NewCartCheckoutHandler(dbClient)
+	api.UserCheckoutHandler = handlers.NewCartCheckoutHandler(dbClient, couponHandle, customerCartHandle)
 
-	api.UserApplyCouponHandler = handlers.NewUserApplyCouponHandler(dbClient)
+	api.UserApplyCouponHandler = handlers.NewUserApplyCouponHandler(dbClient, couponHandle, customerCartHandle)
 
-	api.UserRemoveCouponHandler = handlers.NewUserRemoveCouponHandler(dbClient)
+	api.UserRemoveCouponHandler = handlers.NewUserRemoveCouponHandler(dbClient, customerCartHandle)
 
-	api.UserRegisterHandler = handlers.NewUserRegisterHandler(dbClient)
+	api.UserRegisterHandler = handlers.NewUserRegisterHandler(dbClient, customerInfoHandle)
 
-	api.AdminGenerateCouponHandler = handlers.NewAdminGenerateCouponHandler(dbClient)
+	api.AdminGenerateCouponHandler = handlers.NewAdminGenerateCouponHandler(dbClient, couponHandle)
 
-	api.UserInitPayHandler = handlers.NewUserInitPayHandler(razorClient, dbClient)
+	api.UserInitPayHandler = handlers.NewUserInitPayHandler(razorClient, dbClient, customerCartHandle)
 
-	api.UserPostValidatePaymentHandler = handlers.NewUserPostValidatePaymentHandler(razorClient, dbClient)
+	api.UserPostValidatePaymentHandler = handlers.NewUserPostValidatePaymentHandler(razorClient, dbClient, couponHandle, customerCartHandle)
 
 	api.ServerShutdown = func() {}
 

@@ -12,12 +12,16 @@ import (
 )
 
 type cartPreviewImpl struct {
-	dbClient *sql.DB
+	dbClient            *sql.DB
+	couponHandler       dao.CouponHandler
+	customerCartHandler dao.CustomerCartHandler
 }
 
-func NewCartCheckoutHandler(db *sql.DB) user.CheckoutHandler {
+func NewCartCheckoutHandler(db *sql.DB, couponHandler dao.CouponHandler, customerCartHandler dao.CustomerCartHandler) user.CheckoutHandler {
 	return &cartPreviewImpl{
-		dbClient: db,
+		dbClient:            db,
+		couponHandler:       couponHandler,
+		customerCartHandler: customerCartHandler,
 	}
 }
 
@@ -26,7 +30,7 @@ func (impl *cartPreviewImpl) Handle(params user.CheckoutParams, principal interf
 	if err != nil {
 		return user.NewCheckoutInternalServerError().WithPayload("error in parsing token")
 	}
-	cartItems, couponId, err := dao.GetCustomerCart(impl.dbClient, email.(string))
+	cartItems, couponId, err := impl.customerCartHandler.GetCustomerCart(impl.dbClient, email.(string))
 	if err != nil {
 		return user.NewCheckoutInternalServerError().WithPayload("error getting cart details")
 	}
@@ -35,7 +39,7 @@ func (impl *cartPreviewImpl) Handle(params user.CheckoutParams, principal interf
 	}
 	var couponInfo *model.CouponEntity
 	if couponId != "" {
-		couponInfo, _ = dao.GetCouponDetails(impl.dbClient, couponId, email.(string))
+		couponInfo, _ = impl.customerCartHandler.GetCouponDetails(impl.dbClient, couponId, email.(string))
 
 	}
 	billedCart, err := integration.PrepareBilling(cartItems, couponInfo)

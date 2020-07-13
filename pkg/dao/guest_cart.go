@@ -11,7 +11,7 @@ import (
 
 type GuestCartHandler interface {
 	GetGuestCart(db *sql.DB, sessionId string) (models.CartPreview, error)
-	AddItemToGuestCart(db *sql.DB, sessionId string, totalQty, productId int64) (*models.CartSuccessResponse, error)
+	AddItemToGuestCart(db *sql.DB, prodHandler ProductHandler, sessionId string, totalQty, productId int64) (*models.CartSuccessResponse, error)
 	DeleteExistingGuestCartItemIfAny(db *sql.DB, sessionId string, productId int64) error
 	RemoveItemFromGuestCart(db *sql.DB, productId int64, sessionId string) error
 	InsertItemInGuestCart(db *sql.DB, totalQty, productId int64, sessionId string) error
@@ -19,7 +19,7 @@ type GuestCartHandler interface {
 }
 type guestCart struct{}
 
-func CreateGuestHandler() GuestCartHandler {
+func CreateGuestCartHandler() GuestCartHandler {
 	return &guestCart{}
 }
 func (g *guestCart) GetGuestCart(db *sql.DB, sessionId string) (models.CartPreview, error) {
@@ -51,9 +51,9 @@ func (g *guestCart) GetGuestCart(db *sql.DB, sessionId string) (models.CartPrevi
 	return cart, nil
 }
 
-func (g *guestCart) AddItemToGuestCart(db *sql.DB, sessionId string, totalQty, productId int64) (*models.CartSuccessResponse, error) {
+func (g *guestCart) AddItemToGuestCart(db *sql.DB, prodHandler ProductHandler, sessionId string, totalQty, productId int64) (*models.CartSuccessResponse, error) {
 	msg := "Item added to cart"
-	unitsInStock, err := GetUnitsInStock(db, productId)
+	unitsInStock, err := prodHandler.GetUnitsInStock(db, productId)
 	if err != nil {
 		return nil, err
 	}

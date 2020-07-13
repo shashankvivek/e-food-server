@@ -12,14 +12,20 @@ import (
 )
 
 type loginImpl struct {
-	dbClient         *sql.DB
-	guestCartHandler dao.GuestCartHandler
+	dbClient            *sql.DB
+	guestCartHandler    dao.GuestCartHandler
+	customerInfoHandler dao.CustomerInfoHandler
+	prodHandler         dao.ProductHandler
+	customerCartHandler dao.CustomerCartHandler
 }
 
-func NewUserLoginHandler(db *sql.DB, gc dao.GuestCartHandler) user.LoginHandler {
+func NewUserLoginHandler(db *sql.DB, gc dao.GuestCartHandler, customerInfoHandler dao.CustomerInfoHandler, prodHandler dao.ProductHandler, customerCartHandler dao.CustomerCartHandler) user.LoginHandler {
 	return &loginImpl{
-		dbClient:         db,
-		guestCartHandler: gc,
+		dbClient:            db,
+		guestCartHandler:    gc,
+		customerInfoHandler: customerInfoHandler,
+		prodHandler:         prodHandler,
+		customerCartHandler: customerCartHandler,
 	}
 }
 
@@ -29,7 +35,7 @@ func (impl *loginImpl) Handle(params user.LoginParams) middleware.Responder {
 		return user.NewLoginInternalServerError().WithPayload("error with cookie")
 	}
 	email := params.Login.Email
-	userInfo, err := dao.FetchUserDetails(impl.dbClient, *email)
+	userInfo, err := impl.customerInfoHandler.FetchUserDetails(impl.dbClient, *email)
 	if err != nil {
 		fmt.Println(err.Error())
 		return user.NewLoginInternalServerError().WithPayload("Error fetching user details")
@@ -40,7 +46,7 @@ func (impl *loginImpl) Handle(params user.LoginParams) middleware.Responder {
 		return user.NewRegisterNotFound()
 	}
 	if cookieInfo.Value != "" {
-		err := dao.ShiftGuestCartItemsToCustomer(impl.dbClient, impl.guestCartHandler, cookieInfo.Value, *email)
+		err := impl.customerCartHandler.ShiftGuestCartItemsToCustomer(impl.dbClient, impl.prodHandler, impl.guestCartHandler, cookieInfo.Value, *email)
 		if err != nil {
 			user.NewLoginInternalServerError().WithPayload("Error shifting cart items")
 		}

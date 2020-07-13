@@ -11,12 +11,14 @@ import (
 )
 
 type guestUserImpl struct {
-	dbClient *sql.DB
+	dbClient         *sql.DB
+	guestInfoHandler dao.GuestInfoHandler
 }
 
-func NewGuestAddSessionHandler(dbClient *sql.DB) guest.AddSessionHandler {
+func NewGuestAddSessionHandler(dbClient *sql.DB, g dao.GuestInfoHandler) guest.AddSessionHandler {
 	return &guestUserImpl{
-		dbClient: dbClient,
+		dbClient:         dbClient,
+		guestInfoHandler: g,
 	}
 }
 
@@ -30,7 +32,7 @@ func (impl *guestUserImpl) Handle(params guest.AddSessionParams) middleware.Resp
 	if cookieInfo.Value == "" {
 		return guest.NewAddSessionInternalServerError().WithPayload("Unable to add Item to cart")
 	}
-	isSuccess, err := dao.AddGuestSessionDetail(impl.dbClient, cookieInfo.Value, params.SessionInfo.ExtraInfo)
+	isSuccess, err := impl.guestInfoHandler.AddGuestSessionDetail(impl.dbClient, cookieInfo.Value, params.SessionInfo.ExtraInfo)
 	if err != nil {
 		if strings.Contains(err.Error(), "Duplicate entry") {
 			return guest.NewAddSessionOK().WithPayload(&models.SuccessResponse{Success: true, Message: "Session already present"})

@@ -13,18 +13,20 @@ import (
 )
 
 type generateCouponImpl struct {
-	dbClient *sql.DB
+	dbClient      *sql.DB
+	couponHandler dao.CouponHandler
 }
 
-func NewAdminGenerateCouponHandler(db *sql.DB) admin.GenerateCouponHandler {
+func NewAdminGenerateCouponHandler(db *sql.DB, couponHandler dao.CouponHandler) admin.GenerateCouponHandler {
 	return &generateCouponImpl{
-		dbClient: db,
+		dbClient:      db,
+		couponHandler: couponHandler,
 	}
 }
 
 func (impl *generateCouponImpl) Handle(params admin.GenerateCouponParams) middleware.Responder {
 	defaultRuleSet := "{\"ruleId\": \"c1\",\"discount\": 30.00,\"filters\": {\"4\": {\"minQuantity\": 1}}}"
-	expirationTime := time.Now().UTC().Add(10 * time.Second)
+	expirationTime := time.Now().UTC().Add(90 * time.Second)
 	userLimit := 1
 	rule := model.Rule{}
 	err := json.Unmarshal([]byte(defaultRuleSet), &rule)
@@ -32,7 +34,7 @@ func (impl *generateCouponImpl) Handle(params admin.GenerateCouponParams) middle
 		fmt.Println(err.Error())
 		return admin.NewGenerateCouponInternalServerError().WithPayload("error decoding rule")
 	}
-	couponCode, err := dao.InsertNewCoupon(impl.dbClient, userLimit, expirationTime, defaultRuleSet)
+	couponCode, err := impl.couponHandler.InsertNewCoupon(impl.dbClient, userLimit, expirationTime, defaultRuleSet)
 	if err != nil {
 		fmt.Println(err.Error())
 		return admin.NewGenerateCouponInternalServerError().WithPayload("error generating coupon")

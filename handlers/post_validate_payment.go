@@ -16,14 +16,18 @@ import (
 )
 
 type validatePayImpl struct {
-	client   *razorpay.Client
-	dbClient *sql.DB
+	client              *razorpay.Client
+	dbClient            *sql.DB
+	couponHandler       dao.CouponHandler
+	customerCartHandler dao.CustomerCartHandler
 }
 
-func NewUserPostValidatePaymentHandler(client *razorpay.Client, dbClient *sql.DB) user.PostValidatePaymentHandler {
+func NewUserPostValidatePaymentHandler(client *razorpay.Client, dbClient *sql.DB, couponHandler dao.CouponHandler, customerCartHandler dao.CustomerCartHandler) user.PostValidatePaymentHandler {
 	return &validatePayImpl{
-		client:   client,
-		dbClient: dbClient,
+		client:              client,
+		dbClient:            dbClient,
+		couponHandler:       couponHandler,
+		customerCartHandler: customerCartHandler,
 	}
 }
 
@@ -55,21 +59,21 @@ func (impl *validatePayImpl) Handle(params user.PostValidatePaymentParams, p int
 		// 1. do inventory management
 		// 2. capture payment info under transaction entity
 
-		couponId, err := dao.GetAppliedCouponIdOnCart(impl.dbClient, cartId)
+		couponId, err := impl.customerCartHandler.GetAppliedCouponIdOnCart(impl.dbClient, cartId)
 		if err != nil {
 			fmt.Println(err.Error())
 			return user.NewPostValidatePaymentInternalServerError().WithPayload("error getting coupon info")
 		}
 		// reduce User Limit of coupon
 		if couponId != "" {
-			err = dao.ReduceUserLimit(impl.dbClient, couponId, 1)
+			err = impl.couponHandler.ReduceUserLimit(impl.dbClient, couponId, 1)
 			if err != nil {
 				fmt.Println(err.Error())
 				return user.NewPostValidatePaymentInternalServerError().WithPayload("error with coupon management")
 			}
 		}
 		// delete cart data from cart table
-		err = dao.RenewCart(impl.dbClient, cartId)
+		err = impl.customerCartHandler.RenewCart(impl.dbClient, cartId)
 		if err != nil {
 			fmt.Println(err.Error())
 			return user.NewPostValidatePaymentInternalServerError().WithPayload("unknown cart identifier")

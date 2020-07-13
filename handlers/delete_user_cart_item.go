@@ -11,12 +11,14 @@ import (
 )
 
 type delUserCartItemImpl struct {
-	dbClient *sql.DB
+	dbClient            *sql.DB
+	customerCartHandler dao.CustomerCartHandler
 }
 
-func NewUserRemoveFromCartHandler(db *sql.DB) user.RemoveFromCartHandler {
+func NewUserRemoveFromCartHandler(db *sql.DB, customerCartHandler dao.CustomerCartHandler) user.RemoveFromCartHandler {
 	return &delUserCartItemImpl{
-		dbClient: db,
+		dbClient:            db,
+		customerCartHandler: customerCartHandler,
 	}
 }
 
@@ -25,7 +27,7 @@ func (impl *delUserCartItemImpl) Handle(params user.RemoveFromCartParams, princi
 	if err != nil {
 		return user.NewRemoveFromCartInternalServerError().WithPayload("error in parsing token")
 	}
-	err = dao.RemoveItemFromCustomerCart(impl.dbClient, params.ProductID, email.(string))
+	err = impl.customerCartHandler.RemoveItemFromCustomerCart(impl.dbClient, params.ProductID, email.(string))
 	if err != nil {
 		log.Errorf(err.Error())
 		return user.NewRemoveFromCartInternalServerError().WithPayload("error while deleting item")

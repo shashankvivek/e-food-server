@@ -12,14 +12,16 @@ import (
 )
 
 type initPaymentOrderImpl struct {
-	razorClient *razorpay.Client
-	dbClient    *sql.DB
+	razorClient         *razorpay.Client
+	dbClient            *sql.DB
+	customerCartHandler dao.CustomerCartHandler
 }
 
-func NewUserInitPayHandler(razorClient *razorpay.Client, db *sql.DB) user.InitPayHandler {
+func NewUserInitPayHandler(razorClient *razorpay.Client, db *sql.DB, customerCartHandler dao.CustomerCartHandler) user.InitPayHandler {
 	return &initPaymentOrderImpl{
-		razorClient: razorClient,
-		dbClient:    db,
+		razorClient:         razorClient,
+		dbClient:            db,
+		customerCartHandler: customerCartHandler,
 	}
 }
 
@@ -28,11 +30,11 @@ func (impl *initPaymentOrderImpl) Handle(params user.InitPayParams, principal in
 	if err != nil {
 		return user.NewInitPayInternalServerError().WithPayload("error in parsing token")
 	}
-	cartId, _, err := dao.CreateOrGetCartDetails(impl.dbClient, email.(string))
+	cartId, _, err := impl.customerCartHandler.CreateOrGetCartDetails(impl.dbClient, email.(string))
 	if err != nil {
 		return user.NewInitPayInternalServerError().WithPayload("error fetching cart ID")
 	}
-	cartItems, _, err := dao.GetCustomerCart(impl.dbClient, email.(string))
+	cartItems, _, err := impl.customerCartHandler.GetCustomerCart(impl.dbClient, email.(string))
 	if err != nil {
 		return user.NewInitPayInternalServerError().WithPayload("error fetching cart items")
 	}
