@@ -13,7 +13,7 @@ type guestCartItemsImpl struct {
 	dbClient *sql.DB
 }
 
-func NewCartGetItemsHandler(db *sql.DB) guest.GetItemsHandler {
+func NewGuestCartGetItemsHandler(db *sql.DB) guest.GetItemsHandler {
 	return &guestCartItemsImpl{
 		dbClient: db,
 	}

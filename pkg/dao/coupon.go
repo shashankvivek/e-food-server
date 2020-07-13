@@ -13,11 +13,11 @@ import (
 )
 
 func InsertNewCoupon(db *sql.DB, userLimit int, expTime time.Time, ruleSet string) (string, error) {
-	randId := getToken(10)
+	randId := generateToken(10)
 	err := insertWithUniqueId(db, userLimit, expTime, ruleSet, randId)
 
 	for err != nil && strings.Contains(err.Error(), "Duplicate entry") {
-		randId = getToken(10)
+		randId = generateToken(10)
 		err = insertWithUniqueId(db, userLimit, expTime, ruleSet, randId)
 	}
 	if err != nil {
@@ -83,7 +83,7 @@ func insertWithUniqueId(db *sql.DB, userLimit int, expTime time.Time, ruleSet, r
 	return nil
 }
 
-func getToken(length int) string {
+func generateToken(length int) string {
 	randomBytes := make([]byte, 32)
 	_, err := rand.Read(randomBytes)
 	if err != nil {

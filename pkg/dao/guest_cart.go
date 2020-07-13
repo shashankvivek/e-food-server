@@ -92,16 +92,16 @@ func RemoveItemFromGuestCart(db *sql.DB, productId int64, sessionId string) erro
 	return nil
 }
 
-func GetItemQtyInGuestCart(db *sql.DB, sessionId string, productId int64) (int64, error) {
-	addedQty := 0
-	row := db.QueryRow("SELECT totalQty from guest_cart_item where productId = ? and sessionId = ?", productId, sessionId)
-	err := row.Scan(&addedQty)
-	if err != nil && !strings.Contains(err.Error(), "no row") {
-		log.Errorf(err.Error())
-		return 0, err
-	}
-	return int64(addedQty), nil
-}
+//func GetItemQtyInGuestCart(db *sql.DB, sessionId string, productId int64) (int64, error) {
+//	addedQty := 0
+//	row := db.QueryRow("SELECT totalQty from guest_cart_item where productId = ? and sessionId = ?", productId, sessionId)
+//	err := row.Scan(&addedQty)
+//	if err != nil && !strings.Contains(err.Error(), "no row") {
+//		log.Errorf(err.Error())
+//		return 0, err
+//	}
+//	return int64(addedQty), nil
+//}
 
 func insertItemInGuestCart(db *sql.DB, totalQty, productId int64, sessionId string) error {
 	res, err := db.Exec("INSERT INTO guest_cart_item (sessionId,totalQty,productId) VALUES (?, ?, ?)", sessionId, totalQty, productId)

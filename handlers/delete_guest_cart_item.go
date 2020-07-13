@@ -13,14 +13,13 @@ type deleteGuestCartItemImpl struct {
 	dbClient *sql.DB
 }
 
-func NewCartRemoveItemHandler(db *sql.DB) guest.RemoveItemHandler {
+func NewGuestCartRemoveItemHandler(db *sql.DB) guest.RemoveItemHandler {
 	return &deleteGuestCartItemImpl{
 		dbClient: db,
 	}
 }
 
 func (impl *deleteGuestCartItemImpl) Handle(params guest.RemoveItemParams) middleware.Responder {
-	//TODO: add check for logged in user
 	cookieInfo, err := params.HTTPRequest.Cookie("guest_session")
 	if err != nil {
 		return guest.NewRemoveItemInternalServerError().WithPayload("error with cookie")

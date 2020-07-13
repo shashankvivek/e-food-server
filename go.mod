@@ -3,6 +3,7 @@ module e-food
 go 1.12
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.4.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-openapi/errors v0.19.6
 	github.com/go-openapi/loads v0.19.5
@@ -18,6 +19,7 @@ require (
 	github.com/jessevdk/go-flags v1.4.0
 	github.com/razorpay/razorpay-go v0.0.0-20200616141002-0e6c7c357e18
 	github.com/rs/cors v1.7.0
+	github.com/stretchr/testify v1.6.1
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 	golang.org/x/net v0.0.0-20200625001655-4c5254603344
 	golang.org/x/text v0.3.3 // indirect

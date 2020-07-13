@@ -44,11 +44,11 @@ func configureAPI(api *operations.EFoodAPI) http.Handler {
 
 	api.ProductsGetFromSubCategoryHandler = handlers.NewProductsFromSubCategoryHandler(dbClient)
 
-	api.GuestGetItemsHandler = handlers.NewCartGetItemsHandler(dbClient)
+	api.GuestGetItemsHandler = handlers.NewGuestCartGetItemsHandler(dbClient)
 
-	api.GuestAddItemHandler = handlers.NewCartAddItemHandler(dbClient)
+	api.GuestAddItemHandler = handlers.NewGuestCartAddItemHandler(dbClient)
 
-	api.GuestRemoveItemHandler = handlers.NewCartRemoveItemHandler(dbClient)
+	api.GuestRemoveItemHandler = handlers.NewGuestCartRemoveItemHandler(dbClient)
 
 	api.GuestAddSessionHandler = handlers.NewGuestAddSessionHandler(dbClient)
 
