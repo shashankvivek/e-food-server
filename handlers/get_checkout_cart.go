@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"database/sql"
+	"e-food/models"
 	"e-food/pkg/dao"
 	"e-food/pkg/entities"
 	"e-food/pkg/integration"
@@ -30,7 +31,7 @@ func (impl *cartPreviewImpl) Handle(params user.CheckoutParams, principal interf
 		return user.NewCheckoutInternalServerError().WithPayload("error getting cart details")
 	}
 	if len(cartItems) == 0 {
-		return user.NewCheckoutNotFound()
+		return user.NewCheckoutOK().WithPayload(&models.BillableCart{})
 	}
 	var couponInfo *entities.CouponEntity
 	if couponId != "" {

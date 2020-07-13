@@ -12,12 +12,12 @@ import (
 )
 
 func GetCustomerCart(db *sql.DB, email string) (models.CartPreview, string, error) {
-	_, couponId, err := CreateOrGetCartDetails(db, email)
+	cartId, couponId, err := CreateOrGetCartDetails(db, email)
 	if err != nil {
 		fmt.Println(err.Error())
 		return nil, "", err
 	}
-	rows, err := db.Query("SELECT p.productId,p.name,p.currency, ci.totalQty,p.unitPrice, p.imageUrl FROM customer_cart_item ci ,  product p , cart c where ci.productId = p.productId and c.email=?", email)
+	rows, err := db.Query("SELECT p.productId,p.name,p.currency, ci.totalQty,p.unitPrice,\np.imageUrl FROM customer_cart_item ci ,  product p \nwhere ci.productId = p.productId and ci.cartId=?", cartId)
 	if err != nil {
 		log.Errorf(err.Error())
 		return nil, "", err
@@ -100,15 +100,11 @@ func deleteExistingUserCartItemIfAny(db *sql.DB, cartId, productId int64) error 
 		log.Errorf(err.Error())
 		return err
 	}
-	deletedRow, err := res.RowsAffected()
+	_, err = res.RowsAffected()
 	if err != nil {
 		return err
 	}
-	if deletedRow == 1 || deletedRow == 0 {
-		return nil
-	} else {
-		return errors.New("found more than 1 item to delete")
-	}
+	return nil
 }
 
 func insertItemInUserCart(db *sql.DB, totalQty, cartId, productId int64) error {

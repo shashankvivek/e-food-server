@@ -78,28 +78,42 @@ CREATE TABLE `ecommerce`.`product`
 
 INSERT INTO `ecommerce`.`product` (`name`, `description`, `bcId`, `currency`, `unitsInStock`, `imageUrl`, `unitPrice`,
                                    `scId`)
-VALUES ('Red Apple', 'This is a red apply', '1000', 'Rs', '16',
+VALUES ('Red Apple', 'This is a red apply', '1000', 'INR', '16',
         'https://raw.githubusercontent.com/shashankvivek/e-food-client/master/e-food/src/assets/apple-1.png', '10',
         '2000');
 
 INSERT INTO `ecommerce`.`product` (`name`, `description`, `bcId`, `currency`, `unitsInStock`, `imageUrl`, `unitPrice`,
                                    `scId`)
-VALUES ('Green Apple', 'This is a Green Apple', '1000', 'Rs', '4',
+VALUES ('Green Apple', 'This is a Green Apple', '1000', 'INR', '4',
         'https://raw.githubusercontent.com/shashankvivek/e-food-client/master/e-food/src/assets/apple-3.jpg', '15',
         '2000');
 
-INSERT INTO `ecommerce`.`product` (`name`, `description`, `bcId`, `currency`, `unitsInStock`, `imageUrl`, `unitPrice`, `scId`) VALUES ('Banana', 'This is a Banana', '1000', 'Rs', '20', 'https://raw.githubusercontent.com/shashankvivek/e-food-client/master/e-food/src/assets/banana.jpg', '10', '2002');
+INSERT INTO `ecommerce`.`product` (`name`, `description`, `bcId`, `currency`, `unitsInStock`, `imageUrl`, `unitPrice`,
+                                   `scId`)
+VALUES ('Banana', 'This is a Banana', '1000', 'INR', '20',
+        'https://raw.githubusercontent.com/shashankvivek/e-food-client/master/e-food/src/assets/banana.jpg', '10',
+        '2002');
 
-INSERT INTO `ecommerce`.`product` (`name`, `description`, `bcId`, `currency`, `unitsInStock`, `imageUrl`, `unitPrice`, `scId`) VALUES ('Oranges', 'This is an Orange', '1000', 'Rs', '5', 'https://raw.githubusercontent.com/shashankvivek/e-food-client/master/e-food/src/assets/oranges.jpg', '20', '2001');
+INSERT INTO `ecommerce`.`product` (`name`, `description`, `bcId`, `currency`, `unitsInStock`, `imageUrl`, `unitPrice`,
+                                   `scId`)
+VALUES ('Oranges', 'This is an Orange', '1000', 'INR', '5',
+        'https://raw.githubusercontent.com/shashankvivek/e-food-client/master/e-food/src/assets/oranges.jpg', '20',
+        '2001');
 
-INSERT INTO `ecommerce`.`product` (`name`, `description`, `bcId`, `currency`, `unitsInStock`, `imageUrl`, `unitPrice`, `scId`) VALUES ('Pear', 'This is a Pear', '1000', 'Rs', '10', 'https://raw.githubusercontent.com/shashankvivek/e-food-client/master/e-food/src/assets/pears.jpg', '30', '2003');
+INSERT INTO `ecommerce`.`product` (`name`, `description`, `bcId`, `currency`, `unitsInStock`, `imageUrl`, `unitPrice`,
+                                   `scId`)
+VALUES ('Pear', 'This is a Pear', '1000', 'INR', '10',
+        'https://raw.githubusercontent.com/shashankvivek/e-food-client/master/e-food/src/assets/pears.jpg', '30',
+        '2003');
 
 -- Creating Guest table for session id
-CREATE TABLE `ecommerce`.`guest` (
-                                     `sessionId` VARCHAR(40) NOT NULL,
-                                     `extraInfo` VARCHAR(200) NULL,
-                                     PRIMARY KEY (`sessionId`),
-                                     UNIQUE INDEX `sessionId_UNIQUE` (`sessionId` ASC) VISIBLE);
+CREATE TABLE `ecommerce`.`guest`
+(
+    `sessionId` VARCHAR(40)  NOT NULL,
+    `extraInfo` VARCHAR(200) NULL,
+    PRIMARY KEY (`sessionId`),
+    UNIQUE INDEX `sessionId_UNIQUE` (`sessionId` ASC) VISIBLE
+);
 
 -- create Guest cart Item
 
