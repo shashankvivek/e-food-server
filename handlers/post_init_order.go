@@ -42,23 +42,13 @@ func (impl *initPaymentOrderImpl) Handle(params user.InitPayParams, principal in
 	data := map[string]interface{}{
 		"amount":          params.PreOrder.Amount,
 		"currency":        "INR",
-		"receipt_id":      strconv.FormatInt(cartId, 10),
+		"receipt":         strconv.FormatInt(cartId, 10),
 		"payment_capture": 1,
 	}
-	//data := map[string]interface{}{
-	//	"amount":          1234,
-	//	"currency":        "INR",
-	//	"receipt_id":      "some_receipt_id",
-	//	"payment_capture": 1,
-	//}
-	xtra := map[string]string{
-		"content-type": "application/json",
-	}
-	_, err = impl.razorClient.Order.Create(data, xtra)
+	body, err := impl.razorClient.Order.Create(data, nil)
 	if err != nil {
 		fmt.Println(err)
+		return user.NewInitPayInternalServerError().WithPayload("error with payment gateway")
 	}
-	// returning hardcoded value as their is a known bug:
-	// https://github.com/razorpay/razorpay-go/issues/14
-	return user.NewInitPayOK().WithPayload(&user.InitPayOKBody{ID: "order_FDjBRxhFaBvO5L"})
+	return user.NewInitPayOK().WithPayload(&user.InitPayOKBody{ID: body["id"].(string)})
 }

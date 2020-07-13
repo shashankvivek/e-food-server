@@ -45,8 +45,7 @@ func (impl *validatePayImpl) Handle(params user.PostValidatePaymentParams, p int
 		body, err := impl.client.Order.Fetch(params.PreOrder.RazorpayOrderID, nil, nil)
 		if err != nil {
 			fmt.Println(err.Error())
-			// todo: return a response when some error happens while calling
-			// Razorpay endpoint
+			return user.NewPostValidatePaymentInternalServerError().WithPayload("error fetching order info from 3rd party")
 		}
 		cartId := body["receipt"]
 		fmt.Println(cartId)
