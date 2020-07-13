@@ -1,4 +1,4 @@
-#Intro
+# Intro
 
 e-food is a dummy e-commerce website. The service has been written in **Go** and I have used **go-swagger** framework. *go-swagger* is golang implementation of Swagger 2.0 (aka OpenAPI 2.0), it knows how to serialize and deserialize swagger specifications. 
 
@@ -50,7 +50,7 @@ To run the repository locally :
 
 
 
-#Prerequisite:
+# Prerequisite:
 * Install mysql
 * create schema named `ecommerce` with:  [ TODO: We can create a separate user rather than using `root`]
 > username = `root`,
