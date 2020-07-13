@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"e-food/api/models"
 	"e-food/api/restapi/operations/admin"
+	"e-food/model"
 	"e-food/pkg/dao"
-	"e-food/pkg/entities"
 	"encoding/json"
 	"fmt"
 	"github.com/go-openapi/runtime/middleware"
@@ -26,7 +26,7 @@ func (impl *generateCouponImpl) Handle(params admin.GenerateCouponParams) middle
 	defaultRuleSet := "{\"ruleId\": \"c1\",\"discount\": 30.00,\"filters\": {\"4\": {\"minQuantity\": 1}}}"
 	expirationTime := time.Now().UTC().Add(10 * time.Second)
 	userLimit := 1
-	rule := entities.Rule{}
+	rule := model.Rule{}
 	err := json.Unmarshal([]byte(defaultRuleSet), &rule)
 	if err != nil {
 		fmt.Println(err.Error())

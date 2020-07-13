@@ -2,11 +2,11 @@ package integration
 
 import (
 	"e-food/api/models"
-	"e-food/pkg/entities"
+	"e-food/model"
 	"fmt"
 )
 
-func PrepareBilling(cartItems []*models.CartItem, couponInfo *entities.CouponEntity) (*models.BillableCart, error) {
+func PrepareBilling(cartItems []*models.CartItem, couponInfo *model.CouponEntity) (*models.BillableCart, error) {
 	rules, err := CreateRuleBook()
 	currencyVal := cartItems[0].Currency
 	couponId := ""

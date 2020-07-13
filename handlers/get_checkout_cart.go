@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"e-food/api/models"
 	"e-food/api/restapi/operations/user"
+	"e-food/model"
 	"e-food/pkg/dao"
-	"e-food/pkg/entities"
 	"e-food/pkg/integration"
 	"e-food/pkg/utils"
 	"github.com/go-openapi/runtime/middleware"
@@ -33,7 +33,7 @@ func (impl *cartPreviewImpl) Handle(params user.CheckoutParams, principal interf
 	if len(cartItems) == 0 {
 		return user.NewCheckoutOK().WithPayload(&models.BillableCart{})
 	}
-	var couponInfo *entities.CouponEntity
+	var couponInfo *model.CouponEntity
 	if couponId != "" {
 		couponInfo, _ = dao.GetCouponDetails(impl.dbClient, couponId, email.(string))
 

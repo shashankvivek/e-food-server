@@ -1,4 +1,4 @@
-package entities
+package model
 
 type Rule struct {
 	RuleId   string             `json:"ruleId"`

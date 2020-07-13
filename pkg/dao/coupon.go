@@ -3,7 +3,7 @@ package dao
 import (
 	"crypto/rand"
 	"database/sql"
-	"e-food/pkg/entities"
+	"e-food/model"
 	"encoding/base32"
 	"encoding/json"
 	"errors"
@@ -44,9 +44,9 @@ func ReduceUserLimit(db *sql.DB, couponId string, reduceBy int) error {
 	return nil
 }
 
-func GetCouponDetails(db *sql.DB, coupon, email string) (*entities.CouponEntity, error) {
+func GetCouponDetails(db *sql.DB, coupon, email string) (*model.CouponEntity, error) {
 	row := db.QueryRow("SELECT userLimit,expiryDate,RuleSet from coupons where couponId = ? ", coupon)
-	var couponDetail entities.CouponEntity
+	var couponDetail model.CouponEntity
 	var ruleInfo string
 	err := row.Scan(&couponDetail.UserLimit, &couponDetail.ExpiryDate, &ruleInfo)
 	if err != nil {
