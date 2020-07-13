@@ -36,7 +36,8 @@ It includes:
       - Delete items from the cart.
       - Apply coupons. ( option available during checkout time only )
 8. A test payment gateway has been provided to complete the journey. ( **https://razorpay.com/**)
-9.  Architecture diagram can be found at `./resources/e-food.drawio` and can be opened using http://draw.io/  
+9.  Architecture diagram can be found at `./resources/e-food.drawio` and can be opened using http://draw.io/
+10. Order Management, Inventory management & User address has not been implemented yet.  
      
 Cmd to generate new changes of swagger :
 
