@@ -7,3 +7,4 @@
 8. when order is placed, reduce inventory item count from products
 9. added description in coupon
 10. add price precision with only 2 digit after decimal
+11. use docker for env setup and db

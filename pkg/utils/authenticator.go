@@ -37,7 +37,7 @@ func GenerateJWT(userEmail, fname, lname string) (string, error) {
 	claims["user"] = userEmail
 	claims["fname"] = fname
 	claims["lname"] = lname
-	claims["exp"] = time.Now().Add(time.Minute * 90).Unix()
+	claims["exp"] = time.Now().Add(time.Minute * 300).Unix()
 
 	tokenString, err := token.SignedString(constants.MySecretKeyForJWT)
 	if err != nil {
