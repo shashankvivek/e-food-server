@@ -80,7 +80,7 @@ func AddItemToCustomerCart(db *sql.DB, email string, totalQty, productId int64) 
 }
 
 func CreateOrGetCartDetails(db *sql.DB, email string) (int64, string, error) {
-	_, err := db.Exec("INSERT into cart (email,createdAt) values (?,?)", email, time.Now().UTC())
+	_, err := db.Exec("INSERT into cart (email,couponId,createdAt) values (?,?,?)", email, "", time.Now().UTC())
 	if err != nil && !strings.Contains(err.Error(), "Duplicate entry") {
 		return -1, "", err
 	}
