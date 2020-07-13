@@ -7,6 +7,7 @@ import (
 	"e-food/api/restapi/operations"
 	"e-food/clients"
 	"e-food/handlers"
+	"e-food/pkg/dao"
 	"e-food/pkg/utils"
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
@@ -34,21 +35,23 @@ func configureAPI(api *operations.EFoodAPI) http.Handler {
 
 	dbClient := clientBuilder.BuildSqlClient()
 
+	GuestCartHandle := dao.CreateGuestHandler()
+
 	razorClient := clientBuilder.BuildRazorPayClient()
 
 	api.BearerAuth = utils.ValidateHeader
 
-	api.UserLoginHandler = handlers.NewUserLoginHandler(dbClient)
+	api.UserLoginHandler = handlers.NewUserLoginHandler(dbClient, GuestCartHandle)
 
 	api.MenuCategoryListHandler = handlers.NewMenuCategoryHandler(dbClient)
 
 	api.ProductsGetFromSubCategoryHandler = handlers.NewProductsFromSubCategoryHandler(dbClient)
 
-	api.GuestGetItemsHandler = handlers.NewGuestCartGetItemsHandler(dbClient)
+	api.GuestGetItemsHandler = handlers.NewGuestCartGetItemsHandler(dbClient, GuestCartHandle)
 
-	api.GuestAddItemHandler = handlers.NewGuestCartAddItemHandler(dbClient)
+	api.GuestAddItemHandler = handlers.NewGuestCartAddItemHandler(dbClient, GuestCartHandle)
 
-	api.GuestRemoveItemHandler = handlers.NewGuestCartRemoveItemHandler(dbClient)
+	api.GuestRemoveItemHandler = handlers.NewGuestCartRemoveItemHandler(dbClient, GuestCartHandle)
 
 	api.GuestAddSessionHandler = handlers.NewGuestAddSessionHandler(dbClient)
 

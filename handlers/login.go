@@ -12,12 +12,14 @@ import (
 )
 
 type loginImpl struct {
-	dbClient *sql.DB
+	dbClient         *sql.DB
+	guestCartHandler dao.GuestCartHandler
 }
 
-func NewUserLoginHandler(db *sql.DB) user.LoginHandler {
+func NewUserLoginHandler(db *sql.DB, gc dao.GuestCartHandler) user.LoginHandler {
 	return &loginImpl{
-		dbClient: db,
+		dbClient:         db,
+		guestCartHandler: gc,
 	}
 }
 
@@ -38,7 +40,7 @@ func (impl *loginImpl) Handle(params user.LoginParams) middleware.Responder {
 		return user.NewRegisterNotFound()
 	}
 	if cookieInfo.Value != "" {
-		err := dao.ShiftGuestCartItemsToCustomer(impl.dbClient, cookieInfo.Value, *email)
+		err := dao.ShiftGuestCartItemsToCustomer(impl.dbClient, impl.guestCartHandler, cookieInfo.Value, *email)
 		if err != nil {
 			user.NewLoginInternalServerError().WithPayload("Error shifting cart items")
 		}

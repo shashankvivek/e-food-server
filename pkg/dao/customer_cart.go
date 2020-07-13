@@ -135,8 +135,8 @@ func RemoveItemFromCustomerCart(db *sql.DB, productId int64, email string) error
 	return nil
 }
 
-func ShiftGuestCartItemsToCustomer(db *sql.DB, sessionId, email string) error {
-	guestCartItems, err := GetGuestCart(db, sessionId)
+func ShiftGuestCartItemsToCustomer(db *sql.DB, guestHandler GuestCartHandler, sessionId, email string) error {
+	guestCartItems, err := guestHandler.GetGuestCart(db, sessionId)
 	if err != nil {
 		return err
 	}
@@ -150,7 +150,7 @@ func ShiftGuestCartItemsToCustomer(db *sql.DB, sessionId, email string) error {
 		}
 	}
 	//clean up guest_cart_item table
-	_ = EmptyGuestCartItem(db, sessionId)
+	_ = guestHandler.EmptyGuestCartItem(db, sessionId)
 	return nil
 }
 

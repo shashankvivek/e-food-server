@@ -9,7 +9,20 @@ import (
 	"strings"
 )
 
-func GetGuestCart(db *sql.DB, sessionId string) (models.CartPreview, error) {
+type GuestCartHandler interface {
+	GetGuestCart(db *sql.DB, sessionId string) (models.CartPreview, error)
+	AddItemToGuestCart(db *sql.DB, sessionId string, totalQty, productId int64) (*models.CartSuccessResponse, error)
+	DeleteExistingGuestCartItemIfAny(db *sql.DB, sessionId string, productId int64) error
+	RemoveItemFromGuestCart(db *sql.DB, productId int64, sessionId string) error
+	InsertItemInGuestCart(db *sql.DB, totalQty, productId int64, sessionId string) error
+	EmptyGuestCartItem(db *sql.DB, sessionId string) error
+}
+type guestCart struct{}
+
+func CreateGuestHandler() GuestCartHandler {
+	return &guestCart{}
+}
+func (g *guestCart) GetGuestCart(db *sql.DB, sessionId string) (models.CartPreview, error) {
 	q := fmt.Sprintf("SELECT p.productId,p.name,p.currency, gc.totalQty,p.unitPrice, p.imageUrl FROM guest_cart_item gc INNER JOIN product p where gc.productId = p.productId and gc.sessionId='%s'", sessionId)
 	rows, err := db.Query(q)
 	if err != nil {
@@ -38,7 +51,7 @@ func GetGuestCart(db *sql.DB, sessionId string) (models.CartPreview, error) {
 	return cart, nil
 }
 
-func AddItemToGuestCart(db *sql.DB, sessionId string, totalQty, productId int64) (*models.CartSuccessResponse, error) {
+func (g *guestCart) AddItemToGuestCart(db *sql.DB, sessionId string, totalQty, productId int64) (*models.CartSuccessResponse, error) {
 	msg := "Item added to cart"
 	unitsInStock, err := GetUnitsInStock(db, productId)
 	if err != nil {
@@ -51,11 +64,11 @@ func AddItemToGuestCart(db *sql.DB, sessionId string, totalQty, productId int64)
 		totalQty = unitsInStock
 		msg = "Reached max stock quantity"
 	}
-	err = deleteExistingGuestCartItemIfAny(db, sessionId, productId)
+	err = g.DeleteExistingGuestCartItemIfAny(db, sessionId, productId)
 	if err != nil {
 		return nil, err
 	}
-	err = insertItemInGuestCart(db, totalQty, productId, sessionId)
+	err = g.InsertItemInGuestCart(db, totalQty, productId, sessionId)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +80,7 @@ func AddItemToGuestCart(db *sql.DB, sessionId string, totalQty, productId int64)
 	return retVal, nil
 }
 
-func deleteExistingGuestCartItemIfAny(db *sql.DB, sessionId string, productId int64) error {
+func (g *guestCart) DeleteExistingGuestCartItemIfAny(db *sql.DB, sessionId string, productId int64) error {
 	res, err := db.Exec("DELETE from guest_cart_item where productId = ? and sessionId = ?", productId, sessionId)
 	if err != nil && !strings.Contains(err.Error(), "no row") {
 		log.Errorf(err.Error())
@@ -84,8 +97,8 @@ func deleteExistingGuestCartItemIfAny(db *sql.DB, sessionId string, productId in
 	}
 }
 
-func RemoveItemFromGuestCart(db *sql.DB, productId int64, sessionId string) error {
-	err := deleteExistingGuestCartItemIfAny(db, sessionId, productId)
+func (g *guestCart) RemoveItemFromGuestCart(db *sql.DB, productId int64, sessionId string) error {
+	err := g.DeleteExistingGuestCartItemIfAny(db, sessionId, productId)
 	if err != nil {
 		return err
 	}
@@ -103,7 +116,7 @@ func RemoveItemFromGuestCart(db *sql.DB, productId int64, sessionId string) erro
 //	return int64(addedQty), nil
 //}
 
-func insertItemInGuestCart(db *sql.DB, totalQty, productId int64, sessionId string) error {
+func (g *guestCart) InsertItemInGuestCart(db *sql.DB, totalQty, productId int64, sessionId string) error {
 	res, err := db.Exec("INSERT INTO guest_cart_item (sessionId,totalQty,productId) VALUES (?, ?, ?)", sessionId, totalQty, productId)
 	if err != nil {
 		return err
@@ -119,7 +132,7 @@ func insertItemInGuestCart(db *sql.DB, totalQty, productId int64, sessionId stri
 	}
 }
 
-func EmptyGuestCartItem(db *sql.DB, sessionId string) error {
+func (g *guestCart) EmptyGuestCartItem(db *sql.DB, sessionId string) error {
 	_, err := db.Exec("DELETE from guest_cart_item where sessionId = ? ", sessionId)
 	if err != nil {
 		return err

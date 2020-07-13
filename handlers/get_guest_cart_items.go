@@ -10,17 +10,18 @@ import (
 )
 
 type guestCartItemsImpl struct {
-	dbClient *sql.DB
+	dbClient         *sql.DB
+	guestCartHandler dao.GuestCartHandler
 }
 
-func NewGuestCartGetItemsHandler(db *sql.DB) guest.GetItemsHandler {
+func NewGuestCartGetItemsHandler(db *sql.DB, gc dao.GuestCartHandler) guest.GetItemsHandler {
 	return &guestCartItemsImpl{
-		dbClient: db,
+		dbClient:         db,
+		guestCartHandler: gc,
 	}
 }
 
 func (impl *guestCartItemsImpl) Handle(params guest.GetItemsParams) middleware.Responder {
-	//TODO: add check for logged in user
 	cookieInfo, err := params.HTTPRequest.Cookie("guest_session")
 	if err != nil {
 		return guest.NewGetItemsInternalServerError().WithPayload("error with cookie")
@@ -28,7 +29,7 @@ func (impl *guestCartItemsImpl) Handle(params guest.GetItemsParams) middleware.R
 	if cookieInfo.Value == "" {
 		return guest.NewGetItemsOK().WithPayload(models.CartPreview{})
 	}
-	items, err := dao.GetGuestCart(impl.dbClient, cookieInfo.Value)
+	items, err := impl.guestCartHandler.GetGuestCart(impl.dbClient, cookieInfo.Value)
 	if err != nil {
 		log.Errorf(err.Error())
 		return guest.NewGetItemsInternalServerError().WithPayload("Error in looking for cart")

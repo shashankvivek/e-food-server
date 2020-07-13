@@ -12,12 +12,14 @@ import (
 )
 
 type addCartItemImpl struct {
-	dbClient *sql.DB
+	dbClient         *sql.DB
+	guestCartHandler dao.GuestCartHandler
 }
 
-func NewGuestCartAddItemHandler(dbClient *sql.DB) guest.AddItemHandler {
+func NewGuestCartAddItemHandler(dbClient *sql.DB, gc dao.GuestCartHandler) guest.AddItemHandler {
 	return &addCartItemImpl{
-		dbClient: dbClient,
+		dbClient:         dbClient,
+		guestCartHandler: gc,
 	}
 }
 
@@ -35,7 +37,7 @@ func (impl *addCartItemImpl) Handle(params guest.AddItemParams) middleware.Respo
 	if *params.Body.TotalQty < 1 || *params.Body.TotalQty > constants.MAX_ALLOWED_CART_ITEM_QTY {
 		return guest.NewAddItemOK().WithPayload(&models.CartSuccessResponse{Success: false, Message: "Quantity must be between 1 and 12", QtyAdded: 0})
 	}
-	retVal, err := dao.AddItemToGuestCart(impl.dbClient, cookieInfo.Value, *params.Body.TotalQty, *params.Body.ProductID)
+	retVal, err := impl.guestCartHandler.AddItemToGuestCart(impl.dbClient, cookieInfo.Value, *params.Body.TotalQty, *params.Body.ProductID)
 	if err != nil {
 		fmt.Println(err.Error())
 		return guest.NewAddItemInternalServerError().WithPayload("Error in adding Item to cart")

@@ -10,12 +10,14 @@ import (
 )
 
 type deleteGuestCartItemImpl struct {
-	dbClient *sql.DB
+	dbClient         *sql.DB
+	guestCartHandler dao.GuestCartHandler
 }
 
-func NewGuestCartRemoveItemHandler(db *sql.DB) guest.RemoveItemHandler {
+func NewGuestCartRemoveItemHandler(db *sql.DB, gc dao.GuestCartHandler) guest.RemoveItemHandler {
 	return &deleteGuestCartItemImpl{
-		dbClient: db,
+		dbClient:         db,
+		guestCartHandler: gc,
 	}
 }
 
@@ -27,7 +29,7 @@ func (impl *deleteGuestCartItemImpl) Handle(params guest.RemoveItemParams) middl
 	if cookieInfo.Value == "" {
 		return guest.NewRemoveItemInternalServerError().WithPayload("error with cookie")
 	}
-	err = dao.RemoveItemFromGuestCart(impl.dbClient, params.ProductID, cookieInfo.Value)
+	err = impl.guestCartHandler.RemoveItemFromGuestCart(impl.dbClient, params.ProductID, cookieInfo.Value)
 	if err != nil {
 		log.Errorf(err.Error())
 		return guest.NewRemoveItemInternalServerError().WithPayload("error while deleting item")
