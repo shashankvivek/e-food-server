@@ -2,7 +2,7 @@
 
 e-food is a dummy e-commerce website. The service has been written in **Go** and I have used **go-swagger** framework. *go-swagger* is golang implementation of Swagger 2.0 (aka OpenAPI 2.0), it knows how to serialize and deserialize swagger specifications. 
 
-The go-swagger forces a developer to create documentation while developing an API. The boilerplate code is very helpful in enforcing the developer to follow micro service architecture. 
+The go-swagger forces a developer to create documentation while developing an API. The boilerplate code is very helpful in enforcing micro service architecture code style. 
 
 The `swagger.yaml` of this code base can be found at `./api/swagger.yaml`. The documentation can be seen by pasting `swagger.yaml` into [swagger editor online](https://editor.swagger.io/)
 
@@ -14,7 +14,7 @@ Reference:
 
 It includes:
 
-1. Guest cart session. (Closing the browser a guest user still maintain the list of products)
+1. Guest cart session. (After closing the browser, the app maintain the list of products for guest user)
 2. User Registration 
 3. User Login using `JWT` with validity set to 300 mins
 4. Cart Rules:
@@ -32,11 +32,11 @@ It includes:
       - Total price
       - Total Saving
 7. In a cart you can :
-       - Adjust quantity.
-       - Delete items from the cart.
-       - Apply coupons. ( option available during checkout time only )
+      - Adjust quantity.
+      - Delete items from the cart.
+      - Apply coupons. ( option available during checkout time only )
 8. A test payment gateway has been provided to complete the journey. ( **https://razorpay.com/**)
-9.  Architecture diagram can be found at `resources/e-food.drawio` and can be opened using http://draw.io/  
+9.  Architecture diagram can be found at `./resources/e-food.drawio` and can be opened using http://draw.io/  
      
 Cmd to generate new changes of swagger :
 
