@@ -2,9 +2,8 @@
 2. Pagination for large data
 3. do proper logging
 4. manage deactivated session Ids by removing them
-5. CSRF
 6. Manage headers on deployed server
 7. Add timestamp in session entries to clean them up later with some housekeeping script
-8. when order is placed, reduce coupon userLimit count and inventory item count from products
+8. when order is placed, reduce inventory item count from products
 9. added description in coupon
 10. add price precision with only 2 digit after decimal

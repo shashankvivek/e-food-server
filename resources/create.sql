@@ -82,11 +82,11 @@ VALUES ('Red Apple', 'This is a red apply', '1000', 'INR', '16',
         'https://raw.githubusercontent.com/shashankvivek/e-food-client/master/e-food/src/assets/apple-1.png', '10',
         '2000');
 
-INSERT INTO `ecommerce`.`product` (`name`, `description`, `bcId`, `currency`, `unitsInStock`, `imageUrl`, `unitPrice`,
-                                   `scId`)
-VALUES ('Green Apple', 'This is a Green Apple', '1000', 'INR', '4',
-        'https://raw.githubusercontent.com/shashankvivek/e-food-client/master/e-food/src/assets/apple-3.jpg', '15',
-        '2000');
+-- INSERT INTO `ecommerce`.`product` (`name`, `description`, `bcId`, `currency`, `unitsInStock`, `imageUrl`, `unitPrice`,
+--                                   `scId`)
+-- VALUES ('Green Apple', 'This is a Green Apple', '1000', 'INR', '4',
+--        'https://raw.githubusercontent.com/shashankvivek/e-food-client/master/e-food/src/assets/apple-3.jpg', '15',
+--        '2000');
 
 INSERT INTO `ecommerce`.`product` (`name`, `description`, `bcId`, `currency`, `unitsInStock`, `imageUrl`, `unitPrice`,
                                    `scId`)
