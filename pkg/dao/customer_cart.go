@@ -191,6 +191,18 @@ func RemoveCouponFromCart(db *sql.DB, email string) error {
 	return nil
 }
 
+func RenewCart(db *sql.DB, cartId int64) error {
+	_, err := db.Exec("DELETE  FROM customer_cart_item where cartId = ?", cartId)
+	if err != nil {
+		return err
+	}
+	_, err = db.Exec("DELETE from cart where cartId = ?", cartId)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 //TODO: use this logic when the order is being created
 //func insertItemInUserCart(db *sql.DB, unitsInStock, totalQty, productId int64, email string) error {
 //	tx, err := db.Begin()

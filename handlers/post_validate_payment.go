@@ -6,11 +6,13 @@ import (
 	"database/sql"
 	"e-food/constants"
 	"e-food/models"
+	"e-food/pkg/dao"
 	"e-food/restapi/operations/user"
 	"encoding/hex"
 	"fmt"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/razorpay/razorpay-go"
+	"strconv"
 )
 
 type validatePayImpl struct {
@@ -30,8 +32,6 @@ func (impl *validatePayImpl) Handle(params user.PostValidatePaymentParams, p int
 	data := params.PreOrder.RazorpayOrderID + "|" + params.PreOrder.RazorpayPaymentID
 	// Create a new HMAC by defining the hash type and the key (as byte array)
 	h := hmac.New(sha256.New, []byte(constants.MyRazorSecret))
-
-	// Write Data to it
 	_, err := h.Write([]byte(data))
 	if err != nil {
 		return user.NewPostValidatePaymentInternalServerError().WithPayload("error decoding")
@@ -47,13 +47,22 @@ func (impl *validatePayImpl) Handle(params user.PostValidatePaymentParams, p int
 			fmt.Println(err.Error())
 			return user.NewPostValidatePaymentInternalServerError().WithPayload("error fetching order info from 3rd party")
 		}
-		cartId := body["receipt"]
-		fmt.Println(cartId)
-		// convert cart to order
+		cartId, err := strconv.ParseInt(body["receipt"].(string), 10, 64)
+		if err != nil {
+			fmt.Println(err.Error())
+			return user.NewPostValidatePaymentInternalServerError().WithPayload("error processing order number")
+		}
+		// TODO: convert cart Entity to order Entity
+		// 1. do inventory management
+		// 2. capture payment info under transaction entity
 
 		// delete cart data from cart table
+		err = dao.RenewCart(impl.dbClient, cartId)
+		if err != nil {
+			fmt.Println(err.Error())
+			return user.NewPostValidatePaymentInternalServerError().WithPayload("unknown cart identifier")
+		}
 	}
-
-	//return orderId
-	return user.NewPostValidatePaymentOK().WithPayload(&models.SuccessResponse{Success: isSuccess})
+	//TODO: return orderId
+	return user.NewPostValidatePaymentOK().WithPayload(&models.SuccessResponse{Success: isSuccess, Message: "new_order_id"})
 }
