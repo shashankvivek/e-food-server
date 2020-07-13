@@ -28,7 +28,6 @@ func NewUserPostValidatePaymentHandler(client *razorpay.Client, dbClient *sql.DB
 }
 
 func (impl *validatePayImpl) Handle(params user.PostValidatePaymentParams, p interface{}) middleware.Responder {
-
 	data := params.PreOrder.RazorpayOrderID + "|" + params.PreOrder.RazorpayPaymentID
 	// Create a new HMAC by defining the hash type and the key (as byte array)
 	h := hmac.New(sha256.New, []byte(constants.MyRazorSecret))
@@ -56,6 +55,19 @@ func (impl *validatePayImpl) Handle(params user.PostValidatePaymentParams, p int
 		// 1. do inventory management
 		// 2. capture payment info under transaction entity
 
+		couponId, err := dao.GetAppliedCouponIdOnCart(impl.dbClient, cartId)
+		if err != nil {
+			fmt.Println(err.Error())
+			return user.NewPostValidatePaymentInternalServerError().WithPayload("error getting coupon info")
+		}
+		// reduce User Limit of coupon
+		if couponId != "" {
+			err = dao.ReduceUserLimit(impl.dbClient, couponId, 1)
+			if err != nil {
+				fmt.Println(err.Error())
+				return user.NewPostValidatePaymentInternalServerError().WithPayload("error with coupon management")
+			}
+		}
 		// delete cart data from cart table
 		err = dao.RenewCart(impl.dbClient, cartId)
 		if err != nil {

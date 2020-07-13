@@ -26,6 +26,24 @@ func InsertNewCoupon(db *sql.DB, userLimit int, expTime time.Time, ruleSet strin
 	return randId, nil
 }
 
+func ReduceUserLimit(db *sql.DB, couponId string, reduceBy int) error {
+	var existingCount = 0
+	row := db.QueryRow("SELECT userLimit from coupons where couponId = ?", couponId)
+	err := row.Scan(&existingCount)
+	if err != nil {
+		return err
+	}
+	if existingCount < reduceBy {
+		return errors.New("not enough user limit")
+	}
+	newUserLimit := existingCount - reduceBy
+	_, err = db.Exec("UPDATE coupons set userLimit = ? where couponId = ?", newUserLimit, couponId)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func GetCouponDetails(db *sql.DB, coupon, email string) (*entities.CouponEntity, error) {
 	row := db.QueryRow("SELECT userLimit,expiryDate,RuleSet from coupons where couponId = ? ", coupon)
 	var couponDetail entities.CouponEntity

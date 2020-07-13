@@ -203,6 +203,16 @@ func RenewCart(db *sql.DB, cartId int64) error {
 	return nil
 }
 
+func GetAppliedCouponIdOnCart(db *sql.DB, cartId int64) (string, error) {
+	row := db.QueryRow("SELECT couponId from cart where  cartId = ?", cartId)
+	var couponId = ""
+	err := row.Scan(&couponId)
+	if err != nil {
+		return "", err
+	}
+	return couponId, nil
+}
+
 //TODO: use this logic when the order is being created
 //func insertItemInUserCart(db *sql.DB, unitsInStock, totalQty, productId int64, email string) error {
 //	tx, err := db.Begin()
