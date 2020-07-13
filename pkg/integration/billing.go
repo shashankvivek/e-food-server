@@ -1,7 +1,7 @@
 package integration
 
 import (
-	"e-food/models"
+	"e-food/api/models"
 	"e-food/pkg/entities"
 	"fmt"
 )

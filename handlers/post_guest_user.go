@@ -2,9 +2,9 @@ package handlers
 
 import (
 	"database/sql"
-	"e-food/models"
+	"e-food/api/models"
+	"e-food/api/restapi/operations/guest"
 	"e-food/pkg/dao"
-	"e-food/restapi/operations/guest"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/google/martian/log"
 	"strings"

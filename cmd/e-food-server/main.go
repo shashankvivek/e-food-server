@@ -6,8 +6,8 @@ import (
 	"log"
 	"os"
 
-	"e-food/restapi"
-	"e-food/restapi/operations"
+	"e-food/api/restapi"
+	"e-food/api/restapi/operations"
 
 	"github.com/go-openapi/loads"
 	flags "github.com/jessevdk/go-flags"

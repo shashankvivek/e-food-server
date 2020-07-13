@@ -2,7 +2,7 @@ package dao
 
 import (
 	"database/sql"
-	"e-food/models"
+	"e-food/api/models"
 	"errors"
 	"golang.org/x/crypto/bcrypt"
 )
