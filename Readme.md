@@ -1,4 +1,4 @@
-##Intro##
+#Intro
 
 e-food is a dummy e-commerce website. The service has been written in **Go** and I have used **go-swagger** framework. *go-swagger* is golang implementation of Swagger 2.0 (aka OpenAPI 2.0), it knows how to serialize and deserialize swagger specifications. 
 
@@ -6,6 +6,7 @@ The go-swagger forces a developer to create documentation while developing an AP
 
 The `swagger.yaml` of this code base can be found at `./api/swagger.yaml`. The documentation can be seen by pasting `swagger.yaml` into [swagger editor online](https://editor.swagger.io/)
 
+The UI for this backend service is available as [e-food-client](https://github.com/shashankvivek/e-food-client/tree/master/e-food) on github.
 
 Reference: 
 1. https://github.com/go-swagger/go-swagger
@@ -37,7 +38,7 @@ It includes:
       - Apply coupons. ( option available during checkout time only )
 8. A test payment gateway has been provided to complete the journey. ( **https://razorpay.com/**)
 9.  Architecture diagram can be found at `./resources/e-food.drawio` and can be opened using http://draw.io/
-10. Order Management, Inventory management & User address has not been implemented yet.  
+10. Order Management, Inventory management & User address have not been implemented yet.  
      
 Cmd to generate new changes of swagger :
 
@@ -47,10 +48,9 @@ To run the repository locally :
 
 > go run cmd\e-food-server\main.go --scheme http --port=8080
 
-The UI for this backend service is available as [e-food-client](https://github.com/shashankvivek/e-food-client/tree/master/e-food) on github.
 
 
-###Prerequisite:
+#Prerequisite:
 * Install mysql
 * create schema named `ecommerce` with:  [ TODO: We can create a separate user rather than using `root`]
 > username = `root`,
@@ -60,6 +60,6 @@ The UI for this backend service is available as [e-food-client](https://github.c
  > ./resources/create.sql
 
 * Install dependencies using `go.mod` file
-
+-----------------------
 **Note**: Other areas of improvement has been noted down into `to-do.txt` file of this repo
  
