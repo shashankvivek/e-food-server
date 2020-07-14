@@ -49,9 +49,7 @@ Cmd to generate new changes of swagger :
 
 > swagger generate server -f api/swagger.yaml --default-scheme http --exclude-main
 
-To run the repository locally :
 
-> go run cmd\e-food-server\main.go --scheme http --port=8080
 
 
 
@@ -65,6 +63,10 @@ To run the repository locally :
  > ./resources/create.sql
 
 * Install dependencies using `go.mod` file
+
+* To run the repository locally :  
+> go run cmd\e-food-server\main.go --scheme http --port=8080
+
 -----------------------
 **Note**: Other areas of improvement has been noted down into `to-do.txt` file of this repo
  
