@@ -12,10 +12,10 @@
     "ruleId": "r2",
     "discount": 30.00,
     "filters": {
-      "3": {
+      "2": {
         "eqQunatity": 2
       },
-      "5": {
+      "4": {
         "eqQunatity": 4
       }
     }

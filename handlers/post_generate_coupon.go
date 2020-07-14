@@ -25,7 +25,7 @@ func NewAdminGenerateCouponHandler(db *sql.DB, couponHandler dao.CouponHandler) 
 }
 
 func (impl *generateCouponImpl) Handle(params admin.GenerateCouponParams) middleware.Responder {
-	defaultRuleSet := "{\"ruleId\": \"c1\",\"discount\": 30.00,\"filters\": {\"4\": {\"minQuantity\": 1}}}"
+	defaultRuleSet := "{\"ruleId\": \"c1\",\"discount\": 30.00,\"filters\": {\"3\": {\"minQuantity\": 1}}}"
 	expirationTime := time.Now().UTC().Add(90 * time.Second)
 	userLimit := 1
 	rule := model.Rule{}

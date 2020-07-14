@@ -40,6 +40,7 @@ It includes:
 9.  Architecture diagram can be found at `./resources/e-food.drawio` and can be opened using http://draw.io/
 10. Order Management, Inventory management & User address have not been implemented yet.  
 11. A sample unit test file can be found at `./handlers/delete_guest_cart_item_test.go`
+12. **In case a new rule has to be added for cart items, make sure the `productId` defined in `rules.json` and `ecommerce.product` table are in sync**
      
 Cmd to generate new changes of swagger :
 
@@ -53,7 +54,7 @@ To run the repository locally :
 
 # Prerequisite:
 * Install mysql
-* create schema named `ecommerce` with:  [ TODO: We can create a separate user rather than using `root`]
+* create a schema named `ecommerce` with:  [ TODO: We can create a separate user rather than using `root`]
 > username = `root`,
 > password = `root`
  
