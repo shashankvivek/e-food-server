@@ -29,7 +29,7 @@ func (impl *applyCouponImpl) Handle(params user.ApplyCouponParams, principa inte
 	if err != nil {
 		return user.NewApplyCouponInternalServerError().WithPayload("error in parsing token")
 	}
-	err = impl.customerCartHandler.ApplyCouponToCart(impl.dbClient, params.CouponCode, email.(string))
+	err = impl.customerCartHandler.ApplyCouponToCart(impl.dbClient, impl.couponHandler, params.CouponCode, email.(string))
 	if err != nil {
 		fmt.Println(err.Error())
 		return user.NewApplyCouponInternalServerError().WithPayload("error applying coupon")

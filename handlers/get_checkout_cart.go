@@ -39,8 +39,14 @@ func (impl *cartPreviewImpl) Handle(params user.CheckoutParams, principal interf
 	}
 	var couponInfo *model.CouponEntity
 	if couponId != "" {
-		couponInfo, _ = impl.customerCartHandler.GetCouponDetails(impl.dbClient, couponId, email.(string))
-
+		couponInfo, err = impl.couponHandler.GetCouponDetails(impl.dbClient, couponId)
+		if err != nil {
+			return user.NewCheckoutInternalServerError().WithPayload("error getting applied coupon")
+		}
+		err = impl.customerCartHandler.RemoveIfExpiredCouponFromCart(impl.dbClient, *couponInfo, email.(string))
+		if err != nil {
+			return user.NewCheckoutInternalServerError().WithPayload("error validating coupon against cart")
+		}
 	}
 	billedCart, err := integration.PrepareBilling(cartItems, couponInfo)
 	if err != nil {

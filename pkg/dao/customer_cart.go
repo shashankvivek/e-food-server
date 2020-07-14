@@ -5,7 +5,6 @@ import (
 	"e-food/api/models"
 	"e-food/model"
 	"e-food/pkg/integration"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/google/martian/log"
@@ -17,15 +16,16 @@ type CustomerCartHandler interface {
 	GetCustomerCart(db *sql.DB, email string) (models.CartPreview, string, error)
 	AddItemToCustomerCart(db *sql.DB, prodHandler ProductHandler, email string, totalQty, productId int64) (*models.CartSuccessResponse, error)
 	CreateOrGetCartDetails(db *sql.DB, email string) (int64, string, error)
-	deleteExistingUserCartItemIfAny(db *sql.DB, cartId, productId int64) error
-	insertItemInUserCart(db *sql.DB, totalQty, cartId, productId int64) error
+	deleteExistingCustomerCartItemIfAny(db *sql.DB, cartId, productId int64) error
+	insertItemInCustomerCart(db *sql.DB, totalQty, cartId, productId int64) error
 	RemoveItemFromCustomerCart(db *sql.DB, productId int64, email string) error
 	ShiftGuestCartItemsToCustomer(db *sql.DB, prodHandler ProductHandler, guestHandler GuestCartHandler, sessionId, email string) error
-	ApplyCouponToCart(db *sql.DB, couponId, email string) error
+	ApplyCouponToCart(db *sql.DB, couponHandler CouponHandler, couponId, email string) error
 	RemoveCouponFromCart(db *sql.DB, email string) error
 	RenewCart(db *sql.DB, cartId int64) error
 	GetAppliedCouponIdOnCart(db *sql.DB, cartId int64) (string, error)
-	GetCouponDetails(db *sql.DB, coupon, email string) (*model.CouponEntity, error)
+	RemoveIfExpiredCouponFromCart(db *sql.DB, couponInfo model.CouponEntity, email string) error
+	//GetCouponDetails(db *sql.DB, coupon, email string) (*model.CouponEntity, error)
 }
 
 type customerCart struct{}
@@ -85,12 +85,12 @@ func (c *customerCart) AddItemToCustomerCart(db *sql.DB, prodHandler ProductHand
 		msg = "Reached max stock quantity"
 	}
 
-	err = c.deleteExistingUserCartItemIfAny(db, cartId, productId)
+	err = c.deleteExistingCustomerCartItemIfAny(db, cartId, productId)
 	if err != nil {
 		return nil, err
 	}
 
-	err = c.insertItemInUserCart(db, totalQty, cartId, productId)
+	err = c.insertItemInCustomerCart(db, totalQty, cartId, productId)
 	if err != nil {
 		return nil, err
 	}
@@ -117,7 +117,7 @@ func (c *customerCart) CreateOrGetCartDetails(db *sql.DB, email string) (int64, 
 	return cartId, couponId, nil
 }
 
-func (c *customerCart) deleteExistingUserCartItemIfAny(db *sql.DB, cartId, productId int64) error {
+func (c *customerCart) deleteExistingCustomerCartItemIfAny(db *sql.DB, cartId, productId int64) error {
 	res, err := db.Exec("DELETE from customer_cart_item where productId = ? and cartId = ?", productId, cartId)
 	if err != nil && !strings.Contains(err.Error(), "no row") {
 		log.Errorf(err.Error())
@@ -130,7 +130,7 @@ func (c *customerCart) deleteExistingUserCartItemIfAny(db *sql.DB, cartId, produ
 	return nil
 }
 
-func (c *customerCart) insertItemInUserCart(db *sql.DB, totalQty, cartId, productId int64) error {
+func (c *customerCart) insertItemInCustomerCart(db *sql.DB, totalQty, cartId, productId int64) error {
 	res, err := db.Exec("INSERT INTO customer_cart_item (cartId,totalQty,productId) VALUES (?, ?, ?)", cartId, totalQty, productId)
 	if err != nil {
 		return err
@@ -151,7 +151,7 @@ func (c *customerCart) RemoveItemFromCustomerCart(db *sql.DB, productId int64, e
 	if err != nil {
 		return err
 	}
-	err = c.deleteExistingUserCartItemIfAny(db, cartId, productId)
+	err = c.deleteExistingCustomerCartItemIfAny(db, cartId, productId)
 	if err != nil {
 		return err
 	}
@@ -177,8 +177,8 @@ func (c *customerCart) ShiftGuestCartItemsToCustomer(db *sql.DB, prodHandler Pro
 	return nil
 }
 
-func (c *customerCart) ApplyCouponToCart(db *sql.DB, couponId, email string) error {
-	couponEntity, err := c.GetCouponDetails(db, couponId, email)
+func (c *customerCart) ApplyCouponToCart(db *sql.DB, couponHandler CouponHandler, couponId, email string) error {
+	couponEntity, err := couponHandler.GetCouponDetails(db, couponId)
 	if err != nil {
 		return err
 	}
@@ -202,6 +202,22 @@ func (c *customerCart) ApplyCouponToCart(db *sql.DB, couponId, email string) err
 	return nil
 }
 
+func (c *customerCart) RemoveIfExpiredCouponFromCart(db *sql.DB, couponData model.CouponEntity, email string) error {
+	currentDate := time.Now().UTC()
+	if couponData.ExpiryDate.Before(currentDate) || couponData.UserLimit < 1 {
+		if couponData.UserLimit < 1 {
+			fmt.Println("User limit reached")
+		}
+		if couponData.ExpiryDate.Before(currentDate) {
+			fmt.Println("coupon has expired")
+		}
+		err := c.RemoveCouponFromCart(db, email)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
 func (c *customerCart) RemoveCouponFromCart(db *sql.DB, email string) error {
 	_, err := db.Exec("UPDATE cart set couponId = '' where email= ?", email)
 	if err != nil {
@@ -232,39 +248,8 @@ func (c *customerCart) GetAppliedCouponIdOnCart(db *sql.DB, cartId int64) (strin
 	return couponId, nil
 }
 
-func (c *customerCart) GetCouponDetails(db *sql.DB, coupon, email string) (*model.CouponEntity, error) {
-	row := db.QueryRow("SELECT userLimit,expiryDate,RuleSet from coupons where couponId = ? ", coupon)
-	var couponDetail model.CouponEntity
-	var ruleInfo string
-	err := row.Scan(&couponDetail.UserLimit, &couponDetail.ExpiryDate, &ruleInfo)
-	if err != nil {
-		return nil, err
-	}
-	couponDetail.CouponId = coupon
-	currentDate := time.Now().UTC()
-	if couponDetail.ExpiryDate.After(currentDate) && couponDetail.UserLimit > 0 {
-		err := json.Unmarshal([]byte(ruleInfo), &couponDetail.Rule)
-		if err != nil {
-			return nil, err
-		}
-		return &couponDetail, nil
-	} else {
-		if couponDetail.UserLimit < 1 {
-			fmt.Println("User limit reached")
-		}
-		if couponDetail.ExpiryDate.Before(currentDate) {
-			fmt.Println("coupon has expired")
-		}
-		err := c.RemoveCouponFromCart(db, email)
-		if err != nil {
-			return nil, err
-		}
-		return nil, errors.New("invalid coupon")
-	}
-}
-
 //TODO: use this logic when the order is being created
-//func insertItemInUserCart(db *sql.DB, unitsInStock, totalQty, productId int64, email string) error {
+//func insertItemInCustomerCart(db *sql.DB, unitsInStock, totalQty, productId int64, email string) error {
 //	tx, err := db.Begin()
 //	if err != nil {
 //		return err

@@ -39,6 +39,7 @@ It includes:
 8. A test payment gateway has been provided to complete the journey. ( **https://razorpay.com/**)
 9.  Architecture diagram can be found at `./resources/e-food.drawio` and can be opened using http://draw.io/
 10. Order Management, Inventory management & User address have not been implemented yet.  
+11. A sample unit test file can be found at `./handlers/delete_guest_cart_item_test.go`
      
 Cmd to generate new changes of swagger :
 

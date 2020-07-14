@@ -8,3 +8,4 @@
 9. added description in coupon
 10. add price precision with only 2 digit after decimal
 11. use docker for env setup and db
+12. Inform user if any applied coupon in expired (currently set to 90 secs) while refreshing the cart with new quantities

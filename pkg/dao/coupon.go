@@ -3,7 +3,9 @@ package dao
 import (
 	"crypto/rand"
 	"database/sql"
+	"e-food/model"
 	"encoding/base32"
+	"encoding/json"
 	"errors"
 	"strings"
 	"time"
@@ -12,9 +14,9 @@ import (
 type CouponHandler interface {
 	InsertNewCoupon(db *sql.DB, userLimit int, expTime time.Time, ruleSet string) (string, error)
 	ReduceUserLimit(db *sql.DB, couponId string, reduceBy int) error
-	//GetCouponDetails(db *sql.DB,customerCartHandler CustomerCartHandler,coupon, email string) (*model.CouponEntity, error)
 	insertWithUniqueId(db *sql.DB, userLimit int, expTime time.Time, ruleSet, randId string) error
 	generateRandomToken(length int) string
+	GetCouponDetails(db *sql.DB, coupon string) (*model.CouponEntity, error)
 }
 
 type coupon struct{}
@@ -55,37 +57,6 @@ func (c *coupon) ReduceUserLimit(db *sql.DB, couponId string, reduceBy int) erro
 	return nil
 }
 
-//func (c *coupon)GetCouponDetails(db *sql.DB,customerCartHandler CustomerCartHandler, coupon, email string) (*model.CouponEntity, error) {
-//	row := db.QueryRow("SELECT userLimit,expiryDate,RuleSet from coupons where couponId = ? ", coupon)
-//	var couponDetail model.CouponEntity
-//	var ruleInfo string
-//	err := row.Scan(&couponDetail.UserLimit, &couponDetail.ExpiryDate, &ruleInfo)
-//	if err != nil {
-//		return nil, err
-//	}
-//	couponDetail.CouponId = coupon
-//	currentDate := time.Now().UTC()
-//	if couponDetail.ExpiryDate.After(currentDate) && couponDetail.UserLimit > 0 {
-//		err := json.Unmarshal([]byte(ruleInfo), &couponDetail.Rule)
-//		if err != nil {
-//			return nil, err
-//		}
-//		return &couponDetail, nil
-//	} else {
-//		if couponDetail.UserLimit < 1 {
-//			fmt.Println("User limit reached")
-//		}
-//		if couponDetail.ExpiryDate.Before(currentDate) {
-//			fmt.Println("coupon has expired")
-//		}
-//		err := customerCartHandler.RemoveCouponFromCart(db, email)
-//		if err != nil {
-//			return nil, err
-//		}
-//		return nil, errors.New("invalid coupon")
-//	}
-//}
-
 func (c *coupon) insertWithUniqueId(db *sql.DB, userLimit int, expTime time.Time, ruleSet, randId string) error {
 	_, err := db.Exec("INSERT INTO coupons (couponId, expiryDate, RuleSet, userLimit) VALUES (?,?,?,?)", randId, expTime, ruleSet, userLimit)
 	if err != nil {
@@ -101,4 +72,20 @@ func (c *coupon) generateRandomToken(length int) string {
 		panic(err)
 	}
 	return base32.StdEncoding.EncodeToString(randomBytes)[:length]
+}
+
+func (c *coupon) GetCouponDetails(db *sql.DB, couponId string) (*model.CouponEntity, error) {
+	row := db.QueryRow("SELECT userLimit,expiryDate,RuleSet from coupons where couponId = ? ", couponId)
+	var couponDetail model.CouponEntity
+	var ruleInfo string
+	err := row.Scan(&couponDetail.UserLimit, &couponDetail.ExpiryDate, &ruleInfo)
+	if err != nil {
+		return nil, err
+	}
+	err = json.Unmarshal([]byte(ruleInfo), &couponDetail.Rule)
+	if err != nil {
+		return nil, err
+	}
+	couponDetail.CouponId = couponId
+	return &couponDetail, nil
 }
