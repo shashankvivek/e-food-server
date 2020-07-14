@@ -41,6 +41,9 @@ It includes:
 10. Order Management, Inventory management & User address have not been implemented yet.  
 11. A sample unit test file can be found at `./handlers/delete_guest_cart_item_test.go`
 12. **In case a new rule has to be added for cart items, make sure the `productId` defined in `rules.json` and `ecommerce.product` table are in sync**
+13. To modify coupon rule, make changes in hardcoded value in `./handlers/post_generate_coupon.go` . The values can easily be made flexible by commenting out below lines in the file. Please note that the syntax are follows the same pattern as `rules.json`:
+> defaultRuleSet := "{\"ruleId\": \"c1\",\"discount\": 30.00,\"filters\": {\"3\": {\"minQuantity\": 1}}}" 
+
      
 Cmd to generate new changes of swagger :
 
