@@ -18,7 +18,8 @@ func NewClientBuilder() ClientBuilder {
 
 func (b ClientBuilder) BuildSqlClient() *sql.DB {
 	// The password can come from secrets.json of GKE
-	db, err := sql.Open("mysql", "root:root@/ecommerce?parseTime=True")
+	// move values to constants
+	db, err := sql.Open(constants.DriveName, "root:root@/ecommerce?parseTime=True")
 	if err != nil {
 		log.Fatal("error connecting DB : ", err.Error())
 	}
