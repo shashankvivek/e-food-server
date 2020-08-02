@@ -45,9 +45,9 @@ It includes:
 > defaultRuleSet := "{\"ruleId\": \"c1\",\"discount\": 30.00,\"filters\": {\"3\": {\"minQuantity\": 1}}}" 
 
      
-Cmd to generate new changes of swagger :
+Cmd to generate new changes of swagger go into `./api` folder and run below command :
 
-> swagger generate server -f api/swagger.yaml --default-scheme http --exclude-main
+> swagger generate server -f swagger.yaml --default-scheme http --exclude-main
 
 
 
