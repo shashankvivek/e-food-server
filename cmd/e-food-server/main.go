@@ -4,7 +4,6 @@ package main
 
 import (
 	"log"
-	"net/http"
 	"os"
 
 	"e-food/api/restapi"
@@ -50,10 +49,9 @@ func main() {
 	}
 
 	server.ConfigureAPI()
-	http.Handle("/", server.GetHandler())
 
-	//if err := server.Serve(); err != nil {
-	//	log.Fatalln(err)
-	//}
+	if err := server.Serve(); err != nil {
+		log.Fatalln(err)
+	}
 
 }
