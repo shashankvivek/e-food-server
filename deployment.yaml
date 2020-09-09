@@ -28,3 +28,4 @@ spec:
           ports:
             - containerPort: 8080
               protocol: "TCP"
+              name: hello-app
