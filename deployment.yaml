@@ -18,15 +18,13 @@ spec:
             - --scheme
             - http
             - --host
-            - 127.0.0.0
+            - 0.0.0.0
             - --port
-            - "9005"
+            - "8080"
         - name: hello-app
           # Replace $GCLOUD_PROJECT with your project ID
-          image: gcr.io/qwiklabs-gcp-02-b47ea08feb3d/e-f-serve
+          image: gcr.io/qwiklabs-gcp-02-c224118b300f/e-f-serve
           # This app listens on port 9005 for web traffic by default.
           ports:
-            - containerPort: 9005
-          env:
-            - name: PORT
-              value: "8080"
+            - containerPort: 8080
+              protocol: "TCP"

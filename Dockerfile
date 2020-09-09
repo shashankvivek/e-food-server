@@ -5,6 +5,6 @@ RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
 WORKDIR /app
 COPY main .
 
-EXPOSE 9005
+EXPOSE 8080
 
-ENTRYPOINT ["/app/main", "--scheme", "http", "--port", "9005"]
+ENTRYPOINT ["/app/main", "--scheme", "http", "--port", "8080"]
