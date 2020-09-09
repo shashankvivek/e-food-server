@@ -1,0 +1,32 @@
+# This file configures the hello-world app which serves public web traffic.
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: helloworld-gke
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello
+  template:
+    metadata:
+      labels:
+        app: hello
+    spec:
+      containers:
+        - args:
+            - --scheme
+            - http
+            - --host
+            - 127.0.0.0
+            - --port
+            - "9005"
+        - name: hello-app
+          # Replace $GCLOUD_PROJECT with your project ID
+          image: gcr.io/qwiklabs-gcp-02-b47ea08feb3d/e-f-serve
+          # This app listens on port 9005 for web traffic by default.
+          ports:
+            - containerPort: 9005
+          env:
+            - name: PORT
+              value: "8080"
