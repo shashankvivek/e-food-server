@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: hello-app
-        image: gcr.io/qwiklabs-gcp-00-7f4ecd010334/e-f-serve:master-420
+        image: gcr.io/qwiklabs-gcp-04-dea92edfc477/e-f-serve:master-420
         args: [ "--scheme", "http", "--host", "0.0.0.0", "--port", "8080" ]
         # This app listens on port 9005 for web traffic by default.
         ports:
