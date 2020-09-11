@@ -30,7 +30,7 @@ func (b ClientBuilder) BuildSqlClient() *sql.DB {
 
 func TestCloudSQL() {
 	cfg := mysql.Cfg("qwiklabs-gcp-00-7f4ecd010334:us-central1:e-db", "root", "root")
-	cfg.DBName = "e-db"
+	cfg.DBName = "e_db"
 	db, err := mysql.DialCfg(cfg)
 	if err != nil {
 		log.Println("Error in CloudSQL")
