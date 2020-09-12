@@ -20,7 +20,7 @@ func NewClientBuilder() ClientBuilder {
 func (b ClientBuilder) BuildSqlClient() *sql.DB {
 	// The password can come from secrets.json of GKE
 	// move values to constants
-	cfg := mysql.Cfg("qwiklabs-gcp-04-ba77d4704121:us-central1:e-db", "root", "root")
+	cfg := mysql.Cfg("qwiklabs-gcp-02-d9946fc75698:us-central1:e-db", "root", "root")
 	cfg.DBName = "ecommerce"
 	db, err := mysql.DialCfg(cfg)
 	//db, err := sql.Open(constants.DriveName, "root:root@/ecommerce?parseTime=True")
