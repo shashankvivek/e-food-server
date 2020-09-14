@@ -3,7 +3,6 @@ package clients
 import (
 	"database/sql"
 	"e-food/constants"
-	"github.com/GoogleCloudPlatform/cloudsql-proxy/proxy/dialers/mysql"
 	_ "github.com/go-sql-driver/mysql"
 	razorpay "github.com/razorpay/razorpay-go"
 	"log"
@@ -20,10 +19,10 @@ func NewClientBuilder() ClientBuilder {
 func (b ClientBuilder) BuildSqlClient() *sql.DB {
 	// The password can come from secrets.json of GKE
 	// move values to constants
-	cfg := mysql.Cfg("qwiklabs-gcp-02-d9946fc75698:us-central1:e-db", "root", "root")
-	cfg.DBName = "ecommerce"
-	db, err := mysql.DialCfg(cfg)
-	//db, err := sql.Open(constants.DriveName, "root:root@/ecommerce?parseTime=True")
+	//cfg := mysql.Cfg("qwiklabs-gcp-02-d9946fc75698:us-central1:e-db", "root", "root")
+	//cfg.DBName = "ecommerce"
+	//db, err := mysql.DialCfg(cfg)
+	db, err := sql.Open(constants.DriveName, "root:root@/ecommerce?parseTime=True")
 	if err != nil {
 		log.Fatal("error connecting DB : ", err.Error())
 	}
